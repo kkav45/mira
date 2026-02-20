@@ -175,13 +175,13 @@ const MapManager = {
       // Длина стрелки
       const length = Math.min(40, speed * 4);
 
+      const svgString = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="' + color + '" transform="rotate(' + direction + ' 12 12)">' +
+        '<path d="M12 2L12 22M12 2L7 7M12 2L17 7"/>' +
+        '</svg>';
+
       return new ol.style.Style({
         image: new ol.style.Icon({
-          src: `data:image/svg+xml,${encodeURIComponent(`
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${color}" transform="rotate(${direction} 12 12)">
-              <path d="M12 2L12 22M12 2L7 7M12 2L17 7"/>
-            </svg>
-          `)`,
+          src: 'data:image/svg+xml,' + encodeURIComponent(svgString),
           scale: length / 24,
           rotation: (direction * Math.PI) / 180,
           anchor: [0.5, 0.5]
