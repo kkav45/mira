@@ -57,8 +57,40 @@ const WeatherAPI = {
   },
 
   // Запрос метеоданных
-  async fetchMeteoData(lat, lon, startTime, endTime) {
-    const params = this.getMeteoParams(lat, lon, startTime, endTime);
+  async fetchMeteoData(lat, lon, date) {
+    // Парсим дату
+    const targetDate = new Date(date);
+    const startHour = 0;
+    const endHour = 23;
+    
+    const params = {
+      latitude: lat,
+      longitude: lon,
+      hourly: [
+        'temperature_2m',
+        'relativehumidity_2m',
+        'dewpoint_2m',
+        'windspeed_10m',
+        'winddirection_10m',
+        'surface_pressure',
+        'precipitation',
+        'precipitation_probability',
+        'weathercode',
+        'visibility',
+        'cloudcover'
+      ].join(','),
+      start_hour: startHour,
+      end_hour: endHour,
+      timezone: 'auto',
+      forecast_days: 1
+    };
+
+    // Добавляем дату если указана
+    if (date) {
+      params.start_date = date;
+      params.end_date = date;
+    }
+    
     const queryString = new URLSearchParams(params).toString();
     const url = `${this.config.openMeteoUrl}?${queryString}`;
 

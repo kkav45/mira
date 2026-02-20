@@ -205,6 +205,7 @@ const App = {
   async analyzeCoordinates() {
     const lat = parseFloat(document.getElementById('input-lat')?.value);
     const lon = parseFloat(document.getElementById('input-lon')?.value);
+    const date = document.getElementById('input-date')?.value;
 
     if (isNaN(lat) || isNaN(lon)) {
       this.showError('Введите корректные координаты');
@@ -235,18 +236,27 @@ const App = {
       console.warn('Не удалось получить высоту');
     }
 
-    // Загрузка реальных метеоданных
-    await this.loadWeatherData(lat, lon, elevation);
+    // Загрузка реальных метеоданных с учётом даты
+    await this.loadWeatherData(lat, lon, elevation, date);
   },
 
   // Загрузка метеоданных
-  async loadWeatherData(lat, lon, elevation) {
+  async loadWeatherData(lat, lon, elevation, date = null) {
     this.showNotification('Загрузка метеоданных...', 'info');
     this.updateFlightStatus('restricted');
 
     try {
-      // Запрос к Open-Meteo на 24 часа
-      const weatherData = await WeatherAPI.fetchMeteoData(lat, lon, 0, 24);
+      // Если дата не указана, используем сегодня
+      const selectedDate = date || new Date().toISOString().slice(0, 10);
+      
+      // Обновление даты в интерфейсе
+      const dateEl = document.getElementById('mission-date');
+      if (dateEl) {
+        dateEl.textContent = this.formatDate(selectedDate);
+      }
+
+      // Запрос к Open-Meteo с датой
+      const weatherData = await WeatherAPI.fetchMeteoData(lat, lon, selectedDate);
       
       // Обработка данных
       this.state.weatherData = weatherData;
