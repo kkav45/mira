@@ -112,32 +112,35 @@ const App = {
     if (missionData) {
       const { coordinates, aerodrome } = missionData;
 
-      // Добавление маршрута
-      MapManager.addRoute(coordinates.route);
+      // Добавление маршрута (если есть)
+      if (coordinates?.route) {
+        MapManager.addRoute(coordinates.route);
+      }
 
-      // Добавление зон посадки
-      MapManager.addLandingZones(coordinates.landingZones);
+      // Добавление зон посадки (если есть)
+      if (coordinates?.landingZones) {
+        MapManager.addLandingZones(coordinates.landingZones);
+      }
 
-      // Добавление зон риска
-      MapManager.addRiskZones(coordinates.riskZones);
+      // Добавление зон риска (если есть)
+      if (coordinates?.riskZones) {
+        MapManager.addRiskZones(coordinates.riskZones);
+      }
 
-      // Добавление аэродрома
-      MapManager.addAerodromeMarker({
-        name: aerodrome.name,
-        icao: aerodrome.icao,
-        elevation: aerodrome.elevation,
-        lat: coordinates.start.lat,
-        lon: coordinates.start.lon
-      });
+      // Центрирование на стартовой точке
+      const startLat = coordinates?.start?.lat || 55.30;
+      const startLon = coordinates?.start?.lon || 66.60;
+      
+      MapManager.centerOn(startLat, startLon, 9);
 
-      // Добавление PNR
-      MapManager.addPNR(
-        { lat: coordinates.start.lat, lon: coordinates.start.lon },
-        24.3
-      );
+      // Обновление полей ввода координат
+      const latInput = document.getElementById('input-lat');
+      const lonInput = document.getElementById('input-lon');
+      if (latInput) latInput.value = startLat.toFixed(4);
+      if (lonInput) lonInput.value = startLon.toFixed(4);
 
-      // Центрирование на точке взлёта
-      MapManager.centerOn(coordinates.start.lat, coordinates.start.lon, 9);
+      // Обновление заголовка
+      this.updateHeaderCoords(startLat, startLon);
     }
   },
 
@@ -177,6 +180,11 @@ const App = {
       this.showAutoPushOptions();
     });
 
+    // Анализ по координатам
+    document.getElementById('btn-analyze')?.addEventListener('click', () => {
+      this.analyzeCoordinates();
+    });
+
     // Экспорт
     document.getElementById('btn-export')?.addEventListener('click', () => {
       this.showExportMenu();
@@ -191,6 +199,53 @@ const App = {
     document.getElementById('btn-edit-mission')?.addEventListener('click', () => {
       this.editMission();
     });
+  },
+
+  // Анализ координат
+  async analyzeCoordinates() {
+    const lat = parseFloat(document.getElementById('input-lat')?.value);
+    const lon = parseFloat(document.getElementById('input-lon')?.value);
+
+    if (isNaN(lat) || isNaN(lon)) {
+      this.showError('Введите корректные координаты');
+      return;
+    }
+
+    // Обновление координат в заголовке
+    this.updateHeaderCoords(lat, lon);
+
+    // Центрирование карты
+    MapManager.centerOn(lat, lon, 10);
+
+    // Добавление маркера
+    MapManager.features.points.clear();
+    MapManager.addAerodromeMarker({
+      name: 'Точка анализа',
+      lat: lat,
+      lon: lon,
+      elevation: 0
+    });
+
+    // Запрос высоты
+    const elevation = await WeatherAPI.fetchElevation(lat, lon);
+    document.getElementById('click-elevation').textContent = `${elevation} м`;
+
+    // Имитация загрузки данных
+    this.showNotification('Загрузка метеоданных...', 'info');
+    
+    setTimeout(() => {
+      this.loadDemoData();
+      this.showNotification('Анализ завершён', 'success');
+      this.updateFlightStatus('allowed');
+    }, 1500);
+  },
+
+  // Обновление координат в заголовке
+  updateHeaderCoords(lat, lon) {
+    const coordsEl = document.getElementById('header-coords');
+    if (coordsEl) {
+      coordsEl.textContent = `${lat.toFixed(4)}°N, ${lon.toFixed(4)}°E`;
+    }
   },
 
   // Показ опций авто-загрузки

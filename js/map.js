@@ -540,11 +540,74 @@ const MapManager = {
       }
     });
 
+    // Обработчик клика для получения координат
+    this.map.on('click', (evt) => {
+      const coordinate = evt.coordinate;
+      const lonLat = ol.proj.toLonLat(coordinate);
+      const lon = lonLat[0];
+      const lat = lonLat[1];
+
+      // Обновление UI
+      const coordsEl = document.getElementById('click-coords');
+      if (coordsEl) {
+        coordsEl.textContent = `${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+      }
+
+      // Обновление полей ввода
+      const latInput = document.getElementById('input-lat');
+      const lonInput = document.getElementById('input-lon');
+      if (latInput) latInput.value = lat.toFixed(4);
+      if (lonInput) lonInput.value = lon.toFixed(4);
+
+      // Обновление координат в заголовке
+      const headerCoordsEl = document.getElementById('header-coords');
+      if (headerCoordsEl) {
+        headerCoordsEl.textContent = `${lat.toFixed(4)}°N, ${lon.toFixed(4)}°E`;
+      }
+
+      // Запрос высоты
+      WeatherAPI.fetchElevation(lat, lon).then(elevation => {
+        const elevationEl = document.getElementById('click-elevation');
+        if (elevationEl) {
+          elevationEl.textContent = `${elevation} м`;
+        }
+      });
+
+      // Добавление маркера клика
+      this.addClickMarker(coordinate, lat, lon);
+    });
+
     // Курсор при наведении
     this.map.on('pointermove', (evt) => {
       const feature = this.map.forEachFeatureAtPixel(evt.pixel, (f) => f);
       this.map.getTargetElement().style.cursor = feature ? 'pointer' : '';
     });
+  },
+
+  // Добавление маркера клика
+  addClickMarker(coordinate, lat, lon) {
+    // Очистка предыдущих маркеров клика
+    const existingMarkers = this.features.points.getFeatures().filter(f => f.get('type') === 'click-marker');
+    existingMarkers.forEach(f => this.features.points.removeFeature(f));
+
+    // Создание нового маркера
+    const marker = new ol.Feature({
+      geometry: new ol.geom.Point(coordinate),
+      name: 'Точка анализа',
+      type: 'click-marker',
+      lat: lat,
+      lon: lon
+    });
+
+    marker.setStyle(new ol.style.Style({
+      image: new ol.style.Circle({
+        radius: 8,
+        fill: new ol.style.Fill({ color: '#0d6efd' }),
+        stroke: new ol.style.Stroke({ color: '#fff', width: 2 })
+      })
+    }));
+
+    this.features.points.addFeature(marker);
   },
 
   // Добавление тепловой карты рисков
