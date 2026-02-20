@@ -227,17 +227,229 @@ const App = {
     });
 
     // Запрос высоты
-    const elevation = await WeatherAPI.fetchElevation(lat, lon);
-    document.getElementById('click-elevation').textContent = `${elevation} м`;
+    let elevation = 0;
+    try {
+      elevation = await WeatherAPI.fetchElevation(lat, lon);
+      document.getElementById('click-elevation').textContent = `${elevation} м`;
+    } catch (e) {
+      console.warn('Не удалось получить высоту');
+    }
 
-    // Имитация загрузки данных
+    // Загрузка реальных метеоданных
+    await this.loadWeatherData(lat, lon, elevation);
+  },
+
+  // Загрузка метеоданных
+  async loadWeatherData(lat, lon, elevation) {
     this.showNotification('Загрузка метеоданных...', 'info');
-    
-    setTimeout(() => {
-      this.loadDemoData();
+    this.updateFlightStatus('restricted');
+
+    try {
+      // Получение времени восхода/заката
+      const date = new Date().toISOString().slice(0, 10);
+      const sunTimes = await WeatherAPI.fetchSunTimes(lat, lon, date);
+      
+      // Расчёт временного диапазона
+      let startHour = 6;
+      let endHour = 20;
+      
+      if (sunTimes) {
+        const timeRange = WeatherAPI.calculateTimeRange(sunTimes.sunrise, sunTimes.sunset);
+        startHour = timeRange.startHour;
+        endHour = timeRange.endHour;
+      }
+
+      // Запрос к Open-Meteo
+      const weatherData = await WeatherAPI.fetchMeteoData(lat, lon, startHour, endHour);
+      
+      // Обработка данных
+      this.state.weatherData = weatherData;
+      this.state.currentLocation = { lat, lon };
+
+      // Анализ данных
+      const analysis = this.analyzeWeatherData(weatherData, elevation);
+      
+      // Обновление UI
+      this.updateWeatherUI(analysis);
+      
       this.showNotification('Анализ завершён', 'success');
-      this.updateFlightStatus('allowed');
-    }, 1500);
+      this.updateFlightStatus(analysis.status);
+      
+    } catch (error) {
+      console.error('Ошибка загрузки метеоданных:', error);
+      // Используем демо-данные при ошибке
+      this.loadDemoData();
+      this.showNotification('Используются демо-данные (API недоступен)', 'warning');
+    }
+  },
+
+  // Анализ метеоданных
+  analyzeWeatherData(weatherData, elevation) {
+    const hourly = weatherData.hourly;
+    const currentTime = new Date().getHours();
+    
+    // Получение текущих/ближайших данных
+    const timeIndex = Math.min(currentTime - 6, hourly.time.length - 1);
+    
+    // Извлечение параметров
+    const temp = hourly.temperature_2m[timeIndex] || -8;
+    const humidity = hourly.relativehumidity_2m[timeIndex] || 70;
+    const windSpeed = hourly.windspeed_10m[timeIndex] || 5;
+    const windDir = hourly.winddirection_10m[timeIndex] || 240;
+    const precipitation = hourly.precipitation[timeIndex] || 0;
+    const visibility = hourly.visibility[timeIndex] || 10000;
+    const cloudCover = hourly.cloudcover[timeIndex] || 30;
+    const dewpoint = hourly.dewpoint_2m[timeIndex] || -12;
+
+    // Расчёт индексов
+    const icingRisk = WeatherCalculations.calculateIcingRisk(temp, humidity, precipitation);
+    const fogProb = WeatherCalculations.calculateFogProbability(temp, dewpoint, humidity, windSpeed);
+    const cloudBase = WeatherCalculations.calculateCloudBase(temp, dewpoint);
+
+    // Оценка безопасности
+    const conditions = {
+      wind: windSpeed,
+      visibility: visibility / 1000, // км
+      precipitation,
+      temp,
+      dewpoint,
+      humidity,
+      icing: icingRisk,
+      fog: fogProb
+    };
+
+    const assessment = WeatherCalculations.assessFlightSafety(conditions);
+    const status = WeatherCalculations.getFlightStatus(conditions);
+
+    return {
+      status,
+      rating: assessment.rating,
+      weather: {
+        temp,
+        humidity,
+        windSpeed,
+        windDir,
+        precipitation,
+        visibility: visibility / 1000,
+        cloudCover,
+        cloudBase,
+        icingRisk,
+        fogProb
+      },
+      hourly: {
+        temp: hourly.temperature_2m.slice(0, 24),
+        wind: hourly.windspeed_10m.slice(0, 24),
+        precip: hourly.precipitation.slice(0, 24),
+        time: hourly.time.slice(0, 24).map(t => t.slice(11, 16))
+      }
+    };
+  },
+
+  // Обновление UI с данными анализа
+  updateWeatherUI(analysis) {
+    const { weather } = analysis;
+
+    // Обновление оверлеев
+    const overlayData = {
+      wind10m: weather.windSpeed.toFixed(1),
+      wind500m: (weather.windSpeed * 1.5).toFixed(1),
+      visibility: weather.visibility.toFixed(1),
+      temp: weather.temp.toFixed(0),
+      precipitation: weather.precipitation.toFixed(1),
+      icing: weather.icingRisk < 0.3 ? 'low' : weather.icingRisk < 0.6 ? 'moderate' : 'high'
+    };
+
+    const pnrData = {
+      range: '24.3',
+      time: '18',
+      battery: '32'
+    };
+
+    this.updateMapOverlays(overlayData, pnrData);
+
+    // Обновление статусов в правой панели
+    this.updatePanelStatus(analysis);
+  },
+
+  // Обновление статусов в панели
+  updatePanelStatus(analysis) {
+    // Обновление бейджей в таблице критических параметров
+    const badges = {
+      wind10m: document.getElementById('badge-wind-10m'),
+      wind500m: document.getElementById('badge-wind-500m'),
+      icing: document.getElementById('badge-icing'),
+      fog: document.getElementById('badge-fog'),
+      precip: document.getElementById('badge-precip')
+    };
+
+    const { weather } = analysis;
+
+    if (badges.wind10m) {
+      badges.wind10m.className = `status-pill status-${weather.windSpeed <= 10 ? 'ok' : weather.windSpeed <= 15 ? 'warn' : 'err'}`;
+      badges.wind10m.textContent = weather.windSpeed <= 10 ? '≤10 OK' : weather.windSpeed <= 15 ? '10-15' : '>15';
+    }
+
+    if (badges.wind500m) {
+      const wind500 = weather.windSpeed * 1.5;
+      badges.wind500m.className = `status-pill status-${wind500 <= 15 ? 'ok' : wind500 <= 20 ? 'warn' : 'err'}`;
+      badges.wind500m.textContent = wind500 <= 15 ? '≤15 OK' : wind500 <= 20 ? '15-20' : '>20';
+    }
+
+    if (badges.icing) {
+      badges.icing.className = `status-pill status-${weather.icingRisk <= 0.3 ? 'ok' : weather.icingRisk <= 0.6 ? 'warn' : 'err'}`;
+      badges.icing.textContent = weather.icingRisk <= 0.3 ? 'OK' : weather.icingRisk <= 0.6 ? 'Умеренный' : 'Высокий';
+    }
+
+    if (badges.fog) {
+      badges.fog.className = `status-pill status-${weather.fogProb <= 0.7 ? 'ok' : 'warn'}`;
+      badges.fog.textContent = weather.fogProb <= 0.7 ? 'OK' : 'Риск';
+    }
+
+    if (badges.precip) {
+      badges.precip.className = `status-pill status-${weather.precipitation <= 1.4 ? 'ok' : weather.precipitation <= 2.5 ? 'warn' : 'err'}`;
+      badges.precip.textContent = weather.precipitation <= 1.4 ? '≤1.4 OK' : weather.precipitation <= 2.5 ? '1.4-2.5' : '>2.5';
+    }
+
+    // Обновление числовых значений
+    this.updateNumericValues(weather);
+  },
+
+  // Обновление числовых значений
+  updateNumericValues(weather) {
+    const values = {
+      'param-wind-10m': `${weather.windSpeed.toFixed(1)} м/с`,
+      'param-wind-500m': `${(weather.windSpeed * 1.5).toFixed(1)} м/с`,
+      'param-temp': `${weather.temp.toFixed(0)}°C`,
+      'param-visibility': `${weather.visibility.toFixed(1)} км`,
+      'param-precip': `${weather.precipitation.toFixed(1)} мм/ч`,
+      'param-icing': weather.icingRisk < 0.3 ? 'Низкий риск' : weather.icingRisk < 0.6 ? 'Умеренный' : 'Высокий',
+      'param-fog': weather.fogProb > 0.7 ? 'Вероятен' : 'Не прогнозируется',
+      'param-cloud': `${weather.cloudCover.toFixed(0)}%`
+    };
+
+    Object.entries(values).forEach(([id, value]) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
+    });
+
+    // Обновление статистики
+    this.updateStats(weather);
+  },
+
+  // Обновление статистики
+  updateStats(weather) {
+    const stats = {
+      'stat-wind-10m': weather.windSpeed.toFixed(1),
+      'stat-wind-500m': (weather.windSpeed * 1.5).toFixed(1),
+      'stat-temp': weather.temp.toFixed(0),
+      'stat-visibility': weather.visibility.toFixed(0),
+      'stat-precip': weather.precipitation.toFixed(1)
+    };
+
+    Object.entries(stats).forEach(([id, value]) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
+    });
   },
 
   // Обновление координат в заголовке
