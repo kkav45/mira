@@ -1,0 +1,39 @@
+# Игнорируемые файлы для MIRA 0.2
+
+# Системные файлы
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Логи
+*.log
+
+# Временные файлы
+*.tmp
+*.bak
+*$file.class
+
+# Редакторы кода
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Node.js (если будет использоваться)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Python
+__pycache__/
+*.py[cod]
+.env
+.venv/
+
+# Сборки и дистрибутивы
+dist/
+build/
+
+# Документация (опционально)
+# *.pdf

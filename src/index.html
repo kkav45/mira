@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MIRA 0.2 | Система метеорологического обеспечения БВС</title>
+
+  <!-- OpenLayers CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.4.0/ol.css" />
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- jsPDF для генерации PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header__logo">
+      <div class="header__logo-icon">☁️</div>
+      <span>MIRA 0.2 | Небосвод</span>
+    </div>
+
+    <div class="header__status">
+      <span class="status-badge status-vfr" id="flight-status">
+        <i class="fas fa-check-circle"></i>
+        <span>ПОЛЁТ РАЗРЕШЁН</span>
+      </span>
+      <span class="separator">|</span>
+      <span>Аэродром: <strong id="aerodrome-name">«Северный»</strong></span>
+      <span class="separator">|</span>
+      <span>Обновление: <strong id="update-time">--:--</strong></span>
+    </div>
+
+    <div class="header__controls">
+      <button class="btn btn-sm" id="btn-refresh">
+        <i class="fas fa-sync-alt"></i>
+        <span>Обновить</span>
+      </button>
+      <button class="btn btn-sm" id="btn-export">
+        <i class="fas fa-download"></i>
+        <span>Экспорт</span>
+      </button>
+      <button class="btn btn-sm btn-primary" id="btn-certify">
+        <i class="fas fa-certificate"></i>
+        <span>Сертификация</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- LEFT MENU -->
+    <aside class="left-menu">
+      
+      <div class="menu-section">
+        <div class="menu-section__title">
+          <i class="fas fa-compass"></i>
+          Навигация по разделам
+        </div>
+
+        <div class="menu-item active" data-tab="tab-pnr">
+          <span class="menu-item__icon">📍</span>
+          <span>Точка невозврата</span>
+        </div>
+        <div class="menu-item" data-tab="tab-weather">
+          <span class="menu-item__icon">🌤️</span>
+          <span>Метеоанализ</span>
+        </div>
+        <div class="menu-item" data-tab="tab-profiles">
+          <span class="menu-item__icon">📊</span>
+          <span>Вертикальные профили</span>
+        </div>
+        <div class="menu-item" data-tab="tab-windows">
+          <span class="menu-item__icon">⏰</span>
+          <span>Временные окна</span>
+        </div>
+        <div class="menu-item" data-tab="tab-route">
+          <span class="menu-item__icon">🛤️</span>
+          <span>Маршрут и сегменты</span>
+        </div>
+        <div class="menu-item" data-tab="tab-report">
+          <span class="menu-item__icon">📄</span>
+          <span>Отчёт и сертификация</span>
+        </div>
+      </div>
+
+      <div class="menu-section">
+        <div class="menu-section__title">
+          <i class="fas fa-bolt"></i>
+          Быстрые действия
+        </div>
+        <div class="menu-item" data-action="landing-zones">
+          <span class="menu-item__icon">🚁</span>
+          <span>Зоны посадки</span>
+        </div>
+        <div class="menu-item" data-action="forecast-72h">
+          <span class="menu-item__icon">📈</span>
+          <span>Прогноз 72ч</span>
+        </div>
+        <div class="menu-item" data-action="flight-risks">
+          <span class="menu-item__icon">⚠️</span>
+          <span>Риски полёта</span>
+        </div>
+        <div class="menu-item" data-action="flight-log">
+          <span class="menu-item__icon">📋</span>
+          <span>Журнал полётов</span>
+        </div>
+      </div>
+
+      <div class="menu-section">
+        <div class="menu-section__title">
+          <i class="fas fa-cog"></i>
+          Параметры миссии
+        </div>
+        <div class="mission-info">
+          <div class="info-row">
+            <span class="label">Координаты:</span>
+            <span class="value" id="mission-coords">55.30°N, 66.60°E</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Высота:</span>
+            <span class="value" id="mission-elevation">195 м</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Дата полёта:</span>
+            <span class="value" id="mission-date">13.02.2026</span>
+          </div>
+        </div>
+        <button class="btn btn-sm btn-block" id="btn-edit-mission">
+          <i class="fas fa-edit"></i>
+          Изменить миссию
+        </button>
+      </div>
+
+    </aside>
+
+    <!-- MAP CONTAINER -->
+    <div class="map-container">
+      <div id="map"></div>
+
+      <!-- Map overlay cards -->
+      <div class="map-overlay">
+        <div class="map-card">
+          <div class="map-card__title">
+            <i class="fas fa-wind"></i>
+            Текущие условия
+          </div>
+          <div class="map-card__row">
+            <span>Ветер 10м:</span>
+            <span class="map-card__value" id="overlay-wind-10m">-- м/с</span>
+          </div>
+          <div class="map-card__row">
+            <span>Ветер 500м:</span>
+            <span class="map-card__value" id="overlay-wind-500m">-- м/с</span>
+          </div>
+          <div class="map-card__row">
+            <span>Видимость:</span>
+            <span class="map-card__value" id="overlay-visibility">-- км</span>
+          </div>
+          <div class="map-card__row">
+            <span>Температура:</span>
+            <span class="map-card__value" id="overlay-temp">--°C</span>
+          </div>
+          <div class="map-card__row">
+            <span>Обледенение:</span>
+            <span class="status-pill status-ok" id="overlay-icing">--</span>
+          </div>
+        </div>
+
+        <div class="map-card">
+          <div class="map-card__title">
+            <i class="fas fa-battery-three-quarters"></i>
+            Точка невозврата (PNR)
+          </div>
+          <div class="map-card__row">
+            <span>Макс. дальность:</span>
+            <span class="map-card__value" id="overlay-pnr-range">-- км</span>
+          </div>
+          <div class="map-card__row">
+            <span>Время до PNR:</span>
+            <span class="map-card__value" id="overlay-pnr-time">-- мин</span>
+          </div>
+          <div class="map-card__row">
+            <span>Резерв батареи:</span>
+            <span class="map-card__value" id="overlay-battery">--%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Map legend -->
+      <div class="map-legend">
+        <div class="map-legend__title">Условные обозначения</div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: #0d6efd"></div>
+          <span>Аэродром / Взлётная точка</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: #0dcaf0"></div>
+          <span>Метеостанция</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: #ffc107"></div>
+          <span>Зона повышенного риска</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: #198754"></div>
+          <span>Зона безопасной посадки</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: #dc3545"></div>
+          <span>Зона запрета полётов</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <aside class="right-panel" id="rightPanel">
+      <div class="right-panel__header">
+        <div class="right-panel__title" id="panel-title">
+          <i class="fas fa-chart-line"></i>
+          <span>Точка невозврата</span>
+        </div>
+        <button class="right-panel__close" id="panel-close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="right-panel__content" id="panel-content">
+        <!-- Dynamic content will be injected here -->
+      </div>
+    </aside>
+
+    <!-- Toggle button -->
+    <button class="panel-toggle" id="panel-toggle">
+      <span class="panel-toggle__icon">
+        <i class="fas fa-chevron-right"></i>
+      </span>
+    </button>
+
+  </div>
+
+  <!-- OpenLayers JS -->
+  <script src="https://cdn.jsdelivr.net/npm/ol@v7.4.0/dist/ol.js"></script>
+
+  <!-- Application Scripts -->
+  <script>
+    // Встроенные данные миссии (для работы без CORS)
+    window.MISSION_DATA = {
+      mission: { name: 'Миссия «Северный»', date: '2026-02-13' },
+      coordinates: {
+        start: { lat: 55.302107, lon: 66.598778, name: 'Точка взлёта' },
+        route: [
+          { lat: 55.294118, lon: 66.074007, name: 'Начало маршрута', altitude: 500 },
+          { lat: 55.275456, lon: 66.235891, name: 'КП1', altitude: 600 },
+          { lat: 55.268234, lon: 66.412567, name: 'КП2', altitude: 750 },
+          { lat: 55.256834, lon: 66.970183, name: 'Конец маршрута', altitude: 500 }
+        ],
+        landingZones: [
+          { lat: 55.285, lon: 66.150, name: 'Зона посадки 1', radius: 500 },
+          { lat: 55.270, lon: 66.420, name: 'Зона посадки 2', radius: 500 },
+          { lat: 55.260, lon: 66.850, name: 'Зона посадки 3', radius: 500 }
+        ],
+        riskZones: [
+          { lat: 55.280, lon: 66.300, radius: 2000, name: 'Зона турбулентности', level: 'moderate' },
+          { lat: 55.265, lon: 66.700, radius: 1500, name: 'Зона ограничения', level: 'high' }
+        ]
+      },
+      aerodrome: { name: 'Северный', icao: 'USKK', elevation: 195 },
+      aircraft: { model: 'DJI M300 RTK', speed: 62, batteryCapacity: 25300, batteryMinutes: 55, consumptionRate: 177.3 },
+      thresholds: { windGround: 10, windAltitude: 15, precipitation: 1.4, visibility: 5, tempDewpointDiff: 2 }
+    };
+  </script>
+  <script src="js/api.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/tabs.js"></script>
+  <script src="js/export.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>

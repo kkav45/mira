@@ -1,0 +1,94 @@
+{
+  "mission": {
+    "name": "Миссия «Северный»",
+    "date": "2026-02-13",
+    "aerodrome": {
+      "name": "Северный",
+      "icao": "USKK",
+      "elevation": 195
+    }
+  },
+  "coordinates": {
+    "start": {
+      "lat": 55.302107,
+      "lon": 66.598778,
+      "name": "Точка взлёта"
+    },
+    "route": [
+      {
+        "lat": 55.294118,
+        "lon": 66.074007,
+        "name": "Начало маршрута",
+        "altitude": 500
+      },
+      {
+        "lat": 55.275456,
+        "lon": 66.235891,
+        "name": "Контрольная точка 1",
+        "altitude": 600
+      },
+      {
+        "lat": 55.268234,
+        "lon": 66.412567,
+        "name": "Контрольная точка 2",
+        "altitude": 750
+      },
+      {
+        "lat": 55.256834,
+        "lon": 66.970183,
+        "name": "Конец маршрута",
+        "altitude": 500
+      }
+    ],
+    "landingZones": [
+      {
+        "lat": 55.285,
+        "lon": 66.150,
+        "name": "Зона посадки 1",
+        "radius": 500
+      },
+      {
+        "lat": 55.270,
+        "lon": 66.420,
+        "name": "Зона посадки 2",
+        "radius": 500
+      },
+      {
+        "lat": 55.260,
+        "lon": 66.850,
+        "name": "Зона посадки 3",
+        "radius": 500
+      }
+    ],
+    "riskZones": [
+      {
+        "lat": 55.280,
+        "lon": 66.300,
+        "radius": 2000,
+        "name": "Зона турбулентности",
+        "level": "moderate"
+      },
+      {
+        "lat": 55.265,
+        "lon": 66.700,
+        "radius": 1500,
+        "name": "Зона ограничения",
+        "level": "high"
+      }
+    ]
+  },
+  "aircraft": {
+    "model": "DJI M300 RTK",
+    "speed": 62,
+    "batteryCapacity": 25300,
+    "batteryMinutes": 55,
+    "consumptionRate": 177.3
+  },
+  "thresholds": {
+    "windGround": 10,
+    "windAltitude": 15,
+    "precipitation": 1.4,
+    "visibility": 5,
+    "tempDewpointDiff": 2
+  }
+}

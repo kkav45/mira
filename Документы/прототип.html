@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Метео-обеспечение БВС Pro | SkyArc Style</title>
+  
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
+  
+  <style>
+    :root {
+      /* Цветовая палитра — утилитарный минимализм */
+      --bg-map: #eef2f7;
+      --bg-panel: #ffffff;
+      --bg-panel-hover: #f8f9fa;
+      --text-primary: #212529;
+      --text-secondary: #6c757d;
+      --border-color: #dee2e6;
+      --accent: #0d6efd;
+      --accent-hover: #0b5ed7;
+      --success: #198754;
+      --warning: #ffc107;
+      --danger: #dc3545;
+      --info: #0dcaf0;
+      
+      /* Тени и скругления */
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+      --radius: 6px;
+      --radius-lg: 12px;
+      
+      /* Шрифты */
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: "SF Mono", "Fira Code", "Consolas", monospace;
+      
+      /* Размеры панелей */
+      --left-menu-width: 280px;
+      --right-panel-width: 45vw;
+      --header-height: 56px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: var(--font-family);
+      font-size: 14px;
+      color: var(--text-primary);
+      background: var(--bg-map);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ========== HEADER ========== */
+    .header {
+      height: var(--header-height);
+      background: var(--bg-panel);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      z-index: 1000;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header__logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .header__logo-icon {
+      width: 28px;
+      height: 28px;
+      background: var(--accent);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+
+    .header__status {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 13px;
+    }
+
+    .status-badge {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 500;
+      font-size: 12px;
+    }
+    .status-vfr { background: #d1e7dd; color: #0f5132; }
+    .status-mvfr { background: #fff3cd; color: #664d03; }
+    .status-ifr { background: #f8d7da; color: #842029; }
+
+    .header__controls {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      padding: 6px 14px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-panel);
+      border-radius: var(--radius);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn:hover { background: var(--bg-panel-hover); }
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-sm { padding: 4px 10px; font-size: 12px; }
+
+    /* ========== MAIN LAYOUT ========== */
+    .main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ========== LEFT MENU ========== */
+    .left-menu {
+      width: var(--left-menu-width);
+      background: var(--bg-panel);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      padding: 12px;
+      gap: 8px;
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .menu-section {
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 12px;
+      background: var(--bg-panel);
+    }
+
+    .menu-section__title {
+      font-weight: 600;
+      font-size: 13px;
+      margin-bottom: 10px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background 0.15s;
+      font-size: 13px;
+    }
+    .menu-item:hover { background: var(--bg-panel-hover); }
+    .menu-item.active {
+      background: rgba(13, 110, 253, 0.1);
+      border-left: 3px solid var(--accent);
+      padding-left: 7px;
+    }
+    .menu-item__icon {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-panel-hover);
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    .phase-indicator {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    /* ========== MAP CONTAINER ========== */
+    .map-container {
+      flex: 1;
+      position: relative;
+      z-index: 1;
+    }
+    #map {
+      width: 100%;
+      height: 100%;
+      background: var(--bg-map);
+    }
+
+    /* Map overlays */
+    .map-overlay {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+    }
+    .map-overlay > * { pointer-events: auto; }
+
+    .map-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      box-shadow: var(--shadow-md);
+      min-width: 220px;
+      font-size: 13px;
+    }
+    .map-card__title {
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    .map-card__row {
+      display: flex;
+      justify-content: space-between;
+      padding: 3px 0;
+    }
+    .map-card__value {
+      font-family: var(--font-mono);
+      font-weight: 500;
+    }
+
+    .map-legend {
+      position: absolute;
+      bottom: 20px;
+      left: 12px;
+      z-index: 500;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 10px;
+      box-shadow: var(--shadow-md);
+      font-size: 12px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 3px 0;
+    }
+    .legend-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 3px;
+      border: 1px solid var(--border-color);
+    }
+
+    /* Map markers custom styles */
+    .custom-marker {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: white;
+      font-weight: 600;
+      font-size: 12px;
+      border: 2px solid white;
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+    }
+    .marker-wind { background: var(--info); }
+    .marker-risk { background: var(--warning); color: #000; }
+    .marker-landing { background: var(--success); }
+
+    /* ========== RIGHT PANEL ========== */
+    .right-panel {
+      width: var(--right-panel-width);
+      background: var(--bg-panel);
+      border-left: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 200;
+      transform: translateX(100%);
+      transition: transform 0.25s ease;
+      box-shadow: var(--shadow-lg);
+    }
+    .right-panel.open { transform: translateX(0); }
+
+    .right-panel__header {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-panel-hover);
+    }
+    .right-panel__title {
+      font-weight: 600;
+      font-size: 15px;
+    }
+    .right-panel__close {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: var(--text-secondary);
+      padding: 4px;
+      border-radius: 4px;
+    }
+    .right-panel__close:hover { background: var(--border-color); }
+
+    .right-panel__content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .panel-section {
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 14px;
+    }
+    .panel-section__title {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Tables */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .data-table th {
+      text-align: left;
+      padding: 8px 10px;
+      background: var(--bg-panel-hover);
+      font-weight: 600;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border-color);
+    }
+    .data-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border-color);
+      font-family: var(--font-mono);
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover { background: var(--bg-panel-hover); }
+
+    /* Charts container */
+    .chart-container {
+      position: relative;
+      height: 200px;
+      width: 100%;
+    }
+
+    /* Status pills */
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .status-ok { background: #d1e7dd; color: #0f5132; }
+    .status-warn { background: #fff3cd; color: #664d03; }
+    .status-err { background: #f8d7da; color: #842029; }
+
+    /* Toggle button for right panel */
+    .panel-toggle {
+      position: absolute;
+      right: calc(var(--right-panel-width) + 8px);
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 150;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 8px 0 0 8px;
+      padding: 10px 8px;
+      cursor: pointer;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: right 0.25s ease;
+    }
+    .right-panel.open + .panel-toggle {
+      right: 8px;
+      border-radius: 0 8px 8px 0;
+    }
+    .panel-toggle:hover { background: var(--bg-panel-hover); }
+    .panel-toggle__icon {
+      font-size: 18px;
+      color: var(--text-secondary);
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+      :root { --right-panel-width: 90vw; }
+      .left-menu { width: 240px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header__logo">
+      <div class="header__logo-icon">✈</div>
+      <span>Метео-обеспечение БВС Pro</span>
+    </div>
+    
+    <div class="header__status">
+      <span class="status-badge status-vfr">VFR</span>
+      <span>ICAO: <strong>UUWW</strong></span>
+      <span>Обновление: <strong id="update-time">--:--</strong></span>
+      <span style="color: var(--text-secondary)">|</span>
+      <span>ГОСТ Р 58907-2020</span>
+    </div>
+    
+    <div class="header__controls">
+      <button class="btn btn-sm" id="btn-refresh">⟳ Обновить</button>
+      <button class="btn btn-sm">📤 Экспорт</button>
+      <button class="btn btn-sm btn-primary" id="btn-certify">✓ Сертификация</button>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <div class="main">
+    
+    <!-- LEFT MENU -->
+    <aside class="left-menu">
+      
+      <div class="menu-section">
+        <div class="menu-section__title">Навигация по фазам</div>
+        
+        <div class="menu-item active" data-phase="phase1">
+          <span class="menu-item__icon">1</span>
+          <span>Точка невозврата</span>
+        </div>
+        <div class="menu-item" data-phase="phase2">
+          <span class="menu-item__icon">2</span>
+          <span>Управление флотом</span>
+        </div>
+        <div class="menu-item" data-phase="phase3">
+          <span class="menu-item__icon">3</span>
+          <span>ML-калибровка</span>
+        </div>
+        <div class="menu-item" data-phase="phase4">
+          <span class="menu-item__icon">4</span>
+          <span>Сертификация</span>
+        </div>
+        <div class="menu-item" data-phase="phase5">
+          <span class="phase-indicator">5</span>
+          <span>Метеорология METAR/TAF</span>
+        </div>
+      </div>
+
+      <div class="menu-section">
+        <div class="menu-section__title">Быстрые действия</div>
+        <div class="menu-item">
+          <span class="menu-item__icon">📍</span>
+          <span>Зоны посадки</span>
+        </div>
+        <div class="menu-item">
+          <span class="menu-item__icon">📊</span>
+          <span>Прогноз 72ч</span>
+        </div>
+        <div class="menu-item">
+          <span class="menu-item__icon">⚠️</span>
+          <span>Риски полёта</span>
+        </div>
+        <div class="menu-item">
+          <span class="menu-item__icon">🗂️</span>
+          <span>Журнал полётов</span>
+        </div>
+      </div>
+
+      <div class="menu-section">
+        <div class="menu-section__title">Параметры аэродрома</div>
+        <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;">
+          ICAO: <strong>UUWW</strong><br/>
+          Координаты: 55.59°N, 37.26°E<br/>
+          Высота: 195 м
+        </div>
+        <button class="btn btn-sm" style="width: 100%">Изменить аэродром</button>
+      </div>
+
+    </aside>
+
+    <!-- MAP -->
+    <div class="map-container">
+      <div id="map"></div>
+      
+      <!-- Map overlay cards -->
+      <div class="map-overlay">
+        <div class="map-card">
+          <div class="map-card__title">Текущие условия</div>
+          <div class="map-card__row">
+            <span>Ветер 10м:</span>
+            <span class="map-card__value">6.2 м/с, 240°</span>
+          </div>
+          <div class="map-card__row">
+            <span>Ветер 500м:</span>
+            <span class="map-card__value">12.1 м/с, 250°</span>
+          </div>
+          <div class="map-card__row">
+            <span>Видимость:</span>
+            <span class="map-card__value">>10 км</span>
+          </div>
+          <div class="map-card__row">
+            <span>Температура:</span>
+            <span class="map-card__value">+5°C</span>
+          </div>
+          <div class="map-card__row">
+            <span>Обледенение:</span>
+            <span class="status-pill status-ok">Низкий риск</span>
+          </div>
+        </div>
+
+        <div class="map-card">
+          <div class="map-card__title">Точка невозврата (PNR)</div>
+          <div class="map-card__row">
+            <span>Макс. дальность:</span>
+            <span class="map-card__value">24.3 км</span>
+          </div>
+          <div class="map-card__row">
+            <span>Время до PNR:</span>
+            <span class="map-card__value">18 мин</span>
+          </div>
+          <div class="map-card__row">
+            <span>Резерв батареи:</span>
+            <span class="map-card__value">32%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Map legend -->
+      <div class="map-legend">
+        <div style="font-weight: 600; margin-bottom: 6px;">Условные обозначения</div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: var(--accent)"></div>
+          <span>Аэродром / Взлётная точка</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color marker-wind"></div>
+          <span>Метеостанция</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color marker-risk"></div>
+          <span>Зона повышенного риска</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color marker-landing"></div>
+          <span>Зона безопасной посадки</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <aside class="right-panel" id="rightPanel">
+      <div class="right-panel__header">
+        <div class="right-panel__title" id="panel-title">Метеорология: METAR/TAF</div>
+        <button class="right-panel__close" id="panel-close">×</button>
+      </div>
+      
+      <div class="right-panel__content" id="panel-content">
+        <!-- Dynamic content will be injected here -->
+      </div>
+    </aside>
+
+    <!-- Toggle button -->
+    <button class="panel-toggle" id="panel-toggle">
+      <span class="panel-toggle__icon">◀</span>
+    </button>
+
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  
+  <script>
+    // ========== STATE & CONFIG ==========
+    const state = {
+      currentPhase: 'phase5',
+      rightPanelOpen: false,
+      map: null,
+      charts: {},
+      aerodrome: { icao: 'UUWW', lat: 55.59, lon: 37.26, elevation: 195 },
+      metar: {
+        raw: 'UUWW 201200Z 24006MPS 9999 FEW035 05/M02 Q1021 NOSIG',
+        wind: { speed: 6.2, direction: 240, gust: null },
+        visibility: 10000,
+        clouds: { coverage: 'FEW', base: 3500 },
+        temp: 5, dewpoint: -2, pressure: 1021
+      }
+    };
+
+    // ========== MAP INIT ==========
+    function initMap() {
+      state.map = L.map('map', {
+        center: [state.aerodrome.lat, state.aerodrome.lon],
+        zoom: 10,
+        zoomControl: false,
+        attributionControl: true
+      });
+
+      // Base layer — similar to skyarc.ru style
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors | Данные: Open-Meteo, Росгидромет',
+        maxZoom: 18
+      }).addTo(state.map);
+
+      // Zoom controls
+      L.control.zoom({ position: 'bottomright' }).addTo(state.map);
+
+      // Aerodrome marker
+      const aeroIcon = L.divIcon({
+        className: 'custom-marker',
+        html: '✈',
+        iconSize: [28, 28],
+        iconAnchor: [14, 14]
+      });
+      L.marker([state.aerodrome.lat, state.aerodrome.lon], { icon: aeroIcon })
+        .addTo(state.map)
+        .bindPopup(`<b>${state.aerodrome.icao}</b><br/>Высота: ${state.aerodrome.elevation} м`);
+
+      // Weather station marker
+      const windIcon = L.divIcon({
+        className: 'custom-marker marker-wind',
+        html: '🌡️',
+        iconSize: [28, 28],
+        iconAnchor: [14, 14]
+      });
+      L.marker([state.aerodrome.lat + 0.15, state.aerodrome.lon - 0.2], { icon: windIcon })
+        .addTo(state.map)
+        .bindPopup('<b>Метеостанция #MSK-07</b><br/>Данные в реальном времени');
+
+      // Risk zone polygon (example)
+      const riskZone = L.polygon([
+        [state.aerodrome.lat + 0.3, state.aerodrome.lon],
+        [state.aerodrome.lat + 0.25, state.aerodrome.lon + 0.15],
+        [state.aerodrome.lat + 0.1, state.aerodrome.lon + 0.1],
+        [state.aerodrome.lat + 0.15, state.aerodrome.lon - 0.1]
+      ], {
+        color: '#ffc107',
+        weight: 2,
+        opacity: 0.9,
+        fillOpacity: 0.15
+      }).addTo(state.map).bindPopup('Зона турбулентности / Повышенный риск');
+
+      // Landing zones
+      const landingIcon = L.divIcon({
+        className: 'custom-marker marker-landing',
+        html: '✓',
+        iconSize: [28, 28],
+        iconAnchor: [14, 14]
+      });
+      [[0.08, -0.12], [-0.1, 0.05], [0.02, 0.18]].forEach(([dl, dn]) => {
+        L.marker([state.aerodrome.lat + dl, state.aerodrome.lon + dn], { icon: landingIcon })
+          .addTo(state.map)
+          .bindPopup('Зона безопасной посадки<br/>Радиус: 500 м');
+      });
+
+      // PNR circle
+      L.circle([state.aerodrome.lat, state.aerodrome.lon], {
+        radius: 24300, // 24.3 km
+        color: '#0d6efd',
+        weight: 1,
+        opacity: 0.6,
+        fillOpacity: 0.05,
+        dashArray: '5,5'
+      }).addTo(state.map).bindPopup('Точка невозврата (PNR)<br/>Макс. дальность: 24.3 км');
+    }
+
+    // ========== RIGHT PANEL CONTENT GENERATORS ==========
+    const panelContent = {
+      phase1: () => `
+        <div class="panel-section">
+          <div class="panel-section__title">
+            <span>Расчёт точки невозврата</span>
+            <span class="status-pill status-ok">Актуально</span>
+          </div>
+          <table class="data-table">
+            <tr><td>Скорость БВС</td><td>15.2 м/с</td></tr>
+            <tr><td>Расход батареи</td><td>1.8%/мин</td></tr>
+            <tr><td>Встречный ветер</td><td>6.2 м/с</td></tr>
+            <tr><td><strong>Макс. дальность</strong></td><td><strong>24.3 км</strong></td></tr>
+            <tr><td><strong>Время до PNR</strong></td><td><strong>18 мин</strong></td></tr>
+            <tr><td>Резерв для возврата</td><td>32%</td></tr>
+          </table>
+        </div>
+        <div class="panel-section">
+          <div class="panel-section__title">Зоны безопасной посадки (радиус 50 км)</div>
+          <div class="chart-container">
+            <canvas id="chart-zones"></canvas>
+          </div>
+        </div>
+      `,
+      phase2: () => `
+        <div class="panel-section">
+          <div class="panel-section__title">Статус флота БВС</div>
+          <table class="data-table">
+            <thead><tr><th>ID</th><th>Модель</th><th>Статус</th><th>Батарея</th></tr></thead>
+            <tbody>
+              <tr><td>BVS-001</td><td>DJI M300</td><td><span class="status-pill status-ok">Готов</span></td><td>94%</td></tr>
+              <tr><td>BVS-007</td><td>Autel EVO II</td><td><span class="status-pill status-warn">В полёте</span></td><td>67%</td></tr>
+              <tr><td>BVS-012</td><td>Custom VTOL</td><td><span class="status-pill status-err">Обслуживание</span></td><td>--</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="panel-section">
+          <div class="panel-section__title">Ансамблевый прогноз ветра</div>
+          <div class="chart-container">
+            <canvas id="chart-wind-ensemble"></canvas>
+          </div>
+        </div>
+      `,
+      phase3: () => `
+        <div class="panel-section">
+          <div class="panel-section__title">ML-статистика калибровки</div>
+          <table class="data-table">
+            <tr><td>Обучающих примеров</td><td>87 / 100</td></tr>
+            <tr><td>Точность прогноза</td><td>94.2%</td></tr>
+            <tr><td>Коэффициент коррекции</td><td>1.07</td></tr>
+            <tr><td>Последнее обучение</td><td>2026-02-18</td></tr>
+          </table>
+          <div style="margin-top: 12px; display: flex; gap: 8px;">
+            <button class="btn btn-sm btn-primary">Обучить модель</button>
+            <button class="btn btn-sm">Сбросить</button>
+          </div>
+        </div>
+        <div class="panel-section">
+          <div class="panel-section__title">Прогресс сбора данных</div>
+          <div style="background: var(--bg-panel-hover); border-radius: 4px; height: 8px; margin: 8px 0;">
+            <div style="width: 87%; background: var(--accent); height: 100%; border-radius: 4px;"></div>
+          </div>
+          <div style="font-size: 12px; color: var(--text-secondary); text-align: right;">87% цели</div>
+        </div>
+      `,
+      phase4: () => `
+        <div class="panel-section">
+          <div class="panel-section__title">Чек-лист сертификации</div>
+          <table class="data-table">
+            <tr><td>✓ METAR получен</td><td><span class="status-pill status-ok">OK</span></td></tr>
+            <tr><td>✓ TAF сверен</td><td><span class="status-pill status-ok">OK</span></td></tr>
+            <tr><td>✓ Риски оценены</td><td><span class="status-pill status-ok">OK</span></td></tr>
+            <tr><td>✓ PNR рассчитан</td><td><span class="status-pill status-ok">OK</span></td></tr>
+            <tr><td>⏳ Подпись пилота</td><td><span class="status-pill status-warn">Ожидает</span></td></tr>
+          </table>
+        </div>
+        <div class="panel-section">
+          <div class="panel-section__title">Параметры аудита</div>
+          <select class="btn btn-sm" style="width: 100%; margin-bottom: 10px;">
+            <option>Полный аудит безопасности</option>
+            <option>Комплаенс-проверка</option>
+            <option>Технический аудит</option>
+          </select>
+          <button class="btn btn-sm btn-primary" style="width: 100%">Запустить аудит</button>
+        </div>
+      `,
+      phase5: () => `
+        <div class="panel-section">
+          <div class="panel-section__title">
+            <span>Исходный METAR</span>
+            <div style="display: flex; gap: 6px;">
+              <button class="btn btn-sm" id="btn-metar-refresh">⟳</button>
+              <button class="btn btn-sm">📋</button>
+            </div>
+          </div>
+          <div style="background: var(--bg-panel-hover); padding: 10px; border-radius: 4px; font-family: var(--font-mono); font-size: 13px; margin-bottom: 12px;">
+            ${state.metar.raw}
+          </div>
+          <table class="data-table">
+            <tr><td>Ветер</td><td>240° / 6.2 м/с</td></tr>
+            <tr><td>Видимость</td><td>>10 км</td></tr>
+            <tr><td>Облачность</td><td>FEW035 (3500 ft)</td></tr>
+            <tr><td>Температура / Точка росы</td><td>+5°C / -2°C</td></tr>
+            <tr><td>Давление (QNH)</td><td>1021 гПа</td></tr>
+          </table>
+        </div>
+        
+        <div class="panel-section">
+          <div class="panel-section__title">Лётная категория</div>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center; margin-bottom: 12px;">
+            <div style="padding: 8px; background: #d1e7dd; border-radius: 4px; font-weight: 600;">VFR</div>
+            <div style="padding: 8px; background: var(--bg-panel-hover); border-radius: 4px; color: var(--text-secondary);">MVFR</div>
+            <div style="padding: 8px; background: var(--bg-panel-hover); border-radius: 4px; color: var(--text-secondary);">IFR</div>
+          </div>
+          <div style="font-size: 12px; color: var(--text-secondary);">
+            VFR: Видимость ≥ 10 км, Потолок ≥ 3000 ft
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <div class="panel-section__title">METAR vs Open-Meteo</div>
+          <table class="data-table">
+            <thead><tr><th>Параметр</th><th>METAR</th><th>Open-Meteo</th><th>Δ</th></tr></thead>
+            <tbody>
+              <tr><td>Ветер (м/с)</td><td>6.2</td><td>5.8</td><td>+0.4</td></tr>
+              <tr><td>Направление</td><td>240°</td><td>235°</td><td>+5°</td></tr>
+              <tr><td>Видимость</td><td>>10 км</td><td>12 км</td><td>—</td></tr>
+              <tr><td>Температура</td><td>+5°C</td><td>+4.7°C</td><td>+0.3°C</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="panel-section">
+          <div class="panel-section__title">Прогноз на 24 часа</div>
+          <div class="chart-container">
+            <canvas id="chart-forecast"></canvas>
+          </div>
+        </div>
+      `
+    };
+
+    // ========== CHART RENDERERS ==========
+    function renderCharts(phase) {
+      // Destroy existing charts
+      Object.values(state.charts).forEach(chart => chart?.destroy());
+      state.charts = {};
+
+      if (phase === 'phase1') {
+        const ctx = document.getElementById('chart-zones');
+        if (ctx) {
+          state.charts.zones = new Chart(ctx, {
+            type: 'radar',
+             {
+              labels: ['С-В', 'В', 'Ю-В', 'Ю', 'Ю-З', 'З', 'С-З', 'С'],
+              datasets: [{
+                label: 'Пригодность зон',
+                data: [85, 92, 78, 95, 88, 70, 82, 90],
+                borderColor: '#198754',
+                backgroundColor: 'rgba(25, 135, 84, 0.1)',
+                pointBackgroundColor: '#198754'
+              }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { r: { min: 0, max: 100 } } }
+          });
+        }
+      }
+      
+      if (phase === 'phase2') {
+        const ctx = document.getElementById('chart-wind-ensemble');
+        if (ctx) {
+          state.charts.ensemble = new Chart(ctx, {
+            type: 'line',
+             {
+              labels: ['00', '03', '06', '09', '12', '15', '18', '21'],
+              datasets: [
+                { label: 'Среднее', data: [5.2, 6.1, 7.3, 6.8, 6.2, 5.9, 6.5, 5.8], borderColor: '#0d6efd', tension: 0.3, fill: false },
+                { label: '±1σ', data: [4.1, 5.0, 6.2, 5.7, 5.1, 4.8, 5.4, 4.7], borderColor: 'rgba(13,110,253,0.3)', borderDash: [5,5], pointRadius: 0, fill: false },
+                { label: 'Макс',  [7.8, 8.9, 10.1, 9.2, 8.5, 8.0, 9.1, 8.2], borderColor: '#dc3545', tension: 0.3, pointRadius: 0, fill: false }
+              ]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, scales: { y: { title: { display: true, text: 'м/с' } } } }
+          });
+        }
+      }
+      
+      if (phase === 'phase5') {
+        const ctx = document.getElementById('chart-forecast');
+        if (ctx) {
+          state.charts.forecast = new Chart(ctx, {
+            type: 'bar',
+             {
+              labels: ['12', '15', '18', '21', '00', '03', '06', '09'],
+              datasets: [
+                { 
+                  label: 'Ветер (м/с)', 
+                   [6.2, 6.8, 7.1, 6.5, 5.9, 5.2, 4.8, 5.5], 
+                  backgroundColor: 'rgba(13, 110, 253, 0.6)',
+                  yAxisID: 'y'
+                },
+                { 
+                  label: 'Осадки (мм/ч)', 
+                   [0, 0, 0.2, 0.8, 1.2, 0.5, 0, 0], 
+                  backgroundColor: 'rgba(25, 135, 84, 0.6)',
+                  yAxisID: 'y1'
+                }
+              ]
+            },
+            options: {
+              responsive: true, maintainAspectRatio: false,
+              plugins: { legend: { position: 'bottom' } },
+              scales: {
+                y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Ветер, м/с' }, grid: { drawOnChartArea: false } },
+                y1: { type: 'linear', display: true, position: 'right', title: { display: true, text: 'Осадки, мм/ч' }, grid: { drawOnChartArea: false } }
+              }
+            }
+          });
+        }
+      }
+    }
+
+    // ========== PANEL CONTROL ==========
+    function openPanel(phase) {
+      const panel = document.getElementById('rightPanel');
+      const toggle = document.getElementById('panel-toggle');
+      const title = document.getElementById('panel-title');
+      const content = document.getElementById('panel-content');
+      
+      // Update title
+      const titles = {
+        phase1: 'ФАЗА 1: Точка невозврата',
+        phase2: 'ФАЗА 2: Управление флотом',
+        phase3: 'ФАЗА 3: ML-калибровка',
+        phase4: 'ФАЗА 4: Сертификация',
+        phase5: 'ФАЗА 5: Метеорология METAR/TAF'
+      };
+      title.textContent = titles[phase] || 'Аналитика';
+      
+      // Inject content
+      content.innerHTML = panelContent[phase]?.() || panelContent.phase5();
+      
+      // Open panel
+      panel.classList.add('open');
+      toggle.querySelector('.panel-toggle__icon').textContent = '▶';
+      state.rightPanelOpen = true;
+      
+      // Render charts after DOM update
+      setTimeout(() => renderCharts(phase), 100);
+    }
+
+    function closePanel() {
+      const panel = document.getElementById('rightPanel');
+      const toggle = document.getElementById('panel-toggle');
+      panel.classList.remove('open');
+      toggle.querySelector('.panel-toggle__icon').textContent = '◀';
+      state.rightPanelOpen = false;
+    }
+
+    // ========== EVENT LISTENERS ==========
+    function initEvents() {
+      // Menu items
+      document.querySelectorAll('.menu-item').forEach(item => {
+        item.addEventListener('click', () => {
+          document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+          item.classList.add('active');
+          const phase = item.dataset.phase;
+          if (phase) {
+            state.currentPhase = phase;
+            openPanel(phase);
+          }
+        });
+      });
+
+      // Panel toggle
+      document.getElementById('panel-toggle').addEventListener('click', () => {
+        if (state.rightPanelOpen) closePanel();
+        else openPanel(state.currentPhase);
+      });
+      document.getElementById('panel-close').addEventListener('click', closePanel);
+
+      // Header buttons
+      document.getElementById('btn-refresh').addEventListener('click', () => {
+        document.getElementById('update-time').textContent = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+        // Simulate data refresh
+        alert('Данные обновлены');
+      });
+      document.getElementById('btn-certify').addEventListener('click', () => {
+        alert('Запрос на сертификацию отправлен');
+      });
+
+      // METAR refresh in panel
+      document.addEventListener('click', (e) => {
+        if (e.target.id === 'btn-metar-refresh') {
+          alert('METAR обновлён');
+        }
+      });
+
+      // Update time on load
+      document.getElementById('update-time').textContent = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    // ========== INIT ==========
+    document.addEventListener('DOMContentLoaded', () => {
+      initMap();
+      initEvents();
+      // Open phase 5 by default
+      openPanel('phase5');
+    });
+  </script>
+</body>
+</html>
