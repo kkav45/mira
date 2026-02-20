@@ -22,35 +22,56 @@ const MapManager = {
     const routeSource = new ol.source.Vector();
     const routeLayer = new ol.layer.Vector({
       source: routeSource,
-      style: this.getRouteStyle()
+      style: this.getRouteStyle(),
+      visible: true
     });
 
     // Слой точек анализа
     const pointsSource = new ol.source.Vector();
     const pointsLayer = new ol.layer.Vector({
       source: pointsSource,
-      zIndex: 10
+      zIndex: 10,
+      visible: true
     });
 
     // Слой зон посадки
     const landingSource = new ol.source.Vector();
     const landingLayer = new ol.layer.Vector({
       source: landingSource,
-      style: this.getLandingZoneStyle()
+      style: this.getLandingZoneStyle(),
+      visible: true
     });
 
     // Слой зон риска
     const riskSource = new ol.source.Vector();
     const riskLayer = new ol.layer.Vector({
       source: riskSource,
-      style: this.getRiskZoneStyle()
+      style: this.getRiskZoneStyle(),
+      visible: true
     });
 
     // Слой PNR (точка невозврата)
     const pnrSource = new ol.source.Vector();
     const pnrLayer = new ol.layer.Vector({
       source: pnrSource,
-      style: this.getPnrStyle()
+      style: this.getPnrStyle(),
+      visible: true
+    });
+
+    // Слой векторов ветра
+    const windSource = new ol.source.Vector();
+    const windLayer = new ol.layer.Vector({
+      source: windSource,
+      style: this.getWindStyle(),
+      visible: true
+    });
+
+    // Слой тепловой карты
+    const heatmapSource = new ol.source.Vector();
+    const heatmapLayer = new ol.layer.Vector({
+      source: heatmapSource,
+      style: this.getHeatmapStyle(),
+      visible: false
     });
 
     // Создание карты
@@ -58,10 +79,12 @@ const MapManager = {
       target: targetId,
       layers: [
         osmLayer,
+        heatmapLayer,
         riskLayer,
         pnrLayer,
         routeLayer,
         landingLayer,
+        windLayer,
         pointsLayer
       ],
       view: new ol.View({
@@ -84,7 +107,9 @@ const MapManager = {
       points: pointsLayer,
       landing: landingLayer,
       risk: riskLayer,
-      pnr: pnrLayer
+      pnr: pnrLayer,
+      wind: windLayer,
+      heatmap: heatmapLayer
     };
 
     this.features = {
@@ -92,13 +117,102 @@ const MapManager = {
       points: pointsSource,
       landing: landingSource,
       risk: riskSource,
-      pnr: pnrSource
+      pnr: pnrSource,
+      wind: windSource,
+      heatmap: heatmapSource
     };
 
     // Добавление всплывающих подсказок
     this.addPopup();
 
+    // Инициализация переключателей слоёв
+    this.initLayerToggles();
+
     return this.map;
+  },
+
+  // Инициализация переключателей слоёв
+  initLayerToggles() {
+    // Маршрут
+    document.getElementById('layer-route')?.addEventListener('change', (e) => {
+      this.layers.route.setVisible(e.target.checked);
+    });
+
+    // Ветер
+    document.getElementById('layer-wind')?.addEventListener('change', (e) => {
+      this.layers.wind.setVisible(e.target.checked);
+    });
+
+    // Риск
+    document.getElementById('layer-risk')?.addEventListener('change', (e) => {
+      this.layers.risk.setVisible(e.target.checked);
+    });
+
+    // Посадка
+    document.getElementById('layer-landing')?.addEventListener('change', (e) => {
+      this.layers.landing.setVisible(e.target.checked);
+    });
+
+    // Тепловая карта
+    document.getElementById('layer-heatmap')?.addEventListener('change', (e) => {
+      this.layers.heatmap.setVisible(e.target.checked);
+    });
+  },
+
+  // Стили для векторов ветра
+  getWindStyle() {
+    return function(feature) {
+      const speed = feature.get('speed') || 0;
+      const direction = feature.get('direction') || 0;
+      
+      // Цвет в зависимости от скорости
+      let color;
+      if (speed < 5) color = '#0dcaf0'; // голубой
+      else if (speed < 10) color = '#ffc107'; // жёлтый
+      else if (speed < 15) color = '#fd7e14'; // оранжевый
+      else color = '#dc3545'; // красный
+
+      // Длина стрелки
+      const length = Math.min(40, speed * 4);
+
+      return new ol.style.Style({
+        image: new ol.style.Icon({
+          src: `data:image/svg+xml,${encodeURIComponent(`
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${color}" transform="rotate(${direction} 12 12)">
+              <path d="M12 2L12 22M12 2L7 7M12 2L17 7"/>
+            </svg>
+          `)`,
+          scale: length / 24,
+          rotation: (direction * Math.PI) / 180,
+          anchor: [0.5, 0.5]
+        })
+      });
+    };
+  },
+
+  // Стили для тепловой карты
+  getHeatmapStyle() {
+    return function(feature) {
+      const risk = feature.get('risk') || 0;
+      
+      // Градиент цвета
+      let color;
+      if (risk < 0.3) {
+        color = 'rgba(25, 135, 84, 0.4)'; // зелёный
+      } else if (risk < 0.6) {
+        color = 'rgba(255, 193, 7, 0.4)'; // жёлтый
+      } else {
+        color = 'rgba(220, 53, 69, 0.4)'; // красный
+      }
+
+      return new ol.style.Style({
+        fill: new ol.style.Fill({ color }),
+        stroke: new ol.style.Stroke({
+          color: color.replace('0.4', '0.7'),
+          width: 1
+        })
+      });
+    };
   },
 
   // Стили для маршрута
@@ -324,38 +438,49 @@ const MapManager = {
   // Добавление векторов ветра
   addWindVectors(vectors) {
     // vectors: [{lat, lon, speed, direction, altitude}]
+    this.features.wind.clear();
+    
     const features = vectors.map(v => {
       const center = ol.proj.fromLonLat([v.lon, v.lat]);
       
-      // Создание стрелки ветра
-      const arrow = this.createWindArrow(center, v.speed, v.direction);
-      
       const feature = new ol.Feature({
-        geometry: arrow,
-        name: `Ветер ${v.altitude}м`,
+        geometry: new ol.geom.Point(center),
         speed: v.speed,
         direction: v.direction,
-        altitude: v.altitude
+        altitude: v.altitude || 10
       });
-
-      // Цвет в зависимости от скорости
-      let color = '#0dcaf0';
-      if (v.speed > 15) color = '#dc3545';
-      else if (v.speed > 10) color = '#ffc107';
-      
-      feature.setStyle(new ol.style.Style({
-        stroke: new ol.style.Stroke({
-          color: color,
-          width: 3
-        })
-      }));
 
       return feature;
     });
 
-    // Очистка и добавление (можно выделить в отдельный слой)
-    // this.features.wind.clear();
-    // features.forEach(f => this.features.wind.addFeature(f));
+    features.forEach(f => this.features.wind.addFeature(f));
+  },
+
+  // Добавление тепловой карты рисков
+  addRiskHeatmap(riskData) {
+    // riskData: [{lat, lon, risk: 0-1, radius: 5000}]
+    this.features.heatmap.clear();
+    
+    const features = riskData.map(point => {
+      const center = ol.proj.fromLonLat([point.lon, point.lat]);
+      const radius = point.radius || 5000;
+      
+      // Круг влияния
+      const circle = ol.geom.Polygon.circular(center, radius, 32);
+      const feature = new ol.Feature({
+        geometry: circle,
+        risk: point.risk
+      });
+      
+      return feature;
+    });
+
+    features.forEach(f => this.features.heatmap.addFeature(f));
+    this.layers.heatmap.setVisible(true);
+    
+    // Включить чекбокс
+    const checkbox = document.getElementById('layer-heatmap');
+    if (checkbox) checkbox.checked = true;
   },
 
   // Добавление сегментов маршрута с рисками

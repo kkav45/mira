@@ -577,6 +577,37 @@ Unregister-ScheduledTask -TaskName "MIRA Auto-Push" -Confirm:$false`;
 
     // Обновление статуса полёта
     this.updateFlightStatus('allowed');
+
+    // Добавление векторов ветра (демо)
+    this.addDemoWindVectors();
+
+    // Добавление тепловой карты рисков (демо)
+    this.addDemoRiskHeatmap();
+  },
+
+  // Добавление демо-векторов ветра
+  addDemoWindVectors() {
+    const windVectors = [
+      { lat: 55.35, lon: 66.20, speed: 5.2, direction: 240, altitude: 10 },
+      { lat: 55.30, lon: 66.40, speed: 7.8, direction: 250, altitude: 10 },
+      { lat: 55.25, lon: 66.60, speed: 6.1, direction: 245, altitude: 10 },
+      { lat: 55.32, lon: 66.80, speed: 9.5, direction: 255, altitude: 10 },
+      { lat: 55.28, lon: 67.00, speed: 8.2, direction: 250, altitude: 10 }
+    ];
+
+    MapManager.addWindVectors(windVectors);
+  },
+
+  // Добавление демо-тепловой карты рисков
+  addDemoRiskHeatmap() {
+    const riskData = [
+      { lat: 55.30, lon: 66.30, risk: 0.2, radius: 5000 }, // низкий риск
+      { lat: 55.28, lon: 66.50, risk: 0.5, radius: 5000 }, // умеренный
+      { lat: 55.26, lon: 66.70, risk: 0.3, radius: 5000 }, // низкий
+      { lat: 55.32, lon: 66.90, risk: 0.7, radius: 5000 }  // высокий
+    ];
+
+    MapManager.addRiskHeatmap(riskData);
   },
 
   // Обновление оверлеев карты

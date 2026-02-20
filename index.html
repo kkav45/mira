@@ -218,7 +218,55 @@
 
       <!-- Map legend -->
       <div class="map-legend">
-        <div class="map-legend__title">Условные обозначения</div>
+        <div class="map-legend__title">
+          <i class="fas fa-layer-group"></i>
+          Слои карты
+        </div>
+        
+        <div class="legend-item">
+          <label class="legend-toggle">
+            <input type="checkbox" id="layer-route" checked>
+            <span class="legend-color" style="background: #198754"></span>
+            <span>Маршрут</span>
+          </label>
+        </div>
+        
+        <div class="legend-item">
+          <label class="legend-toggle">
+            <input type="checkbox" id="layer-wind" checked>
+            <span class="legend-color" style="background: #0dcaf0"></span>
+            <span>Векторы ветра</span>
+          </label>
+        </div>
+        
+        <div class="legend-item">
+          <label class="legend-toggle">
+            <input type="checkbox" id="layer-risk" checked>
+            <span class="legend-color" style="background: #ffc107"></span>
+            <span>Зоны риска</span>
+          </label>
+        </div>
+        
+        <div class="legend-item">
+          <label class="legend-toggle">
+            <input type="checkbox" id="layer-landing" checked>
+            <span class="legend-color" style="background: #198754"></span>
+            <span>Зоны посадки</span>
+          </label>
+        </div>
+        
+        <div class="legend-item">
+          <label class="legend-toggle">
+            <input type="checkbox" id="layer-heatmap">
+            <span class="legend-color" style="background: linear-gradient(45deg, #198754, #ffc107, #dc3545)"></span>
+            <span>Тепловая карта</span>
+          </label>
+        </div>
+        
+        <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-color);">
+          <div class="map-legend__title">Условные обозначения</div>
+        </div>
+        
         <div class="legend-item">
           <div class="legend-color" style="background: #0d6efd"></div>
           <span>Аэродром / Взлётная точка</span>
@@ -226,14 +274,6 @@
         <div class="legend-item">
           <div class="legend-color" style="background: #0dcaf0"></div>
           <span>Метеостанция</span>
-        </div>
-        <div class="legend-item">
-          <div class="legend-color" style="background: #ffc107"></div>
-          <span>Зона повышенного риска</span>
-        </div>
-        <div class="legend-item">
-          <div class="legend-color" style="background: #198754"></div>
-          <span>Зона безопасной посадки</span>
         </div>
         <div class="legend-item">
           <div class="legend-color" style="background: #dc3545"></div>

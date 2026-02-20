@@ -482,6 +482,27 @@ body {
   flex-shrink: 0;
 }
 
+/* Legend toggle */
+.legend-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  user-select: none;
+}
+
+.legend-toggle input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: var(--accent);
+}
+
+.legend-toggle:hover {
+  opacity: 0.8;
+}
+
 /* =====================================================
    RIGHT PANEL
    ===================================================== */
