@@ -55,7 +55,7 @@
 
   /* Размеры */
   --left-menu-width: 280px;
-  --right-panel-width: 450px;
+  --right-panel-width: 35vw;
   --header-height: 60px;
 }
 
@@ -744,13 +744,13 @@ body {
    ===================================================== */
 @media (max-width: 1400px) {
   :root {
-    --right-panel-width: 400px;
+    --right-panel-width: 35vw;
   }
 }
 
 @media (max-width: 1200px) {
   :root {
-    --right-panel-width: 380px;
+    --right-panel-width: 35vw;
   }
   
   .left-menu {
