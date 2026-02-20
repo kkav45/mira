@@ -300,39 +300,104 @@ const TabsManager = {
 
   // Рендер панели временных окон
   renderWindowsPanel() {
-    const windows = MockDataGenerator.generateFlightWindows();
-    
+    // Расчёт окон
+    const weatherData = App.state.weatherData;
+    const windows = TimeWindows.calculateWindows(weatherData);
+    const grouped = TimeWindows.groupByStatus(windows);
+    const bestWindows = TimeWindows.findBestWindows(windows, 5);
+    const departure = TimeWindows.recommendDepartureTime(windows);
+
     return `
       <div class="panel-section">
         <div class="panel-section__title">
           <span>Временные окна (24 часа)</span>
-          <span class="status-pill status-info">${windows.filter(w => w.status === 'allowed').length} благоприятных</span>
+          <span class="status-pill status-info">${grouped.allowed.length} благоприятных</span>
         </div>
+        
+        <div class="panel-grid-3 mb-2">
+          <div class="stat-card">
+            <div class="stat-card__value" style="color: #198754;">${grouped.allowed.length}</div>
+            <div class="stat-card__label">Разрешено</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__value" style="color: #ffc107;">${grouped.restricted.length}</div>
+            <div class="stat-card__label">Ограничено</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__value" style="color: #dc3545;">${grouped.forbidden.length}</div>
+            <div class="stat-card__label">Запрещено</div>
+          </div>
+        </div>
+
         <div class="flight-windows">
-          ${windows.map(w => `
-            <div class="flight-window ${w.status}" data-time="${w.startTime}">
-              <div>${w.startTime.slice(11, 16)}</div>
-              <div style="font-size: 10px; opacity: 0.8;">Рейтинг: ${w.rating}</div>
+          ${windows.slice(0, 24).map(w => `
+            <div class="flight-window ${w.status}" data-time="${w.startTime}" title="Рейтинг: ${w.rating}">
+              <div>${TimeWindows.formatTime(w.startTime)}</div>
+              <div style="font-size: 10px; opacity: 0.8;">★ ${w.rating}</div>
             </div>
           `).join('')}
         </div>
       </div>
 
       <div class="panel-section">
-        <div class="panel-section__title">Рекомендуемое время старта</div>
-        <div class="stat-card mb-2" style="background: linear-gradient(135deg, #d1e7dd 0%, #badbcc 100%);">
-          <div class="stat-card__value" style="color: #0f5132; font-size: 32px;">10:25 — 10:35</div>
-          <div class="stat-card__label">Оптимальное окно</div>
-          <div style="font-size: 12px; color: #0f5132; margin-top: 8px;">
-            <i class="fas fa-check-circle"></i> Минимальный ветер, хорошая видимость
-          </div>
+        <div class="panel-section__title">
+          <i class="fas fa-star"></i>
+          Лучшие окна для вылета
         </div>
+        
+        ${departure.recommended ? `
+          <div class="stat-card mb-2" style="background: linear-gradient(135deg, #d1e7dd 0%, #badbcc 100%); border-color: #198754;">
+            <div class="stat-card__value" style="color: #0f5132; font-size: 24px;">
+              ${TimeWindows.formatTime(departure.startTime)} — ${TimeWindows.formatTime(departure.endTime)}
+            </div>
+            <div class="stat-card__label">Рекомендуемое время вылета</div>
+            <div style="font-size: 12px; color: #0f5132; margin-top: 8px;">
+              <i class="fas fa-check-circle"></i> ${departure.reason}<br/>
+              Длительность: ${departure.duration} мин | Рейтинг: ${departure.avgRating}
+            </div>
+          </div>
+        ` : `
+          <div class="stat-card mb-2" style="background: linear-gradient(135deg, #fff3cd 0%, #ffecb5 100%); border-color: #ffc107;">
+            <div class="stat-card__value" style="color: #664d03; font-size: 18px;">
+              ⚠️ Нет благоприятных окон
+            </div>
+            <div class="stat-card__label">Рассмотрите альтернативы</div>
+          </div>
+        `}
+
+        ${bestWindows.length > 0 ? `
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Время</th>
+                <th>Рейтинг</th>
+                <th>Статус</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${bestWindows.map(w => `
+                <tr>
+                  <td>${TimeWindows.formatTime(w.startTime)}</td>
+                  <td><strong>★ ${w.rating}</strong></td>
+                  <td><span class="status-pill status-ok">OK</span></td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        ` : ''}
       </div>
 
       <div class="panel-section">
-        <div class="panel-section__title">Тепловая карта условий</div>
-        <div class="chart-container" style="height: 100px;">
-          <canvas id="chart-heatmap"></canvas>
+        <div class="panel-section__title">
+          <i class="fas fa-chart-line"></i>
+          Динамика условий
+        </div>
+        <div class="chart-container">
+          <canvas id="chart-windows-heatmap"></canvas>
+        </div>
+        <div class="mt-2 text-muted" style="font-size: 12px;">
+          <i class="fas fa-info-circle"></i> 
+          Тренд: ${TimeWindows.analyzeTrend(windows) === 'improving' ? '📈 Улучшение' : TimeWindows.analyzeTrend(windows) === 'worsening' ? '📉 Ухудшение' : '➡️ Стабильно'}
         </div>
       </div>
     `;
