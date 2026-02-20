@@ -569,7 +569,12 @@ const MapManager = {
       WeatherAPI.fetchElevation(lat, lon).then(elevation => {
         const elevationEl = document.getElementById('click-elevation');
         if (elevationEl) {
-          elevationEl.textContent = `${elevation} м`;
+          elevationEl.textContent = elevation ? `${elevation} м` : '-- м';
+        }
+      }).catch(() => {
+        const elevationEl = document.getElementById('click-elevation');
+        if (elevationEl) {
+          elevationEl.textContent = '-- м';
         }
       });
 

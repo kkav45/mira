@@ -466,6 +466,9 @@ const TabsManager = {
 
   // Инициализация графиков после открытия вкладки
   initTabCharts(tabId) {
+    // Очистка предыдущих графиков
+    ChartsManager.destroyAllCharts();
+    
     switch (tabId) {
       case 'tab-pnr':
         this.initEnergyChart();
@@ -489,6 +492,11 @@ const TabsManager = {
   initEnergyChart() {
     const ctx = document.getElementById('chart-energy');
     if (!ctx) return;
+
+    // Уничтожение предыдущего графика если есть
+    if (ChartsManager.charts.energy) {
+      ChartsManager.charts.energy.destroy();
+    }
 
     ChartsManager.createEnergyProfileChart(ctx.getContext('2d'), {
       labels: [0, 12, 31, 46],

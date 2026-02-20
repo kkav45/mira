@@ -354,19 +354,30 @@ Unregister-ScheduledTask -TaskName "MIRA Auto-Push" -Confirm:$false`;
 
   // Обновление оверлеев карты
   updateMapOverlays(weather, pnr) {
-    document.getElementById('overlay-wind-10m').textContent = `${weather.wind10m} м/с`;
-    document.getElementById('overlay-wind-500m').textContent = `${weather.wind500m} м/с`;
-    document.getElementById('overlay-visibility').textContent = `${weather.visibility} км`;
-    document.getElementById('overlay-temp').textContent = `${weather.temp}°C`;
-    document.getElementById('overlay-precip').textContent = `${weather.precipitation} мм/ч`;
-    
-    const icingEl = document.getElementById('overlay-icing');
-    icingEl.textContent = weather.icing === 'low' ? 'Низкий' : weather.icing === 'moderate' ? 'Умеренный' : 'Высокий';
-    icingEl.className = `status-pill status-${weather.icing === 'low' ? 'ok' : weather.icing === 'moderate' ? 'warn' : 'err'}`;
+    const overlayWind10m = document.getElementById('overlay-wind-10m');
+    const overlayWind500m = document.getElementById('overlay-wind-500m');
+    const overlayVisibility = document.getElementById('overlay-visibility');
+    const overlayTemp = document.getElementById('overlay-temp');
+    const overlayPrecip = document.getElementById('overlay-precip');
+    const overlayIcing = document.getElementById('overlay-icing');
+    const overlayPnrRange = document.getElementById('overlay-pnr-range');
+    const overlayPnrTime = document.getElementById('overlay-pnr-time');
+    const overlayBattery = document.getElementById('overlay-battery');
 
-    document.getElementById('overlay-pnr-range').textContent = `${pnr.range} км`;
-    document.getElementById('overlay-pnr-time').textContent = `${pnr.time} мин`;
-    document.getElementById('overlay-battery').textContent = `${pnr.battery}%`;
+    if (overlayWind10m) overlayWind10m.textContent = `${weather.wind10m} м/с`;
+    if (overlayWind500m) overlayWind500m.textContent = `${weather.wind500m} м/с`;
+    if (overlayVisibility) overlayVisibility.textContent = `${weather.visibility} км`;
+    if (overlayTemp) overlayTemp.textContent = `${weather.temp}°C`;
+    if (overlayPrecip) overlayPrecip.textContent = `${weather.precipitation} мм/ч`;
+    
+    if (overlayIcing) {
+      overlayIcing.textContent = weather.icing === 'low' ? 'Низкий' : weather.icing === 'moderate' ? 'Умеренный' : 'Высокий';
+      overlayIcing.className = `status-pill status-${weather.icing === 'low' ? 'ok' : weather.icing === 'moderate' ? 'warn' : 'err'}`;
+    }
+
+    if (overlayPnrRange) overlayPnrRange.textContent = `${pnr.range} км`;
+    if (overlayPnrTime) overlayPnrTime.textContent = `${pnr.time} мин`;
+    if (overlayBattery) overlayBattery.textContent = `${pnr.battery}%`;
   },
 
   // Обновление статуса полёта
