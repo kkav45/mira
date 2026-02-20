@@ -32,8 +32,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Публикуем содержимое папки src
-          path: './src'
+          # Публикуем из корня репозитория
+          path: '.'
 
       - name: Deploy to GitHub Pages
         id: deployment

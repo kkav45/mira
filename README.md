@@ -25,11 +25,11 @@ MIRA 0.2 (Метеорологическое Информационно-Расч
 
 ### Вариант 1: Простой запуск (рекомендуется)
 
-Просто откройте файл `src/index.html` в браузере:
+Просто откройте файл `index.html` в браузере:
 
 ```bash
 # Windows - дважды кликните по файлу
-start src\index.html
+start index.html
 
 # Или перетащите файл в окно браузера
 ```
@@ -42,14 +42,20 @@ start src\index.html
 
 ```bash
 # Python 3
-cd src
 python -m http.server 8000
 
 # Node.js
-npx http-server src -p 8000
+npx http-server . -p 8000
 
 # Затем откройте в браузере
 http://localhost:8000
+```
+
+### Вариант 3: GitHub Pages
+
+Опубликованная версия доступна:
+```
+https://kkav45.github.io/mira/
 ```
 
 ---
