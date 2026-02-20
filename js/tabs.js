@@ -175,31 +175,31 @@ const TabsManager = {
       <div class="panel-section">
         <div class="panel-section__title">
           <span>Ключевые показатели</span>
-          <span class="status-pill status-ok">VFR</span>
+          <span class="status-pill status-ok" id="weather-status">VFR</span>
         </div>
         <div class="panel-grid-3">
           <div class="stat-card">
-            <div class="stat-card__value" style="color: #4299e1;">6.2</div>
+            <div class="stat-card__value" style="color: #4299e1;" id="stat-wind-10m">6.2</div>
             <div class="stat-card__label">Ветер 10м (м/с)</div>
           </div>
           <div class="stat-card">
-            <div class="stat-card__value" style="color: #ed8936;">12.1</div>
+            <div class="stat-card__value" style="color: #ed8936;" id="stat-wind-500m">12.1</div>
             <div class="stat-card__label">Ветер 500м (м/с)</div>
           </div>
           <div class="stat-card">
-            <div class="stat-card__value" style="color: #38a169;">>10</div>
+            <div class="stat-card__value" style="color: #38a169;" id="stat-visibility">>10</div>
             <div class="stat-card__label">Видимость (км)</div>
           </div>
           <div class="stat-card">
-            <div class="stat-card__value" style="color: #9f7aea;">-8</div>
+            <div class="stat-card__value" style="color: #9f7aea;" id="stat-temp">-8</div>
             <div class="stat-card__label">Температура (°C)</div>
           </div>
           <div class="stat-card">
-            <div class="stat-card__value" style="color: #48bb78;">0.0</div>
+            <div class="stat-card__value" style="color: #48bb78;" id="stat-precip">0.0</div>
             <div class="stat-card__label">Осадки (мм/ч)</div>
           </div>
           <div class="stat-card">
-            <div class="stat-card__value" style="color: #198754;">Низкий</div>
+            <div class="stat-card__value" style="color: #198754;" id="stat-icing">Низкий</div>
             <div class="stat-card__label">Обледенение</div>
           </div>
         </div>
@@ -210,36 +210,48 @@ const TabsManager = {
         <table class="data-table">
           <tr>
             <td><i class="fas fa-wind"></i> Ветер у земли</td>
-            <td><strong>6.2 м/с</strong></td>
-            <td><span class="status-pill status-ok">≤10 OK</span></td>
+            <td><strong id="param-wind-10m">6.2 м/с</strong></td>
+            <td><span class="status-pill status-ok" id="badge-wind-10m">≤10 OK</span></td>
           </tr>
           <tr>
             <td><i class="fas fa-wind"></i> Ветер на 500м</td>
-            <td><strong>12.1 м/с</strong></td>
-            <td><span class="status-pill status-ok">≤15 OK</span></td>
+            <td><strong id="param-wind-500m">12.1 м/с</strong></td>
+            <td><span class="status-pill status-ok" id="badge-wind-500m">≤15 OK</span></td>
           </tr>
           <tr>
             <td><i class="fas fa-snowflake"></i> Обледенение</td>
-            <td><strong>Низкий риск</strong></td>
-            <td><span class="status-pill status-ok">OK</span></td>
+            <td><strong id="param-icing">Низкий риск</strong></td>
+            <td><span class="status-pill status-ok" id="badge-icing">OK</span></td>
           </tr>
           <tr>
             <td><i class="fas fa-smog"></i> Туман</td>
-            <td><strong>Не прогнозируется</strong></td>
-            <td><span class="status-pill status-ok">OK</span></td>
+            <td><strong id="param-fog">Не прогнозируется</strong></td>
+            <td><span class="status-pill status-ok" id="badge-fog">OK</span></td>
           </tr>
           <tr>
             <td><i class="fas fa-cloud-rain"></i> Осадки</td>
-            <td><strong>0.0 мм/ч</strong></td>
-            <td><span class="status-pill status-ok">≤1.4 OK</span></td>
+            <td><strong id="param-precip">0.0 мм/ч</strong></td>
+            <td><span class="status-pill status-ok" id="badge-precip">≤1.4 OK</span></td>
+          </tr>
+          <tr>
+            <td><i class="fas fa-cloud"></i> Облачность</td>
+            <td><strong id="param-cloud">35%</strong></td>
+            <td><span class="status-pill status-ok" id="badge-cloud">OK</span></td>
           </tr>
         </table>
       </div>
 
       <div class="panel-section">
-        <div class="panel-section__title">Временной ряд метеопараметров</div>
+        <div class="panel-section__title">Временной ряд метеопараметров (24 часа)</div>
         <div class="chart-container chart-container-large">
           <canvas id="chart-time-series"></canvas>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-section__title">Прогноз по часам</div>
+        <div class="flight-windows" id="hourly-forecast">
+          <!-- Заполняется JavaScript -->
         </div>
       </div>
     `;
@@ -511,13 +523,37 @@ const TabsManager = {
     const ctx = document.getElementById('chart-time-series');
     if (!ctx) return;
 
-    const mockHourly = MockDataGenerator.generateHourlyData(24);
-    ChartsManager.createTimeSeriesChart(ctx.getContext('2d'), {
-      labels: mockHourly.time.map(t => t.slice(11, 16)),
-      temperature: mockHourly.temperature_2m,
-      windSpeed: mockHourly.windspeed_10m,
-      humidity: mockHourly.relativehumidity_2m
-    });
+    // Уничтожение предыдущего графика если есть
+    if (ChartsManager.charts.timeSeries) {
+      ChartsManager.charts.timeSeries.destroy();
+    }
+
+    // Получение данных из состояния приложения
+    const weatherData = App.state.weatherData;
+    
+    if (weatherData && weatherData.hourly) {
+      const hourly = weatherData.hourly;
+      const labels = hourly.time?.slice(0, 24).map(t => t.slice(11, 16)) || [];
+      const temp = hourly.temperature_2m?.slice(0, 24) || [];
+      const wind = hourly.windspeed_10m?.slice(0, 24) || [];
+      const humidity = hourly.relativehumidity_2m?.slice(0, 24) || [];
+
+      ChartsManager.createTimeSeriesChart(ctx.getContext('2d'), {
+        labels,
+        temperature: temp,
+        windSpeed: wind,
+        humidity
+      });
+    } else {
+      // Демо-данные если нет реальных
+      const mockHourly = MockDataGenerator.generateHourlyData(24);
+      ChartsManager.createTimeSeriesChart(ctx.getContext('2d'), {
+        labels: mockHourly.time.map(t => t.slice(11, 16)),
+        temperature: mockHourly.temperature_2m,
+        windSpeed: mockHourly.windspeed_10m,
+        humidity: mockHourly.relativehumidity_2m
+      });
+    }
   },
 
   // Инициализация профильных графиков
