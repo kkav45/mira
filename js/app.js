@@ -245,22 +245,8 @@ const App = {
     this.updateFlightStatus('restricted');
 
     try {
-      // Получение времени восхода/заката
-      const date = new Date().toISOString().slice(0, 10);
-      const sunTimes = await WeatherAPI.fetchSunTimes(lat, lon, date);
-      
-      // Расчёт временного диапазона
-      let startHour = 6;
-      let endHour = 20;
-      
-      if (sunTimes) {
-        const timeRange = WeatherAPI.calculateTimeRange(sunTimes.sunrise, sunTimes.sunset);
-        startHour = timeRange.startHour;
-        endHour = timeRange.endHour;
-      }
-
-      // Запрос к Open-Meteo
-      const weatherData = await WeatherAPI.fetchMeteoData(lat, lon, startHour, endHour);
+      // Запрос к Open-Meteo на 24 часа
+      const weatherData = await WeatherAPI.fetchMeteoData(lat, lon, 0, 24);
       
       // Обработка данных
       this.state.weatherData = weatherData;
@@ -286,20 +272,23 @@ const App = {
   // Анализ метеоданных
   analyzeWeatherData(weatherData, elevation) {
     const hourly = weatherData.hourly;
-    const currentTime = new Date().getHours();
-    
-    // Получение текущих/ближайших данных
-    const timeIndex = Math.min(currentTime - 6, hourly.time.length - 1);
+    if (!hourly) {
+      console.warn('Нет почасовых данных');
+      return this.getEmptyAnalysis();
+    }
+
+    // Получение первого доступного часа
+    const timeIndex = 0;
     
     // Извлечение параметров
-    const temp = hourly.temperature_2m[timeIndex] || -8;
-    const humidity = hourly.relativehumidity_2m[timeIndex] || 70;
-    const windSpeed = hourly.windspeed_10m[timeIndex] || 5;
-    const windDir = hourly.winddirection_10m[timeIndex] || 240;
-    const precipitation = hourly.precipitation[timeIndex] || 0;
-    const visibility = hourly.visibility[timeIndex] || 10000;
-    const cloudCover = hourly.cloudcover[timeIndex] || 30;
-    const dewpoint = hourly.dewpoint_2m[timeIndex] || -12;
+    const temp = hourly.temperature_2m?.[timeIndex] || -8;
+    const humidity = hourly.relativehumidity_2m?.[timeIndex] || 70;
+    const windSpeed = hourly.windspeed_10m?.[timeIndex] || 5;
+    const windDir = hourly.winddirection_10m?.[timeIndex] || 240;
+    const precipitation = hourly.precipitation?.[timeIndex] || 0;
+    const visibility = hourly.visibility?.[timeIndex] || 10000;
+    const cloudCover = hourly.cloudcover?.[timeIndex] || 30;
+    const dewpoint = hourly.dewpoint_2m?.[timeIndex] || -12;
 
     // Расчёт индексов
     const icingRisk = WeatherCalculations.calculateIcingRisk(temp, humidity, precipitation);
@@ -337,10 +326,36 @@ const App = {
         fogProb
       },
       hourly: {
-        temp: hourly.temperature_2m.slice(0, 24),
-        wind: hourly.windspeed_10m.slice(0, 24),
-        precip: hourly.precipitation.slice(0, 24),
-        time: hourly.time.slice(0, 24).map(t => t.slice(11, 16))
+        temp: hourly.temperature_2m?.slice(0, 24) || [],
+        wind: hourly.windspeed_10m?.slice(0, 24) || [],
+        precip: hourly.precipitation?.slice(0, 24) || [],
+        time: hourly.time?.slice(0, 24).map(t => t.slice(11, 16)) || []
+      }
+    };
+  },
+
+  // Пустой анализ (при ошибке)
+  getEmptyAnalysis() {
+    return {
+      status: 'restricted',
+      rating: '0.50',
+      weather: {
+        temp: -8,
+        humidity: 70,
+        windSpeed: 5,
+        windDir: 240,
+        precipitation: 0,
+        visibility: 10,
+        cloudCover: 30,
+        cloudBase: 500,
+        icingRisk: 0.1,
+        fogProb: 0.2
+      },
+      hourly: {
+        temp: [],
+        wind: [],
+        precip: [],
+        time: []
       }
     };
   },

@@ -25,19 +25,14 @@ const WeatherAPI = {
         'surface_pressure',
         'precipitation',
         'precipitation_probability',
-        'rain',
-        'snowfall',
         'weathercode',
         'visibility',
-        'cloudcover_low',
-        'cloudcover',
-        'cape',
-        'freezing_level_height',
-        'shortwave_radiation'
+        'cloudcover'
       ].join(','),
       start_hour: startTime,
       end_hour: endTime,
-      timezone: 'auto'
+      timezone: 'auto',
+      forecast_days: 1
     };
   },
 
@@ -82,17 +77,24 @@ const WeatherAPI = {
 
   // Запрос высоты местности
   async fetchElevation(lat, lon) {
-    const url = `${this.config.openTopoUrl}?locations=${lat},${lon}`;
+    // Используем прокси для обхода CORS
+    const url = `https://api.opentopodata.org/v1/srtm90m?locations=${lat},${lon}`;
 
     try {
-      const response = await fetch(url);
+      const response = await fetch(url, {
+        mode: 'cors',
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
       return data.results[0]?.elevation || 0;
     } catch (error) {
-      console.error('Ошибка получения высоты:', error);
+      console.warn('Ошибка получения высоты (используется значение по умолчанию):', error.message);
       return 0;
     }
   },
