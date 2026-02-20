@@ -42,6 +42,9 @@ const App = {
       // Запуск часов обновления
       this.startUpdateTime();
 
+      // Установка текущей даты
+      this.setCurrentDate();
+
       // Генерация демонстрационных данных
       this.loadDemoData();
 
@@ -52,6 +55,21 @@ const App = {
       console.error('Ошибка инициализации:', error);
       // Продолжаем работу с демо-данными
       this.useDemoMode();
+    }
+  },
+
+  // Установка текущей даты
+  setCurrentDate() {
+    const today = new Date().toISOString().slice(0, 10);
+    const dateInput = document.getElementById('input-date');
+    if (dateInput) {
+      dateInput.value = today;
+    }
+    
+    // Также обновим дату в миссии
+    const missionDateEl = document.getElementById('mission-date');
+    if (missionDateEl) {
+      missionDateEl.textContent = this.formatDate(today);
     }
   },
 
