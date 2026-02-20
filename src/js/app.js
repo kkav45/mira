@@ -172,6 +172,11 @@ const App = {
       this.refreshData();
     });
 
+    // Авто-загрузка
+    document.getElementById('btn-auto-push')?.addEventListener('click', () => {
+      this.showAutoPushOptions();
+    });
+
     // Экспорт
     document.getElementById('btn-export')?.addEventListener('click', () => {
       this.showExportMenu();
@@ -186,6 +191,85 @@ const App = {
     document.getElementById('btn-edit-mission')?.addEventListener('click', () => {
       this.editMission();
     });
+  },
+
+  // Показ опций авто-загрузки
+  showAutoPushOptions() {
+    const message = `🚀 Авто-загрузка на GitHub
+
+Выберите действие:
+
+1️⃣ Быстрая загрузка
+   → Прямо сейчас отправить изменения
+
+2️⃣ Настроить авто-загрузку
+   → Автоматически каждые 5 минут (Планировщик)
+
+3️⃣ Открыть репозиторий
+   → https://github.com/kkav45/mira`;
+
+    const choice = prompt(message, '1');
+    
+    switch (choice) {
+      case '1':
+        this.quickPush();
+        break;
+      case '2':
+        this.setupAutoPush();
+        break;
+      case '3':
+        window.open('https://github.com/kkav45/mira', '_blank');
+        break;
+    }
+  },
+
+  // Быстрая загрузка
+  async quickPush() {
+    const instructions = `📤 Быстрая загрузка на GitHub
+
+Откройте PowerShell и выполните:
+
+cd "d:\\! Погода\\MIRA 0.2 (небосвод)"
+.\\publish-github.ps1
+
+Или вручную:
+git add .
+git commit -m "Update"
+git push`;
+
+    alert(instructions);
+    
+    try {
+      window.open('powershell.exe', '_blank');
+    } catch (e) {
+      console.log('Не удалось открыть PowerShell');
+    }
+  },
+
+  // Настройка авто-загрузки
+  setupAutoPush() {
+    const instructions = `⚙️ Настройка авто-загрузки
+
+1. Откройте PowerShell от имени администратора
+
+2. Выполните команду:
+cd "d:\\! Погода\\MIRA 0.2 (небосвод)"
+.\\setup-autopush.ps1
+
+3. Готово!
+   → Загрузка каждые 5 минут
+   → Лог: .auto-push.log
+
+Для отключения:
+Unregister-ScheduledTask -TaskName "MIRA Auto-Push" -Confirm:$false`;
+
+    alert(instructions);
+    
+    try {
+      window.open('powershell.exe', '_blank');
+    } catch (e) {
+      console.log('Не удалось открыть PowerShell');
+    }
   },
 
   // Загрузка демонстрационных данных
