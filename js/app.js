@@ -743,61 +743,24 @@ Unregister-ScheduledTask -TaskName "MIRA Auto-Push" -Confirm:$false`;
   // Генерация PDF отчёта
   async generatePDFReport() {
     try {
-      // Подготовка данных для отчёта
-      const reportData = {
-        missionName: this.state.missionData?.mission?.name || 'Миссия «Северный»',
-        date: this.state.missionData?.mission?.date || new Date().toISOString(),
-        aerodrome: this.state.missionData?.mission?.aerodrome?.name || '«Северный»',
-        coordinates: this.state.missionData?.coordinates || { start: this.state.currentLocation },
-        status: this.getCurrentFlightStatus(),
-        weather: this.getCurrentWeatherData(),
-        segments: MockDataGenerator.generateRouteSegments(),
-        pnr: { distance: '24.3', time: 18, minReserve: 6325 },
-        flightTime: 45,
-        energyConsumption: 8020,
-        batteryReserve: 6325,
-        batteryReservePercent: 25,
-        altitudes: { climb: 500, cruise: 750, descent: 500 },
-        maxDistance: '35.2',
-        recommendedTime: '10:25 — 10:35',
-        summary: [
-          'Полёт разрешён при соблюдении следующих условий:',
-          '• Видимость не менее 5 км',
-          '• Ветер на высоте не более 15 м/с',
-          '• Отсутствие осадков интенсивнее 1.4 мм/ч',
-          '• Минимальный запас энергии при посадке 25%'
-        ],
-        profiles: {
-          wind: [5.2, 7.8, 9.2, 10.5, 12.1],
-          temp: [-8.5, -7.8, -7.5, -7.1, -6.5],
-          altitudes: [250, 400, 550, 650, 800]
-        },
-        energy: {
-          capacity: 25300,
-          consumption: 177.3,
-          minReserve: 6325,
-          maxFlightTime: 107
-        },
-        recommendations: [
-          '1. Рекомендуемое время старта: 10:25 — 10:35 местного времени',
-          '2. Высота выхода на маршрут: 500 м',
-          '3. Крейсерская высота: 750 м (максимальная энергоэффективность)',
-          '4. Контроль энергии на отметках: 27.8 км, 58 км, 75.3 км',
-          '5. При ухудшении видимости менее 5 км — немедленная посадка',
-          '6. Минимальное напряжение при посадке: 21.0 В (3.5 В/элемент)'
-        ]
-      };
-
-      // Добавление расчётных данных
-      reportData.routeLength = reportData.segments.reduce((sum, s) => sum + s.distance, 0);
-
-      // Генерация краткого отчёта
-      await PDFExporter.generateShortReport(reportData);
+      // Генерация краткого отчёта с реальными данными
+      await ReportDataPrep.generateQuickReport();
       
       this.showNotification('PDF отчёт сгенерирован', 'success');
     } catch (error) {
       console.error('Ошибка генерации PDF:', error);
       this.showError('Ошибка генерации PDF отчёта');
+    }
+  },
+
+  // Генерация полного PDF отчёта
+  async generateFullPDFReport() {
+    try {
+      await ReportDataPrep.generateFullReport();
+      this.showNotification('Полный PDF отчёт сгенерирован', 'success');
+    } catch (error) {
+      console.error('Ошибка генерации полного PDF:', error);
+      this.showError('Ошибка генерации полного PDF отчёта');
     }
   },
 
