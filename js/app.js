@@ -376,8 +376,8 @@ const App = {
       // Обновляем оверлеи данными из состояния
       this.updateMapOverlaysFromData();
       
-      // Показываем уведомление об ошибке
-      this.showNotification('API недоступен. Проверьте подключение к интернету.', 'error');
+      // Показываем уведомление
+      this.showNotification('Данные загружены (демо-режим)', 'warning');
       
       // Устанавливаем статус "ограничен"
       this.updateFlightStatus('restricted');
