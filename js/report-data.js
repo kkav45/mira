@@ -88,16 +88,16 @@ const ReportDataPrep = {
       };
     }
 
-    // Демо-данные
+    // Значения по умолчанию
     return {
-      wind10m: '6.2',
-      windDir10m: 240,
-      temp: '-8',
-      humidity: 70,
-      visibility: 10,
+      wind10m: '0.0',
+      windDir10m: 0,
+      temp: '0',
+      humidity: 0,
+      visibility: 0,
       precipitation: '0.0',
-      cloudCover: 30,
-      icing: 0.1
+      cloudCover: 0,
+      icing: 0
     };
   },
 
@@ -134,10 +134,10 @@ const ReportDataPrep = {
       };
     }
 
-    // Демо-профили
+    // Пустые профили
     return {
-      wind: [5.2, 7.8, 9.2, 10.5, 12.1],
-      temp: [-8.5, -7.8, -7.5, -7.1, -6.5],
+      wind: [],
+      temp: [],
       altitudes: [250, 400, 550, 650, 800],
       time: []
     };

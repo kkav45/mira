@@ -8,7 +8,42 @@ const WeatherAPI = {
   config: {
     openMeteoUrl: 'https://api.open-meteo.com/v1/forecast',
     openTopoUrl: 'https://api.opentopodata.org/v1/srtm90m',
-    sunriseSunsetUrl: 'https://api.sunrise-sunset.org/json'
+    sunriseSunsetUrl: 'https://api.sunrise-sunset.org/json',
+    maxRetries: 3,
+    retryDelay: 1000 // мс
+  },
+
+  // Задержка перед следующей попыткой
+  async delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  },
+
+  // Fetch с retry logic
+  async fetchWithRetry(url, options = {}, retries = this.config.maxRetries) {
+    for (let attempt = 1; attempt <= retries; attempt++) {
+      try {
+        const response = await fetch(url, {
+          ...options,
+          mode: 'cors',
+          headers: {
+            'Accept': 'application/json',
+            ...options.headers
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        return await response.json();
+      } catch (error) {
+        if (attempt === retries) {
+          throw error;
+        }
+        console.warn(`Попытка ${attempt} не удалась, повтор через ${this.config.retryDelay}мс...`);
+        await this.delay(this.config.retryDelay * attempt); // экспоненциальная задержка
+      }
+    }
   },
 
   // Параметры запроса к Open-Meteo
@@ -38,10 +73,10 @@ const WeatherAPI = {
 
   // Запрос метеоданных для маршрута (несколько точек)
   async fetchMeteoDataForRoute(coordinates, startTime, endTime) {
-    const promises = coordinates.map(coord => 
+    const promises = coordinates.map(coord =>
       this.fetchMeteoData(coord.lat, coord.lon, startTime, endTime)
     );
-    
+
     try {
       const results = await Promise.all(promises);
       return results.map((data, index) => ({
@@ -58,11 +93,6 @@ const WeatherAPI = {
 
   // Запрос метеоданных
   async fetchMeteoData(lat, lon, date) {
-    // Парсим дату
-    const targetDate = new Date(date);
-    const startHour = 0;
-    const endHour = 23;
-    
     const params = {
       latitude: lat,
       longitude: lon,
@@ -79,27 +109,15 @@ const WeatherAPI = {
         'visibility',
         'cloudcover'
       ].join(','),
-      start_hour: startHour,
-      end_hour: endHour,
       timezone: 'auto',
-      forecast_days: 1
+      forecast_days: 7
     };
 
-    // Добавляем дату если указана
-    if (date) {
-      params.start_date = date;
-      params.end_date = date;
-    }
-    
     const queryString = new URLSearchParams(params).toString();
     const url = `${this.config.openMeteoUrl}?${queryString}`;
 
     try {
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
+      const data = await this.fetchWithRetry(url);
       return data;
     } catch (error) {
       console.error('Ошибка получения метеоданных:', error);
@@ -109,26 +127,10 @@ const WeatherAPI = {
 
   // Запрос высоты местности
   async fetchElevation(lat, lon) {
-    // Используем прокси для обхода CORS
-    const url = `https://api.opentopodata.org/v1/srtm90m?locations=${lat},${lon}`;
-
-    try {
-      const response = await fetch(url, {
-        mode: 'cors',
-        headers: {
-          'Accept': 'application/json'
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      return data.results[0]?.elevation || 0;
-    } catch (error) {
-      console.warn('Ошибка получения высоты (используется значение по умолчанию):', error.message);
-      return 0;
-    }
+    // OpenTopoData API блокирует CORS-прокси, возвращаем значение по умолчанию
+    // В будущей версии можно использовать серверный прокси
+    console.log('Высота местности: используется значение по умолчанию (0 м)');
+    return 0;
   },
 
   // Запрос времени восхода/заката
@@ -136,14 +138,10 @@ const WeatherAPI = {
     const url = `${this.config.sunriseSunsetUrl}?lat=${lat}&lng=${lon}&date=${date}&formatted=0`;
 
     try {
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
+      const data = await this.fetchWithRetry(url);
       return {
-        sunrise: data.results.sunrise,
-        sunset: data.results.sunset
+        sunrise: data.results?.sunrise,
+        sunset: data.results?.sunset
       };
     } catch (error) {
       console.error('Ошибка получения времени восхода/заката:', error);
@@ -195,17 +193,40 @@ const WeatherAPI = {
 const WeatherCalculations = {
   // Линейная интерполяция между уровнями
   interpolate(valueLower, valueUpper, ratio) {
+    // Защита от некорректных данных
+    if (valueLower === undefined || valueUpper === undefined || ratio === undefined) {
+      return null;
+    }
+    if (valueLower === null || valueUpper === null) {
+      return null;
+    }
     return valueLower + (valueUpper - valueLower) * ratio;
   },
 
   // Интерполяция направления ветра (с учётом перехода 360°→0°)
   interpolateWindDirection(dirLower, dirUpper, ratio) {
+    // Защита от некорректных данных
+    if (dirLower === undefined || dirUpper === undefined || ratio === undefined) {
+      return null;
+    }
+    if (dirLower === null || dirUpper === null) {
+      return null;
+    }
+
+    // Нормализация углов к диапазону [0, 360)
+    dirLower = ((dirLower % 360) + 360) % 360;
+    dirUpper = ((dirUpper % 360) + 360) % 360;
+
+    // Расчёт кратчайшего пути с учётом перехода через 0°
     let diff = dirUpper - dirLower;
     if (diff > 180) diff -= 360;
     if (diff < -180) diff += 360;
+
     let result = dirLower + diff * ratio;
-    if (result < 0) result += 360;
-    if (result >= 360) result -= 360;
+
+    // Нормализация результата
+    result = ((result % 360) + 360) % 360;
+
     return result;
   },
 
@@ -390,78 +411,5 @@ const WeatherCalculations = {
       tailwind: headwind < 0 ? -headwind : 0,
       crosswind: Math.abs(crosswind)
     };
-  }
-};
-
-/**
- * Генерация демонстрационных данных (для прототипа)
- */
-const MockDataGenerator = {
-  generateHourlyData(hours = 48) {
-    const data = {
-      time: [],
-      temperature_2m: [],
-      relativehumidity_2m: [],
-      windspeed_10m: [],
-      winddirection_10m: [],
-      precipitation: [],
-      visibility: [],
-      cloudcover: [],
-      weathercode: []
-    };
-
-    const now = new Date();
-    let temp = -8;
-    let wind = 5;
-
-    for (let i = 0; i < hours; i++) {
-      const time = new Date(now.getTime() + i * 60 * 60 * 1000);
-      data.time.push(time.toISOString().slice(0, 16));
-
-      // Имитация изменения параметров
-      temp += (Math.random() - 0.5) * 2;
-      wind += (Math.random() - 0.5) * 2;
-      wind = Math.max(2, Math.min(15, wind));
-
-      data.temperature_2m.push(parseFloat(temp.toFixed(1)));
-      data.relativehumidity_2m.push(Math.floor(60 + Math.random() * 30));
-      data.windspeed_10m.push(parseFloat(wind.toFixed(1)));
-      data.winddirection_10m.push(Math.floor(200 + Math.random() * 80));
-      data.precipitation.push(parseFloat((Math.random() * 0.5).toFixed(1)));
-      data.visibility.push(Math.floor(8 + Math.random() * 7));
-      data.cloudcover.push(Math.floor(20 + Math.random() * 40));
-      data.weathercode.push(Math.random() > 0.8 ? 3 : 1);
-    }
-
-    return data;
-  },
-
-  generateFlightWindows() {
-    const windows = [];
-    const now = new Date();
-
-    for (let i = 0; i < 24; i++) {
-      const startTime = new Date(now.getTime() + i * 60 * 60 * 1000);
-      const endTime = new Date(startTime.getTime() + 30 * 60 * 1000);
-      
-      const status = Math.random() > 0.3 ? 'allowed' : (Math.random() > 0.5 ? 'restricted' : 'forbidden');
-      
-      windows.push({
-        startTime: startTime.toISOString().slice(0, 16),
-        endTime: endTime.toISOString().slice(0, 16),
-        status: status,
-        rating: parseFloat((0.5 + Math.random() * 0.5).toFixed(2))
-      });
-    }
-
-    return windows;
-  },
-
-  generateRouteSegments() {
-    return [
-      { id: 1, name: 'Взлёт - КП1', distance: 12.4, time: 12, energy: 2140, wind: 5.2, temp: -8, risk: 'low' },
-      { id: 2, name: 'КП1 - КП2', distance: 18.7, time: 18, energy: 3200, wind: 7.8, temp: -9, risk: 'moderate' },
-      { id: 3, name: 'КП2 - Конец', distance: 15.2, time: 15, energy: 2680, wind: 6.1, temp: -7, risk: 'low' }
-    ];
   }
 };

@@ -678,33 +678,25 @@ const MapManager = {
         coordsEl.textContent = `${lat.toFixed(6)}, ${lon.toFixed(6)}`;
       }
 
-      // Обновление полей ввода
-      const latInput = document.getElementById('input-lat');
-      const lonInput = document.getElementById('input-lon');
-      if (latInput) latInput.value = lat.toFixed(4);
-      if (lonInput) lonInput.value = lon.toFixed(4);
-
-      // Обновление координат в заголовке
-      const headerCoordsEl = document.getElementById('header-coords');
-      if (headerCoordsEl) {
-        headerCoordsEl.textContent = `${lat.toFixed(4)}°N, ${lon.toFixed(4)}°E`;
+      // Обновление координат в приложении
+      if (App.state.currentLocation) {
+        App.state.currentLocation = { lat, lon };
       }
 
-      // Запрос высоты
-      WeatherAPI.fetchElevation(lat, lon).then(elevation => {
-        const elevationEl = document.getElementById('click-elevation');
-        if (elevationEl) {
-          elevationEl.textContent = elevation ? `${elevation} м` : '-- м';
-        }
-      }).catch(() => {
-        const elevationEl = document.getElementById('click-elevation');
-        if (elevationEl) {
-          elevationEl.textContent = '-- м';
-        }
-      });
+      // Обновление информации о миссии
+      const missionCoordsEl = document.getElementById('mission-coords');
+      if (missionCoordsEl) {
+        missionCoordsEl.textContent = `${lat.toFixed(2)}°N, ${lon.toFixed(2)}°E`;
+      }
 
       // Добавление маркера клика
       this.addClickMarker(coordinate, lat, lon);
+
+      // Загрузка метеоданных для новой точки
+      if (typeof App !== 'undefined' && App.loadWeatherData) {
+        const today = new Date().toISOString().slice(0, 10);
+        App.loadWeatherData(lat, lon, 0, today);
+      }
     });
 
     // Курсор при наведении

@@ -14,7 +14,7 @@ const TimeWindows = {
   // Расчёт временных окон на 24 часа
   calculateWindows(weatherData, coordinates) {
     if (!weatherData || !weatherData.hourly) {
-      return this.generateDemoWindows();
+      return [];
     }
 
     const hourly = weatherData.hourly;
@@ -210,47 +210,6 @@ const TimeWindows = {
   // Форматирование времени
   formatTime(isoString) {
     return isoString.slice(11, 16);
-  },
-
-  // Генерация демо-окон
-  generateDemoWindows() {
-    const windows = [];
-    const now = new Date();
-
-    for (let i = 0; i < 48; i++) {
-      const time = new Date(now.getTime() + i * 60 * 60 * 1000);
-      const isoString = time.toISOString().slice(0, 16);
-      
-      // Имитация изменения условий
-      const hour = time.getHours();
-      let status = 'allowed';
-      let rating = 0.8 + Math.random() * 0.2;
-
-      if (hour < 6 || hour > 20) {
-        status = 'restricted';
-        rating = 0.5 + Math.random() * 0.3;
-      }
-
-      if (Math.random() < 0.1) {
-        status = 'forbidden';
-        rating = 0.2 + Math.random() * 0.3;
-      }
-
-      windows.push({
-        startTime: isoString,
-        endTime: new Date(time.getTime() + 30 * 60 * 1000).toISOString().slice(0, 16),
-        rating: parseFloat(rating.toFixed(2)),
-        status,
-        params: {
-          temp: -8 + Math.random() * 4,
-          windSpeed: 5 + Math.random() * 5,
-          precipitation: Math.random() < 0.2 ? Math.random() : 0
-        },
-        recommendation: status === 'allowed' ? ['✅ Полёт разрешён'] : ['⚠️ Ограничения']
-      });
-    }
-
-    return windows;
   },
 
   // Анализ временной динамики

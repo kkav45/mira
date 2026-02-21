@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MIRA 0.2 | Система метеорологического обеспечения БВС</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☁️</text></svg>" type="image/svg+xml">
 
   <!-- OpenLayers CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.4.0/ol.css" />
@@ -28,33 +29,86 @@
     <div class="header__status">
       <span class="status-badge status-vfr" id="flight-status">
         <i class="fas fa-check-circle"></i>
-        <span>ГОТОВ К АНАЛИЗУ</span>
+        <span>ПОЛЁТ РАЗРЕШЁН</span>
       </span>
-      <span class="separator">|</span>
-      <span>Координаты: <strong id="header-coords">--</strong></span>
       <span class="separator">|</span>
       <span>Обновление: <strong id="update-time">--:--</strong></span>
     </div>
 
     <div class="header__controls">
+      <button class="btn btn-sm" id="btn-params">
+        <i class="fas fa-cog"></i>
+        <span>Параметры</span>
+      </button>
       <button class="btn btn-sm" id="btn-refresh">
         <i class="fas fa-sync-alt"></i>
         <span>Обновить</span>
-      </button>
-      <button class="btn btn-sm" id="btn-auto-push">
-        <i class="fas fa-cloud-upload-alt"></i>
-        <span>Авто-загрузка</span>
       </button>
       <button class="btn btn-sm" id="btn-export">
         <i class="fas fa-download"></i>
         <span>Экспорт</span>
       </button>
-      <button class="btn btn-sm btn-primary" id="btn-certify">
-        <i class="fas fa-certificate"></i>
-        <span>Сертификация</span>
-      </button>
     </div>
   </header>
+
+  <!-- Modal for Parameters -->
+  <div class="modal" id="paramsModal">
+    <div class="modal__overlay" id="paramsModalOverlay"></div>
+    <div class="modal__content">
+      <div class="modal__header">
+        <h3 class="modal__title">
+          <i class="fas fa-cog"></i>
+          Параметры миссии
+        </h3>
+        <button class="modal__close" id="paramsModalClose">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal__body">
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-map-marker-alt"></i>
+            Широта (lat)
+          </label>
+          <input type="number" id="input-lat" placeholder="55.75" value="55.30" step="0.0001" class="form-input">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-map-marker-alt"></i>
+            Долгота (lon)
+          </label>
+          <input type="number" id="input-lon" placeholder="37.62" value="66.60" step="0.0001" class="form-input">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-calendar-alt"></i>
+            Дата анализа
+          </label>
+          <input type="date" id="input-date" class="form-input">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-plane"></i>
+            Высота полёта (м)
+          </label>
+          <input type="number" id="input-altitude" placeholder="500" value="500" step="50" class="form-input">
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button class="btn btn-sm" id="paramsModalCancel">
+          <i class="fas fa-times"></i>
+          Отмена
+        </button>
+        <button class="btn btn-sm btn-primary" id="paramsModalSave">
+          <i class="fas fa-check"></i>
+          Применить
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- MAIN -->
   <div class="main">
@@ -68,29 +122,29 @@
           Навигация по разделам
         </div>
 
-        <div class="menu-item active" data-tab="tab-pnr">
-          <span class="menu-item__icon">📍</span>
-          <span>Точка невозврата</span>
-        </div>
-        <div class="menu-item" data-tab="tab-weather">
+        <div class="menu-item active" data-tab="tab-weather">
           <span class="menu-item__icon">🌤️</span>
           <span>Метеоанализ</span>
+        </div>
+        <div class="menu-item" data-tab="tab-metar">
+          <span class="menu-item__icon">📋</span>
+          <span>METAR/TAF</span>
         </div>
         <div class="menu-item" data-tab="tab-profiles">
           <span class="menu-item__icon">📊</span>
           <span>Вертикальные профили</span>
         </div>
-        <div class="menu-item" data-tab="tab-windows">
-          <span class="menu-item__icon">⏰</span>
-          <span>Временные окна</span>
-        </div>
         <div class="menu-item" data-tab="tab-route">
           <span class="menu-item__icon">🛤️</span>
           <span>Маршрут и сегменты</span>
         </div>
+        <div class="menu-item" data-tab="tab-pnr">
+          <span class="menu-item__icon">📍</span>
+          <span>Точка невозврата</span>
+        </div>
         <div class="menu-item" data-tab="tab-report">
           <span class="menu-item__icon">📄</span>
-          <span>Отчёт и сертификация</span>
+          <span>Отчёт</span>
         </div>
       </div>
 
@@ -99,21 +153,13 @@
           <i class="fas fa-bolt"></i>
           Быстрые действия
         </div>
-        <div class="menu-item" data-action="landing-zones">
+        <div class="menu-item" data-action="zones">
           <span class="menu-item__icon">🚁</span>
           <span>Зоны посадки</span>
         </div>
-        <div class="menu-item" data-action="forecast-72h">
-          <span class="menu-item__icon">📈</span>
-          <span>Прогноз 72ч</span>
-        </div>
-        <div class="menu-item" data-action="flight-risks">
+        <div class="menu-item" data-action="risks">
           <span class="menu-item__icon">⚠️</span>
-          <span>Риски полёта</span>
-        </div>
-        <div class="menu-item" data-action="flight-log">
-          <span class="menu-item__icon">📋</span>
-          <span>Журнал полётов</span>
+          <span>Карты рисков</span>
         </div>
       </div>
 
@@ -122,50 +168,25 @@
           <i class="fas fa-cog"></i>
           Параметры миссии
         </div>
-        
-        <div class="form-group" style="margin-bottom: 12px;">
-          <label style="font-size: 11px; color: var(--text-secondary); text-transform: uppercase;">
-            <i class="fas fa-map-marker-alt"></i> Координаты (широта, долгота)
-          </label>
-          <div style="display: flex; gap: 6px; margin-top: 6px;">
-            <input type="number" id="input-lat" placeholder="55.75" value="55.30" step="0.0001" 
-                   style="flex: 1; padding: 8px; border: 1px solid var(--border-color); border-radius: var(--radius); font-size: 13px;">
-            <input type="number" id="input-lon" placeholder="37.62" value="66.60" step="0.0001"
-                   style="flex: 1; padding: 8px; border: 1px solid var(--border-color); border-radius: var(--radius); font-size: 13px;">
-          </div>
-        </div>
-        
-        <div class="form-group" style="margin-bottom: 12px;">
-          <label style="font-size: 11px; color: var(--text-secondary); text-transform: uppercase;">
-            <i class="fas fa-calendar-alt"></i> Дата анализа
-          </label>
-          <input type="date" id="input-date" value="" step="1"
-                 style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: var(--radius); font-size: 13px; margin-top: 6px;">
-        </div>
-        
-        <button class="btn btn-sm btn-primary btn-block" id="btn-analyze" style="margin-bottom: 8px;">
-          <i class="fas fa-search-location"></i>
-          Анализ
-        </button>
-        
+
         <div class="mission-info">
           <div class="info-row">
-            <span class="label">Кликните на карту:</span>
-            <span class="value" id="click-coords">--</span>
-          </div>
-          <div class="info-row">
-            <span class="label">Высота:</span>
-            <span class="value" id="click-elevation">-- м</span>
+            <span class="label">Координаты:</span>
+            <span class="value" id="mission-coords">55.30°N, 66.60°E</span>
           </div>
           <div class="info-row">
             <span class="label">Дата:</span>
-            <span class="value" id="mission-date">13.02.2026</span>
+            <span class="value" id="mission-date">--</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Клик на карте:</span>
+            <span class="value" id="click-coords">--</span>
           </div>
         </div>
-        
-        <button class="btn btn-sm btn-block" id="btn-edit-mission">
+
+        <button class="btn btn-sm btn-block" id="btn-open-params">
           <i class="fas fa-edit"></i>
-          Изменить дату
+          Изменить параметры
         </button>
       </div>
 
@@ -274,7 +295,7 @@
         <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-color);">
           <div class="map-legend__title">Условные обозначения</div>
         </div>
-        
+
         <div class="legend-item">
           <div class="legend-color" style="background: #0d6efd"></div>
           <span>Аэродром / Взлётная точка</span>
@@ -286,6 +307,26 @@
         <div class="legend-item">
           <div class="legend-color" style="background: #dc3545"></div>
           <span>Зона запрета полётов</span>
+        </div>
+
+        <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-color);">
+          <div class="map-legend__title">
+            <i class="fas fa-chart-area"></i>
+            Легенда тепловой карты
+          </div>
+        </div>
+
+        <div class="legend-item">
+          <div class="legend-color" style="background: rgba(25, 135, 84, 0.8)"></div>
+          <span>✅ Низкий риск</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: rgba(255, 193, 7, 0.8)"></div>
+          <span>⚠️ Умеренный риск</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: rgba(220, 53, 69, 0.8)"></div>
+          <span>❌ Высокий риск</span>
         </div>
       </div>
     </div>

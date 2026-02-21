@@ -26,7 +26,19 @@ const ChartsManager = {
           titleFont: { size: 13 },
           bodyFont: { size: 12 },
           borderColor: 'rgba(255, 255, 255, 0.1)',
-          borderWidth: 1
+          borderWidth: 1,
+          callbacks: {
+            label: function(context) {
+              let label = context.dataset.label || '';
+              if (label) {
+                label += ': ';
+              }
+              if (context.parsed.y !== null) {
+                label += context.parsed.y.toFixed(1);
+              }
+              return label;
+            }
+          }
         }
       },
       scales: {
@@ -430,30 +442,76 @@ const ChartsManager = {
 
   // Тепловая карта временных окон
   createHeatmapChart(ctx, data) {
-    const canvas = ctx.canvas;
-    const width = canvas.width;
-    const height = canvas.height;
-    
-    // Простая реализация через canvas
-    const cellWidth = width / 24;
-    const cellHeight = 30;
-    
-    data.forEach((item, i) => {
-      const x = i * cellWidth;
-      let color;
-      
-      if (item.status === 'allowed') color = 'rgba(25, 135, 84, 0.8)';
-      else if (item.status === 'restricted') color = 'rgba(255, 193, 7, 0.8)';
-      else color = 'rgba(220, 53, 69, 0.8)';
-      
-      ctx.fillStyle = color;
-      ctx.fillRect(x, 0, cellWidth - 2, cellHeight);
-      
-      // Текст времени
-      ctx.fillStyle = '#fff';
-      ctx.font = '10px sans-serif';
-      ctx.fillText(item.time, x + 2, 20);
-    });
+    const config = {
+      type: 'bar',
+      data: {
+        labels: data.map(item => item.time),
+        datasets: [{
+          label: 'Статус окна',
+          data: data.map((item, i) => ({
+            x: i,
+            status: item.status,
+            time: item.time
+          })).map((d, i) => d.status === 'allowed' ? 1 : d.status === 'restricted' ? 0.5 : 0.2),
+          backgroundColor: data.map(item => {
+            if (item.status === 'allowed') return 'rgba(25, 135, 84, 0.9)';
+            if (item.status === 'restricted') return 'rgba(255, 193, 7, 0.9)';
+            return 'rgba(220, 53, 69, 0.9)';
+          }),
+          borderColor: data.map(item => {
+            if (item.status === 'allowed') return 'rgba(25, 135, 84, 1)';
+            if (item.status === 'restricted') return 'rgba(255, 193, 7, 1)';
+            return 'rgba(220, 53, 69, 1)';
+          }),
+          borderWidth: 1,
+          borderRadius: 3
+        }]
+      },
+      options: {
+        ...this.getDefaultOptions(),
+        indexAxis: 'x',
+        scales: {
+          x: {
+            grid: { color: 'rgba(0, 0, 0, 0.05)' },
+            ticks: { 
+              font: { size: 9 },
+              maxRotation: 45,
+              minRotation: 45
+            }
+          },
+          y: {
+            display: false,
+            min: 0,
+            max: 1.2
+          }
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            padding: 12,
+            titleFont: { size: 13 },
+            bodyFont: { size: 12 },
+            borderColor: 'rgba(255, 255, 255, 0.1)',
+            borderWidth: 1,
+            callbacks: {
+              label: function(context) {
+                const label = data[context.dataIndex];
+                const statusText = label.status === 'allowed' ? '✅ Разрешено' : 
+                                   label.status === 'restricted' ? '⚠️ Ограничено' : '❌ Запрещено';
+                return [`Время: ${label.time}`, `Статус: ${statusText}`];
+              },
+              title: function(items) {
+                return 'Временное окно';
+              }
+            }
+          }
+        }
+      }
+    };
+
+    this.charts.heatmap = new Chart(ctx, config);
+    return this.charts.heatmap;
   },
 
   // Обновление всех графиков новыми данными

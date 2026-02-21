@@ -4,14 +4,14 @@
  */
 
 const TabsManager = {
-  currentTab: 'tab-pnr',
+  currentTab: 'tab-weather',
   rightPanelOpen: false,
 
   // Инициализация
   init() {
     this.bindMenuEvents();
     this.bindPanelEvents();
-    this.openTab('tab-pnr');
+    this.openTab('tab-weather');
   },
 
   // Привязка событий меню
@@ -92,10 +92,10 @@ const TabsManager = {
     const icons = {
       'tab-pnr': 'fas fa-map-marker-alt',
       'tab-weather': 'fas fa-cloud-sun',
+      'tab-metar': 'fas fa-file-alt',
       'tab-profiles': 'fas fa-chart-area',
-      'tab-windows': 'fas fa-clock',
       'tab-route': 'fas fa-route',
-      'tab-report': 'fas fa-file-alt'
+      'tab-report': 'fas fa-file-download'
     };
     return icons[tabId] || 'fas fa-chart-line';
   },
@@ -107,10 +107,10 @@ const TabsManager = {
         return this.renderPNRPanel();
       case 'tab-weather':
         return this.renderWeatherPanel();
+      case 'tab-metar':
+        return this.renderMetarPanel();
       case 'tab-profiles':
         return this.renderProfilesPanel();
-      case 'tab-windows':
-        return this.renderWindowsPanel();
       case 'tab-route':
         return this.renderRoutePanel();
       case 'tab-report':
@@ -122,9 +122,22 @@ const TabsManager = {
 
   // Рендер панели PNR
   renderPNRPanel() {
-    const mockData = MockDataGenerator.generateRouteSegments();
-    const totalDistance = mockData.reduce((sum, s) => sum + s.distance, 0).toFixed(1);
-    const totalEnergy = mockData.reduce((sum, s) => sum + s.energy, 0);
+    // Расчёт маршрута на основе реальных данных
+    const missionData = App.state.missionData || window.MISSION_DATA;
+    const weatherData = App.state.weatherData;
+    const routePoints = missionData?.coordinates?.route || [];
+    
+    let totalDistance = '46.3';
+    let totalTime = 45;
+    
+    if (routePoints.length > 0) {
+      const segments = RouteCalculator.calculateSegments(
+        routePoints,
+        weatherData?.weather || {}
+      );
+      totalDistance = RouteCalculator.calculateTotalDistance(segments).toFixed(1);
+      totalTime = RouteCalculator.calculateTotalTime(segments);
+    }
 
     return `
       <div class="panel-section">
@@ -298,6 +311,81 @@ const TabsManager = {
     `;
   },
 
+  // Рендер панели METAR/TAF
+  renderMetarPanel() {
+    return `
+      <div class="panel-section">
+        <div class="panel-section__title">
+          <i class="fas fa-file-alt"></i>
+          METAR (Текущая погода)
+        </div>
+        <div class="mission-info">
+          <div class="info-row">
+            <span class="label">Аэродром:</span>
+            <span class="value" id="metar-aerodrome">--</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Время наблюдения:</span>
+            <span class="value" id="metar-time">--</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Ветер:</span>
+            <span class="value" id="metar-wind">--</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Видимость:</span>
+            <span class="value" id="metar-visibility">--</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Погода:</span>
+            <span class="value" id="metar-weather">--</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Температура:</span>
+            <span class="value" id="metar-temp">--</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Давление:</span>
+            <span class="value" id="metar-pressure">--</span>
+          </div>
+        </div>
+        <div class="mt-2">
+          <button class="btn btn-sm btn-primary" id="btn-get-metar">
+            <i class="fas fa-sync-alt"></i>
+            Получить METAR
+          </button>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-section__title">
+          <i class="fas fa-chart-line"></i>
+          TAF (Прогноз)
+        </div>
+        <div class="mission-info">
+          <div class="info-row">
+            <span class="label">Аэродром:</span>
+            <span class="value" id="taf-aerodrome">--</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Время выпуска:</span>
+            <span class="value" id="taf-time">--</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Период:</span>
+            <span class="value" id="taf-period">--</span>
+          </div>
+        </div>
+        <div class="mt-2">
+          <button class="btn btn-sm btn-primary" id="btn-get-taf">
+            <i class="fas fa-sync-alt"></i>
+            Получить TAF
+          </button>
+        </div>
+      </div>
+    `;
+  },
+
   // Рендер панели временных окон
   renderWindowsPanel() {
     // Расчёт окон
@@ -405,7 +493,25 @@ const TabsManager = {
 
   // Рендер панели маршрута
   renderRoutePanel() {
-    const segments = MockDataGenerator.generateRouteSegments();
+    // Расчёт сегментов на основе реальных данных
+    const missionData = App.state.missionData || window.MISSION_DATA;
+    const weatherData = App.state.weatherData;
+    const routePoints = missionData?.coordinates?.route || [];
+    
+    let segments = [];
+    let totalDistance = '46.3';
+    let totalTime = 45;
+    let totalEnergy = 8020;
+    
+    if (routePoints.length > 0) {
+      segments = RouteCalculator.calculateSegments(
+        routePoints,
+        weatherData?.weather || {}
+      );
+      totalDistance = RouteCalculator.calculateTotalDistance(segments).toFixed(1);
+      totalTime = RouteCalculator.calculateTotalTime(segments);
+      totalEnergy = RouteCalculator.calculateTotalEnergy(segments);
+    }
 
     return `
       <div class="panel-section">
@@ -545,7 +651,7 @@ const TabsManager = {
   initTabCharts(tabId) {
     // Очистка предыдущих графиков
     ChartsManager.destroyAllCharts();
-    
+
     switch (tabId) {
       case 'tab-pnr':
         this.initEnergyChart();
@@ -553,11 +659,11 @@ const TabsManager = {
       case 'tab-weather':
         this.initTimeSeriesChart();
         break;
+      case 'tab-metar':
+        // METAR/TAF не требует графиков
+        break;
       case 'tab-profiles':
         this.initProfileCharts();
-        break;
-      case 'tab-windows':
-        this.initHeatmapChart();
         break;
       case 'tab-route':
         this.initAltitudeProfileChart();
@@ -595,13 +701,27 @@ const TabsManager = {
 
     // Получение данных из состояния приложения
     const weatherData = App.state.weatherData;
-    
+
+    console.log('TabsManager | initTimeSeriesChart:', {
+      hasWeatherData: !!weatherData,
+      hasHourly: !!weatherData?.hourly,
+      timeLength: weatherData?.hourly?.time?.length
+    });
+
     if (weatherData && weatherData.hourly) {
       const hourly = weatherData.hourly;
       const labels = hourly.time?.slice(0, 24).map(t => t.slice(11, 16)) || [];
       const temp = hourly.temperature_2m?.slice(0, 24) || [];
       const wind = hourly.windspeed_10m?.slice(0, 24) || [];
       const humidity = hourly.relativehumidity_2m?.slice(0, 24) || [];
+
+      console.log('TabsManager | Создаю график с реальными данными:', {
+        labelsCount: labels.length,
+        tempCount: temp.length,
+        windCount: wind.length,
+        firstTemp: temp[0],
+        firstWind: wind[0]
+      });
 
       ChartsManager.createTimeSeriesChart(ctx.getContext('2d'), {
         labels,
@@ -610,13 +730,13 @@ const TabsManager = {
         humidity
       });
     } else {
-      // Демо-данные если нет реальных
-      const mockHourly = MockDataGenerator.generateHourlyData(24);
+      // Пустые данные если нет реальных
+      console.log('TabsManager | Нет данных для графика (ожидание API)');
       ChartsManager.createTimeSeriesChart(ctx.getContext('2d'), {
-        labels: mockHourly.time.map(t => t.slice(11, 16)),
-        temperature: mockHourly.temperature_2m,
-        windSpeed: mockHourly.windspeed_10m,
-        humidity: mockHourly.relativehumidity_2m
+        labels: [],
+        temperature: [],
+        windSpeed: [],
+        humidity: []
       });
     }
   },
@@ -664,8 +784,11 @@ const TabsManager = {
     const ctx = document.getElementById('chart-heatmap');
     if (!ctx) return;
 
-    const windows = MockDataGenerator.generateFlightWindows().slice(0, 24);
-    ChartsManager.createHeatmapChart(ctx.getContext('2d'), 
+    // Расчёт временных окон на основе реальных данных
+    const weatherData = App.state.weatherData;
+    const windows = TimeWindows.calculateWindows(weatherData).slice(0, 24);
+    
+    ChartsManager.createHeatmapChart(ctx.getContext('2d'),
       windows.map(w => ({
         time: w.startTime.slice(11, 16),
         status: w.status

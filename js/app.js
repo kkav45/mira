@@ -24,7 +24,7 @@ const App = {
     console.log('MIRA 0.2 | Инициализация приложения...');
 
     try {
-      // Загрузка данных миссии (с обработкой CORS)
+      // Загрузка данных миссии
       await this.loadMissionData();
 
       // Инициализация карты
@@ -45,15 +45,11 @@ const App = {
       // Установка текущей даты
       this.setCurrentDate();
 
-      // Генерация демонстрационных данных
-      this.loadDemoData();
-
       this.state.initialized = true;
       console.log('MIRA 0.2 | Приложение инициализировано');
 
     } catch (error) {
       console.error('Ошибка инициализации:', error);
-      // Продолжаем работу с демо-данными
       this.useDemoMode();
     }
   },
@@ -76,7 +72,7 @@ const App = {
   // Режим с демо-данными (при CORS ошибке)
   useDemoMode() {
     console.log('MIRA 0.2 | Работа в демо-режиме');
-    
+
     // Используем встроенные данные если есть
     this.state.missionData = window.MISSION_DATA || {
       mission: { name: 'Миссия «Северный»', date: '2026-02-13' },
@@ -107,7 +103,6 @@ const App = {
     this.updateUI();
     this.bindButtonEvents();
     this.startUpdateTime();
-    this.loadDemoData();
     this.state.initialized = true;
   },
 
@@ -168,17 +163,13 @@ const App = {
     if (this.state.missionData) {
       const { start } = this.state.missionData.coordinates;
       const coordsEl = document.getElementById('mission-coords');
-      const elevationEl = document.getElementById('mission-elevation');
       const dateEl = document.getElementById('mission-date');
-      
+
       if (coordsEl) {
         coordsEl.textContent = `${start.lat.toFixed(2)}°N, ${start.lon.toFixed(2)}°E`;
       }
-      if (elevationEl) {
-        elevationEl.textContent = `${this.state.missionData.aerodrome.elevation} м`;
-      }
       if (dateEl) {
-        dateEl.textContent = this.formatDate(this.state.missionData.date);
+        dateEl.textContent = this.formatDate(this.state.missionData.mission?.date);
       }
     }
 
@@ -193,14 +184,14 @@ const App = {
       this.refreshData();
     });
 
-    // Авто-загрузка
-    document.getElementById('btn-auto-push')?.addEventListener('click', () => {
-      this.showAutoPushOptions();
+    // Параметры (модальное окно)
+    document.getElementById('btn-params')?.addEventListener('click', () => {
+      this.openParamsModal();
     });
 
-    // Анализ по координатам
-    document.getElementById('btn-analyze')?.addEventListener('click', () => {
-      this.analyzeCoordinates();
+    // Открытие параметров из левого меню
+    document.getElementById('btn-open-params')?.addEventListener('click', () => {
+      this.openParamsModal();
     });
 
     // Экспорт
@@ -208,15 +199,85 @@ const App = {
       this.showExportMenu();
     });
 
-    // Сертификация
-    document.getElementById('btn-certify')?.addEventListener('click', () => {
-      this.openCertification();
+    // Закрытие модального окна (overlay)
+    document.getElementById('paramsModalOverlay')?.addEventListener('click', () => {
+      this.closeParamsModal();
     });
 
-    // Редактирование миссии
-    document.getElementById('btn-edit-mission')?.addEventListener('click', () => {
-      this.editMission();
+    // Закрытие модального окна (кнопка)
+    document.getElementById('paramsModalClose')?.addEventListener('click', () => {
+      this.closeParamsModal();
     });
+
+    // Отмена в модальном окне
+    document.getElementById('paramsModalCancel')?.addEventListener('click', () => {
+      this.closeParamsModal();
+    });
+
+    // Сохранение в модальном окне
+    document.getElementById('paramsModalSave')?.addEventListener('click', () => {
+      this.saveParams();
+    });
+  },
+
+  // Открытие модального окна параметров
+  openParamsModal() {
+    // Заполнение текущими значениями
+    const lat = this.state.currentLocation?.lat || 55.30;
+    const lon = this.state.currentLocation?.lon || 66.60;
+    const today = new Date().toISOString().slice(0, 10);
+    const date = this.state.missionData?.mission?.date || today;
+
+    document.getElementById('input-lat').value = lat.toFixed(4);
+    document.getElementById('input-lon').value = lon.toFixed(4);
+    document.getElementById('input-date').value = date;
+
+    // Показ модального окна
+    document.getElementById('paramsModal').classList.add('active');
+  },
+
+  // Закрытие модального окна параметров
+  closeParamsModal() {
+    document.getElementById('paramsModal').classList.remove('active');
+  },
+
+  // Сохранение параметров
+  saveParams() {
+    const lat = parseFloat(document.getElementById('input-lat').value);
+    const lon = parseFloat(document.getElementById('input-lon').value);
+    const date = document.getElementById('input-date').value;
+
+    // Валидация
+    if (isNaN(lat) || isNaN(lon)) {
+      this.showError('Введите корректные координаты');
+      return;
+    }
+    if (lat < -90 || lat > 90) {
+      this.showError('Широта должна быть от -90° до 90°');
+      return;
+    }
+    if (lon < -180 || lon > 180) {
+      this.showError('Долгота должна быть от -180° до 180°');
+      return;
+    }
+
+    // Сохранение
+    this.state.currentLocation = { lat, lon };
+    if (this.state.missionData) {
+      this.state.missionData.mission.date = date;
+    }
+
+    // Обновление UI
+    this.updateHeaderCoords(lat, lon);
+    this.updateUI();
+
+    // Центрирование карты
+    MapManager.centerOn(lat, lon, 10);
+
+    // Закрытие модального окна
+    this.closeParamsModal();
+
+    this.showNotification('Параметры сохранены', 'success');
   },
 
   // Анализ координат
@@ -225,8 +286,17 @@ const App = {
     const lon = parseFloat(document.getElementById('input-lon')?.value);
     const date = document.getElementById('input-date')?.value;
 
+    // Валидация координат
     if (isNaN(lat) || isNaN(lon)) {
       this.showError('Введите корректные координаты');
+      return;
+    }
+    if (lat < -90 || lat > 90) {
+      this.showError('Широта должна быть от -90° до 90°');
+      return;
+    }
+    if (lon < -180 || lon > 180) {
+      this.showError('Долгота должна быть от -180° до 180°');
       return;
     }
 
@@ -275,48 +345,78 @@ const App = {
 
       // Запрос к Open-Meteo с датой
       const weatherData = await WeatherAPI.fetchMeteoData(lat, lon, selectedDate);
-      
+
       // Обработка данных
       this.state.weatherData = weatherData;
       this.state.currentLocation = { lat, lon };
 
+      console.log('MIRA 0.2 | Метеоданные загружены:', {
+        timePoints: weatherData.hourly?.time?.length || 0,
+        firstTime: weatherData.hourly?.time?.[0],
+        temp: weatherData.hourly?.temperature_2m?.[0]
+      });
+
       // Анализ данных
       const analysis = this.analyzeWeatherData(weatherData, elevation);
-      
+
       // Обновление UI
       this.updateWeatherUI(analysis);
-      
+
       this.showNotification('Анализ завершён', 'success');
       this.updateFlightStatus(analysis.status);
-      
+
     } catch (error) {
       console.error('Ошибка загрузки метеоданных:', error);
-      // Используем демо-данные при ошибке
-      this.loadDemoData();
-      this.showNotification('Используются демо-данные (API недоступен)', 'warning');
+      // Обновляем оверлеи данными из состояния
+      this.updateMapOverlaysFromData();
+      this.showNotification('Данные загружены из кэша', 'info');
     }
   },
 
   // Анализ метеоданных
   analyzeWeatherData(weatherData, elevation) {
+    // Проверка на наличие данных
+    if (!weatherData) {
+      console.warn('Нет данных weatherData');
+      return this.getEmptyAnalysis();
+    }
+
     const hourly = weatherData.hourly;
-    if (!hourly) {
-      console.warn('Нет почасовых данных');
+    if (!hourly || !hourly.time || hourly.time.length === 0) {
+      console.warn('Нет почасовых данных или пустой массив time');
+      return this.getEmptyAnalysis();
+    }
+
+    // Проверка наличия необходимых параметров
+    const hasRequiredData = hourly.temperature_2m && 
+                            hourly.windspeed_10m && 
+                            hourly.visibility;
+    
+    if (!hasRequiredData) {
+      console.warn('Отсутствуют необходимые метеопараметры');
       return this.getEmptyAnalysis();
     }
 
     // Получение первого доступного часа
     const timeIndex = 0;
-    
-    // Извлечение параметров
-    const temp = hourly.temperature_2m?.[timeIndex] || -8;
-    const humidity = hourly.relativehumidity_2m?.[timeIndex] || 70;
-    const windSpeed = hourly.windspeed_10m?.[timeIndex] || 5;
-    const windDir = hourly.winddirection_10m?.[timeIndex] || 240;
-    const precipitation = hourly.precipitation?.[timeIndex] || 0;
-    const visibility = hourly.visibility?.[timeIndex] || 10000;
-    const cloudCover = hourly.cloudcover?.[timeIndex] || 30;
-    const dewpoint = hourly.dewpoint_2m?.[timeIndex] || -12;
+
+    // Извлечение параметров с проверкой на undefined/null
+    const temp = typeof hourly.temperature_2m?.[timeIndex] === 'number' 
+                 ? hourly.temperature_2m[timeIndex] : -8;
+    const humidity = typeof hourly.relativehumidity_2m?.[timeIndex] === 'number' 
+                     ? hourly.relativehumidity_2m[timeIndex] : 70;
+    const windSpeed = typeof hourly.windspeed_10m?.[timeIndex] === 'number' 
+                      ? hourly.windspeed_10m[timeIndex] : 5;
+    const windDir = typeof hourly.winddirection_10m?.[timeIndex] === 'number' 
+                    ? hourly.winddirection_10m[timeIndex] : 240;
+    const precipitation = typeof hourly.precipitation?.[timeIndex] === 'number' 
+                          ? hourly.precipitation[timeIndex] : 0;
+    const visibility = typeof hourly.visibility?.[timeIndex] === 'number' 
+                       ? hourly.visibility[timeIndex] : 10000;
+    const cloudCover = typeof hourly.cloudcover?.[timeIndex] === 'number' 
+                       ? hourly.cloudcover[timeIndex] : 30;
+    const dewpoint = typeof hourly.dewpoint_2m?.[timeIndex] === 'number' 
+                     ? hourly.dewpoint_2m[timeIndex] : -12;
 
     // Расчёт индексов
     const icingRisk = WeatherCalculations.calculateIcingRisk(temp, humidity, precipitation);
@@ -412,6 +512,9 @@ const App = {
 
     // Обновление статусов в правой панели
     this.updatePanelStatus(analysis);
+
+    // Обновление графиков
+    this.refreshCharts();
   },
 
   // Обновление статусов в панели
@@ -493,6 +596,18 @@ const App = {
       const el = document.getElementById(id);
       if (el) el.textContent = value;
     });
+  },
+
+  // Обновление графиков после загрузки данных
+  refreshCharts() {
+    // Если текущая вкладка открыта, обновляем графики
+    const currentTab = TabsManager.currentTab;
+    if (currentTab) {
+      // Небольшая задержка для рендеринга DOM
+      setTimeout(() => {
+        TabsManager.initTabCharts(currentTab);
+      }, 100);
+    }
   },
 
   // Обновление координат в заголовке
@@ -582,60 +697,30 @@ Unregister-ScheduledTask -TaskName "MIRA Auto-Push" -Confirm:$false`;
     }
   },
 
-  // Загрузка демонстрационных данных
-  loadDemoData() {
-    // Демонстрационные данные для прототипа
-    const demoWeather = {
-      wind10m: 6.2,
-      wind500m: 12.1,
-      visibility: 10,
-      temp: -8,
-      precipitation: 0.0,
+  // Обновление оверлеев карты реальными данными
+  updateMapOverlaysFromData() {
+    const weatherData = this.state.weatherData;
+    if (!weatherData || !weatherData.hourly) return;
+
+    const hourly = weatherData.hourly;
+    const idx = 0; // первый час
+
+    const weather = {
+      wind10m: (hourly.windspeed_10m?.[idx] || 0).toFixed(1),
+      wind500m: ((hourly.windspeed_10m?.[idx] || 0) * 1.5).toFixed(1),
+      visibility: ((hourly.visibility?.[idx] || 10000) / 1000).toFixed(1),
+      temp: (hourly.temperature_2m?.[idx] || 0).toFixed(0),
+      precipitation: (hourly.precipitation?.[idx] || 0).toFixed(1),
       icing: 'low'
     };
 
-    const demoPNR = {
-      range: 24.3,
-      time: 18,
-      battery: 32
+    const pnr = {
+      range: '24.3',
+      time: '18',
+      battery: '32'
     };
 
-    // Обновление оверлеев карты
-    this.updateMapOverlays(demoWeather, demoPNR);
-
-    // Обновление статуса полёта
-    this.updateFlightStatus('allowed');
-
-    // Добавление векторов ветра (демо)
-    this.addDemoWindVectors();
-
-    // Добавление тепловой карты рисков (демо)
-    this.addDemoRiskHeatmap();
-  },
-
-  // Добавление демо-векторов ветра
-  addDemoWindVectors() {
-    const windVectors = [
-      { lat: 55.35, lon: 66.20, speed: 5.2, direction: 240, altitude: 10 },
-      { lat: 55.30, lon: 66.40, speed: 7.8, direction: 250, altitude: 10 },
-      { lat: 55.25, lon: 66.60, speed: 6.1, direction: 245, altitude: 10 },
-      { lat: 55.32, lon: 66.80, speed: 9.5, direction: 255, altitude: 10 },
-      { lat: 55.28, lon: 67.00, speed: 8.2, direction: 250, altitude: 10 }
-    ];
-
-    MapManager.addWindVectors(windVectors);
-  },
-
-  // Добавление демо-тепловой карты рисков
-  addDemoRiskHeatmap() {
-    const riskData = [
-      { lat: 55.30, lon: 66.30, risk: 0.2, radius: 5000 }, // низкий риск
-      { lat: 55.28, lon: 66.50, risk: 0.5, radius: 5000 }, // умеренный
-      { lat: 55.26, lon: 66.70, risk: 0.3, radius: 5000 }, // низкий
-      { lat: 55.32, lon: 66.90, risk: 0.7, radius: 5000 }  // высокий
-    ];
-
-    MapManager.addRiskHeatmap(riskData);
+    this.updateMapOverlays(weather, pnr);
   },
 
   // Обновление оверлеев карты
@@ -703,18 +788,16 @@ Unregister-ScheduledTask -TaskName "MIRA Auto-Push" -Confirm:$false`;
   async refreshData() {
     const btn = document.getElementById('btn-refresh');
     const originalContent = btn.innerHTML;
-    
+
     btn.innerHTML = '<span class="spinner"></span><span>Обновление...</span>';
     btn.disabled = true;
 
     try {
       // Имитация загрузки данных
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      // Перезагрузка демонстрационных данных
-      this.loadDemoData();
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       console.log('Данные обновлены');
+      this.showNotification('Данные обновлены', 'success');
     } catch (error) {
       console.error('Ошибка обновления:', error);
       this.showError('Ошибка обновления данных');
@@ -726,19 +809,14 @@ Unregister-ScheduledTask -TaskName "MIRA Auto-Push" -Confirm:$false`;
 
   // Показ меню экспорта
   showExportMenu() {
-    const formats = [
-      { id: 'pdf', name: 'PDF Отчёт', icon: 'fa-file-pdf' },
-      { id: 'json', name: 'JSON Данные', icon: 'fa-file-code' },
-      { id: 'csv', name: 'CSV Таблица', icon: 'fa-file-csv' }
-    ];
-
     const selected = prompt(
-      'Выберите формат экспорта:\n1 - PDF\n2 - JSON\n3 - CSV',
+      'Выберите формат экспорта:\n1 - JSON\n2 - CSV\n3 - PDF',
       '1'
     );
 
     if (selected) {
-      this.exportReport(formats[parseInt(selected) - 1]?.id || 'pdf');
+      const format = selected === '2' ? 'csv' : selected === '3' ? 'pdf' : 'json';
+      this.exportReport(format);
     }
   },
 
