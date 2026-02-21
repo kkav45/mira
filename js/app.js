@@ -513,6 +513,9 @@ const App = {
     // Обновление статусов в правой панели
     this.updatePanelStatus(analysis);
 
+    // Обновление содержимого правой панели
+    this.updatePanelContent();
+
     // Обновление графиков
     this.refreshCharts();
   },
@@ -558,6 +561,33 @@ const App = {
 
     // Обновление числовых значений
     this.updateNumericValues(weather);
+  },
+
+  // Обновление содержимого правой панели
+  updatePanelContent() {
+    // Если текущая вкладка Метеоанализ, обновляем данные
+    const currentTab = TabsManager.currentTab;
+    if (currentTab === 'tab-weather') {
+      // Обновление статистики
+      const weatherData = this.state.weatherData;
+      if (weatherData && weatherData.hourly) {
+        const hourly = weatherData.hourly;
+        const idx = 0;
+
+        // Обновление ключевых показателей
+        const statWind10m = document.getElementById('stat-wind-10m');
+        const statWind500m = document.getElementById('stat-wind-500m');
+        const statTemp = document.getElementById('stat-temp');
+        const statVisibility = document.getElementById('stat-visibility');
+        const statPrecip = document.getElementById('stat-precip');
+
+        if (statWind10m) statWind10m.textContent = (hourly.windspeed_10m?.[idx] || 0).toFixed(1);
+        if (statWind500m) statWind500m.textContent = ((hourly.windspeed_10m?.[idx] || 0) * 1.5).toFixed(1);
+        if (statTemp) statTemp.textContent = (hourly.temperature_2m?.[idx] || 0).toFixed(0);
+        if (statVisibility) statVisibility.textContent = ((hourly.visibility?.[idx] || 10000) / 1000).toFixed(1);
+        if (statPrecip) statPrecip.textContent = (hourly.precipitation?.[idx] || 0).toFixed(1);
+      }
+    }
   },
 
   // Обновление числовых значений
