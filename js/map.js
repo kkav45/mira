@@ -641,11 +641,11 @@ const MapManager = {
     // Обработчик клика
     this.map.on('click', (evt) => {
       const feature = this.map.forEachFeatureAtPixel(evt.pixel, (f) => f);
-      
+
       if (feature) {
         const props = feature.getProperties();
         let html = `<div class="ol-popup__title">${props.name || 'Объект'}</div>`;
-        
+
         if (props.altitude) html += `<div class="ol-popup__row"><span>Высота:</span><span>${props.altitude} м</span></div>`;
         if (props.speed) html += `<div class="ol-popup__row"><span>Скорость:</span><span>${props.speed} м/с</span></div>`;
         if (props.direction) html += `<div class="ol-popup__row"><span>Направление:</span><span>${props.direction}°</span></div>`;
@@ -665,7 +665,7 @@ const MapManager = {
       }
     });
 
-    // Обработчик клика для получения координат
+    // Обработчик клика для получения координат и метеоданных
     this.map.on('click', (evt) => {
       const coordinate = evt.coordinate;
       const lonLat = ol.proj.toLonLat(coordinate);
@@ -692,10 +692,13 @@ const MapManager = {
       // Добавление маркера клика
       this.addClickMarker(coordinate, lat, lon);
 
-      // Загрузка метеоданных для новой точки
+      // Загрузка метеоданных и показ попапа с погодой
       if (typeof App !== 'undefined' && App.loadWeatherData) {
         const today = new Date().toISOString().slice(0, 10);
-        App.loadWeatherData(lat, lon, 0, today);
+        App.loadWeatherData(lat, lon, 0, today).then(() => {
+          // После загрузки данных показываем попап с температурой и ветром
+          this.showWeatherPopup(coordinate, lat, lon);
+        });
       }
     });
 
@@ -730,6 +733,59 @@ const MapManager = {
     }));
 
     this.features.points.addFeature(marker);
+  },
+
+  // Показ попапа с погодой
+  showWeatherPopup(coordinate, lat, lon) {
+    const weatherData = App.state.weatherData;
+    if (!weatherData || !weatherData.hourly) return;
+
+    const hourly = weatherData.hourly;
+    const idx = 0; // Первый час
+
+    const temp = hourly.temperature_2m?.[idx] || 0;
+    const windSpeed = hourly.windspeed_10m?.[idx] || 0;
+    const windDir = hourly.winddirection_10m?.[idx] || 0;
+    const humidity = hourly.relativehumidity_2m?.[idx] || 0;
+
+    // Определяем направление ветра
+    const windDirections = ['С', 'СВ', 'В', 'ЮВ', 'Ю', 'ЮЗ', 'З', 'СЗ'];
+    const windDirIndex = Math.round(windDir / 45) % 8;
+    const windDirText = windDirections[windDirIndex];
+
+    // Формируем HTML попапа
+    const html = `
+      <div class="ol-popup__title">
+        <i class="fas fa-cloud-sun"></i>
+        Погода
+      </div>
+      <div class="ol-popup__row">
+        <span><i class="fas fa-thermometer-half"></i> Температура:</span>
+        <span><strong>${temp.toFixed(1)}°C</strong></span>
+      </div>
+      <div class="ol-popup__row">
+        <span><i class="fas fa-wind"></i> Ветер:</span>
+        <span><strong>${windSpeed.toFixed(1)} м/с</strong> (${windDirText})</span>
+      </div>
+      <div class="ol-popup__row">
+        <span><i class="fas fa-tint"></i> Влажность:</span>
+        <span>${humidity.toFixed(0)}%</span>
+      </div>
+      <div class="ol-popup__row" style="margin-top: 8px; font-size: 11px; color: #666;">
+        ${lat.toFixed(4)}°N, ${lon.toFixed(4)}°E
+      </div>
+    `;
+
+    // Находим popup элемент
+    const popupContainer = document.getElementById('popup');
+    const popupContent = document.getElementById('popup-content');
+    const popupOverlay = this.map.getOverlays().getArray().find(o => o.getElement() === popupContainer);
+
+    if (popupContainer && popupContent && popupOverlay) {
+      popupContent.innerHTML = html;
+      popupOverlay.setPosition(coordinate);
+      popupContainer.style.display = 'block';
+    }
   },
 
   // Добавление тепловой карты рисков
