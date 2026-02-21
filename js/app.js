@@ -336,7 +336,7 @@ const App = {
     try {
       // Если дата не указана, используем сегодня
       const selectedDate = date || new Date().toISOString().slice(0, 10);
-      
+
       // Обновление даты в интерфейсе
       const dateEl = document.getElementById('mission-date');
       if (dateEl) {
@@ -346,14 +346,19 @@ const App = {
       // Запрос к Open-Meteo с датой
       const weatherData = await WeatherAPI.fetchMeteoData(lat, lon, selectedDate);
 
+      // Проверка на наличие данных
+      if (!weatherData || !weatherData.hourly || !weatherData.hourly.time) {
+        throw new Error('Нет данных в ответе API');
+      }
+
       // Обработка данных
       this.state.weatherData = weatherData;
       this.state.currentLocation = { lat, lon };
 
       console.log('MIRA 0.2 | Метеоданные загружены:', {
-        timePoints: weatherData.hourly?.time?.length || 0,
-        firstTime: weatherData.hourly?.time?.[0],
-        temp: weatherData.hourly?.temperature_2m?.[0]
+        timePoints: weatherData.hourly.time.length,
+        firstTime: weatherData.hourly.time[0],
+        temp: weatherData.hourly.temperature_2m?.[0]
       });
 
       // Анализ данных
@@ -367,9 +372,15 @@ const App = {
 
     } catch (error) {
       console.error('Ошибка загрузки метеоданных:', error);
+      
       // Обновляем оверлеи данными из состояния
       this.updateMapOverlaysFromData();
-      this.showNotification('Данные загружены из кэша', 'info');
+      
+      // Показываем уведомление об ошибке
+      this.showNotification('API недоступен. Проверьте подключение к интернету.', 'error');
+      
+      // Устанавливаем статус "ограничен"
+      this.updateFlightStatus('restricted');
     }
   },
 
