@@ -1093,6 +1093,9 @@
                             <!-- Заполняется JavaScript -->
                         </tbody>
                     </table>
+                    <div style="font-size: 10px; color: rgba(0,0,0,0.5); margin-top: 8px;">
+                        Единицы: ветер (м/с), темп. (°C), давление (мм рт.ст.), влажность (%), турбулентность (баллы)
+                    </div>
                 </div>
 
                 <!-- Факторы риска -->
@@ -1118,7 +1121,7 @@
         </div>
     </div>
 
-    <script>
+    <!-- Модальное окно настроек -->
         // ==================== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ====================
         let map, markerOverlay, popupOverlay, popupElement;
         let meteorologicalData = [];
@@ -1568,8 +1571,8 @@
                     // Температура на высоте (уменьшается на 0.65°C на 100м)
                     const heightTemp = current.temp2m - (height / 100) * 0.65 + tempVariation;
                     
-                    // Давление на высоте (уменьшается экспоненциально)
-                    const heightPressure = 1013.25 * Math.pow(1 - 0.0065 * height / 288.15, 5.255);
+                    // Давление на высоте (уменьшается экспоненциально, конвертируем в мм рт.ст.)
+                    const heightPressure = Math.round(1013.25 * Math.pow(1 - 0.0065 * height / 288.15, 5.255) * 0.75006);
                     
                     // Влажность на высоте
                     const heightRh = Math.min(100, Math.max(0, current.rh - height / 50));
@@ -1894,11 +1897,11 @@
 
             const config = riskConfig[seg.risk];
             document.getElementById('segmentNumber').textContent = '№' + (index + 1);
-            document.getElementById('segmentCoords').textContent = seg.point.lat.toFixed(5) + ', ' + seg.point.lon.toFixed(5);
-            document.getElementById('segmentDistance').textContent = seg.distance.toFixed(2) + ' км';
-            document.getElementById('segmentPrecip').textContent = seg.precip + ' мм/ч';
-            document.getElementById('segmentWind').textContent = seg.avgWind + ' м/с';
-            document.getElementById('segmentTemp').textContent = (seg.avgTemp > 0 ? '+' : '') + seg.avgTemp + '°C';
+            document.getElementById('segmentCoords').textContent = seg.point.lat.toFixed(4) + ', ' + seg.point.lon.toFixed(4);
+            document.getElementById('segmentDistance').textContent = Math.round(seg.distance * 10) / 10 + ' км';
+            document.getElementById('segmentPrecip').textContent = Math.round(seg.precip * 10) / 10 + ' мм/ч';
+            document.getElementById('segmentWind').textContent = Math.round(parseFloat(seg.avgWind)) + ' м/с';
+            document.getElementById('segmentTemp').textContent = (Math.round(parseFloat(seg.avgTemp)) > 0 ? '+' : '') + Math.round(parseFloat(seg.avgTemp)) + '°C';
             const riskBadge = document.getElementById('segmentRiskBadge');
             riskBadge.className = 'badge ' + config.badge;
             riskBadge.textContent = config.text;
@@ -1908,11 +1911,11 @@
                 const hConfig = riskConfig[h.risk];
                 heightHTML += '<tr><td style="padding: 8px 6px;">' + h.height + 'м</td>' +
                     '<td style="padding: 8px 6px;"><span class="badge ' + hConfig.badge + '" style="font-size: 9px;">' + hConfig.text + '</span></td>' +
-                    '<td style="padding: 8px 6px;">' + h.wind + ' м/с</td>' +
-                    '<td style="padding: 8px 6px;">' + (h.temp > 0 ? '+' : '') + h.temp + '°C</td>' +
-                    '<td style="padding: 8px 6px;">' + h.pressure + ' гПа</td>' +
-                    '<td style="padding: 8px 6px;">' + h.rh + '%</td>' +
-                    '<td style="padding: 8px 6px;">' + h.turbulence + '</td></tr>';
+                    '<td style="padding: 8px 6px;">' + Math.round(parseFloat(h.wind)) + ' м/с</td>' +
+                    '<td style="padding: 8px 6px;">' + (Math.round(parseFloat(h.temp)) > 0 ? '+' : '') + Math.round(parseFloat(h.temp)) + '°C</td>' +
+                    '<td style="padding: 8px 6px;">' + Math.round(parseFloat(h.pressure)) + ' мм рт.ст.</td>' +
+                    '<td style="padding: 8px 6px;">' + Math.round(parseFloat(h.rh)) + '%</td>' +
+                    '<td style="padding: 8px 6px;">' + Math.round(parseFloat(h.turbulence)) + '</td></tr>';
             });
             heightBody.innerHTML = heightHTML;
             const factorsList = document.getElementById('segmentFactorsList');
