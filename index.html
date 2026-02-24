@@ -1004,13 +1004,48 @@
 
             <!-- Вкладка: Графики -->
             <div class="tab-content" id="tab-charts">
-                <div class="chart-container" id="timeSeriesChart"></div>
-                <div class="chart-container" id="verticalProfileChart"></div>
-                <div class="chart-container" id="temperatureProfileChart"></div>
-                <div class="chart-container" id="windRoseChart"></div>
-                <div class="chart-container" id="turbulenceChart"></div>
-                <div class="chart-container" id="ceilingChart"></div>
-                <div class="chart-container" id="flightWindowsChart"></div>
+                <div style="margin-bottom: 14px;">
+                    <div style="font-size: 12px; font-weight: 600; color: #2d3748; margin-bottom: 8px;">
+                        <i class="fas fa-chart-line"></i> Временной ряд метеопараметров
+                    </div>
+                    <div class="chart-container" id="timeSeriesChart"></div>
+                </div>
+                <div style="margin-bottom: 14px;">
+                    <div style="font-size: 12px; font-weight: 600; color: #2d3748; margin-bottom: 8px;">
+                        <i class="fas fa-layer-group"></i> Вертикальный профиль ветра
+                    </div>
+                    <div class="chart-container" id="verticalProfileChart"></div>
+                </div>
+                <div style="margin-bottom: 14px;">
+                    <div style="font-size: 12px; font-weight: 600; color: #2d3748; margin-bottom: 8px;">
+                        <i class="fas fa-thermometer-half"></i> Вертикальный профиль температуры
+                    </div>
+                    <div class="chart-container" id="temperatureProfileChart"></div>
+                </div>
+                <div style="margin-bottom: 14px;">
+                    <div style="font-size: 12px; font-weight: 600; color: #2d3748; margin-bottom: 8px;">
+                        <i class="fas fa-compass"></i> Роза ветров
+                    </div>
+                    <div class="chart-container" id="windRoseChart"></div>
+                </div>
+                <div style="margin-bottom: 14px;">
+                    <div style="font-size: 12px; font-weight: 600; color: #2d3748; margin-bottom: 8px;">
+                        <i class="fas fa-wave-square"></i> Индекс турбулентности
+                    </div>
+                    <div class="chart-container" id="turbulenceChart"></div>
+                </div>
+                <div style="margin-bottom: 14px;">
+                    <div style="font-size: 12px; font-weight: 600; color: #2d3748; margin-bottom: 8px;">
+                        <i class="fas fa-cloud"></i> Высота нижней границы облаков
+                    </div>
+                    <div class="chart-container" id="ceilingChart"></div>
+                </div>
+                <div style="margin-bottom: 14px;">
+                    <div style="font-size: 12px; font-weight: 600; color: #2d3748; margin-bottom: 8px;">
+                        <i class="fas fa-calendar-alt"></i> Тепловая календарная карта полётных окон
+                    </div>
+                    <div class="chart-container" id="flightWindowsChart"></div>
+                </div>
             </div>
 
             <!-- Вкладка: Детали -->
