@@ -220,10 +220,12 @@
             display: flex;
             gap: 10px;
             margin-bottom: 14px;
+            flex-wrap: wrap;
         }
 
         .coord-input {
-            flex: 1;
+            flex: 1 1 200px;
+            min-width: 150px;
             background: rgba(0, 0, 0, 0.05);
             border: 1px solid rgba(0, 0, 0, 0.15);
             border-radius: 10px;
@@ -231,6 +233,7 @@
             color: #2d3748;
             font-size: 13px;
             font-family: 'SF Mono', Monaco, monospace;
+            box-sizing: border-box;
         }
 
         .coord-input:focus {
@@ -1001,11 +1004,48 @@
 
             <!-- Вкладка: Графики -->
             <div class="tab-content" id="tab-charts">
-                <div class="chart-container" id="timeSeriesChart"></div>
-                <div class="chart-container" id="verticalProfileChart"></div>
-                <div class="chart-container" id="temperatureProfileChart"></div>
-                <div class="chart-container" id="windRoseChart"></div>
-                <div class="chart-container" id="turbulenceChart"></div>
+                <div style="margin-bottom: 14px;">
+                    <div style="font-size: 12px; font-weight: 600; color: #2d3748; margin-bottom: 8px;">
+                        <i class="fas fa-chart-line"></i> Временной ряд метеопараметров
+                    </div>
+                    <div class="chart-container" id="timeSeriesChart"></div>
+                </div>
+                <div style="margin-bottom: 14px;">
+                    <div style="font-size: 12px; font-weight: 600; color: #2d3748; margin-bottom: 8px;">
+                        <i class="fas fa-layer-group"></i> Вертикальный профиль ветра
+                    </div>
+                    <div class="chart-container" id="verticalProfileChart"></div>
+                </div>
+                <div style="margin-bottom: 14px;">
+                    <div style="font-size: 12px; font-weight: 600; color: #2d3748; margin-bottom: 8px;">
+                        <i class="fas fa-thermometer-half"></i> Вертикальный профиль температуры
+                    </div>
+                    <div class="chart-container" id="temperatureProfileChart"></div>
+                </div>
+                <div style="margin-bottom: 14px;">
+                    <div style="font-size: 12px; font-weight: 600; color: #2d3748; margin-bottom: 8px;">
+                        <i class="fas fa-compass"></i> Роза ветров
+                    </div>
+                    <div class="chart-container" id="windRoseChart"></div>
+                </div>
+                <div style="margin-bottom: 14px;">
+                    <div style="font-size: 12px; font-weight: 600; color: #2d3748; margin-bottom: 8px;">
+                        <i class="fas fa-wave-square"></i> Индекс турбулентности
+                    </div>
+                    <div class="chart-container" id="turbulenceChart"></div>
+                </div>
+                <div style="margin-bottom: 14px;">
+                    <div style="font-size: 12px; font-weight: 600; color: #2d3748; margin-bottom: 8px;">
+                        <i class="fas fa-cloud"></i> Высота нижней границы облаков
+                    </div>
+                    <div class="chart-container" id="ceilingChart"></div>
+                </div>
+                <div style="margin-bottom: 14px;">
+                    <div style="font-size: 12px; font-weight: 600; color: #2d3748; margin-bottom: 8px;">
+                        <i class="fas fa-calendar-alt"></i> Тепловая календарная карта полётных окон
+                    </div>
+                    <div class="chart-container" id="flightWindowsChart"></div>
+                </div>
             </div>
 
             <!-- Вкладка: Детали -->
@@ -2997,6 +3037,8 @@
             renderTemperatureProfile();
             renderWindRose();
             renderTurbulenceChart();
+            renderCeilingChart();
+            renderFlightWindowsCalendar();
             renderDetailedTable();
             renderRecommendations();
             renderRiskZones();
@@ -3222,6 +3264,131 @@
             };
 
             Plotly.newPlot('turbulenceChart', [trace], layout, {responsive: true, displayModeBar: false});
+        }
+
+        function renderCeilingChart() {
+            if (meteorologicalData.length === 0) return;
+
+            // Расчёт высоты нижней границы облаков (упрощённо)
+            const ceilingData = meteorologicalData.map(hour => {
+                const time = hour.time;
+                // Высота облаков зависит от влажности и облачности
+                const baseCeiling = 3000 - (hour.cloudCover * 25);
+                const humidityFactor = hour.rh > 80 ? 0.7 : 1;
+                const ceiling = Math.max(0, baseCeiling * humidityFactor);
+                
+                return {
+                    time,
+                    ceiling: Math.round(ceiling),
+                    cloudCover: hour.cloudCover
+                };
+            });
+
+            const trace = {
+                x: ceilingData.map(d => d.time),
+                y: ceilingData.map(d => d.ceiling),
+                type: 'scatter',
+                mode: 'lines',
+                line: { color: '#4fc3f7', width: 2 },
+                fill: 'tozeroy',
+                fillcolor: 'rgba(79, 195, 247, 0.2)',
+                name: 'Высота облаков'
+            };
+
+            const layout = {
+                height: 220,
+                margin: { t: 20, b: 35, l: 45, r: 30 },
+                xaxis: { tickformat: '%H:%M', tickfont: { size: 10, color: '#2d3748' } },
+                yaxis: { 
+                    title: 'Высота (м)',
+                    tickfont: { size: 10, color: '#2d3748' },
+                    titlefont: { color: '#2d3748' }
+                },
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                font: { color: '#2d3748' },
+                showlegend: false
+            };
+
+            Plotly.newPlot('ceilingChart', [trace], layout, {responsive: true, displayModeBar: false});
+        }
+
+        function renderFlightWindowsCalendar() {
+            if (meteorologicalData.length === 0) return;
+
+            // Группировка по дням и часам
+            const days = {};
+            meteorologicalData.forEach((hour, index) => {
+                const dateKey = hour.dateStr;
+                if (!days[dateKey]) {
+                    days[dateKey] = { date: hour.dateStr, hours: [], statuses: [] };
+                }
+                days[dateKey].hours.push(hour.timeStr);
+                days[dateKey].statuses.push(hour.status);
+            });
+
+            // Подготовка данных для тепловой карты
+            const dates = Object.keys(days);
+            const hours = Array.from({length: 24}, (_, i) => i);
+            
+            const statusValues = [];
+            const statusColors = [];
+
+            dates.forEach((date, dateIndex) => {
+                hours.forEach(hour => {
+                    const hourData = meteorologicalData.find(d => 
+                        d.dateStr === date && d.time.getHours() === hour
+                    );
+                    
+                    if (hourData) {
+                        const value = hourData.status === 'allowed' ? 2 : hourData.status === 'restricted' ? 1 : 0;
+                        statusValues.push(value);
+                        statusColors.push(
+                            value === 2 ? 'rgba(56, 161, 105, 0.8)' :
+                            value === 1 ? 'rgba(237, 137, 54, 0.8)' :
+                            'rgba(229, 62, 62, 0.8)'
+                        );
+                    } else {
+                        statusValues.push(null);
+                        statusColors.push('rgba(0,0,0,0)');
+                    }
+                });
+            });
+
+            const trace = {
+                x: hours,
+                y: dates.map((d, i) => d),
+                z: statusValues,
+                type: 'heatmap',
+                colorscale: [
+                    [0, 'rgba(229, 62, 62, 0.8)'],
+                    [0.5, 'rgba(237, 137, 54, 0.8)'],
+                    [1, 'rgba(56, 161, 105, 0.8)']
+                ],
+                hoverinfo: 'x+y+text',
+                text: statusValues.map(v => v === 2 ? '✓ Разрешён' : v === 1 ? '⚠ Ограничения' : '✗ Запрещён'),
+                name: 'Полётные окна'
+            };
+
+            const layout = {
+                height: 220,
+                margin: { t: 20, b: 35, l: 80, r: 30 },
+                xaxis: { 
+                    title: 'Часы',
+                    tickfont: { size: 9, color: '#2d3748' },
+                    titlefont: { color: '#2d3748' }
+                },
+                yaxis: { 
+                    tickfont: { size: 9, color: '#2d3748' },
+                    titlefont: { color: '#2d3748' }
+                },
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                font: { color: '#2d3748' },
+                showlegend: false
+            };
+
+            Plotly.newPlot('flightWindowsChart', [trace], layout, {responsive: true, displayModeBar: false});
         }
 
         function renderDetailedTable() {
