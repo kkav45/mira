@@ -1460,116 +1460,237 @@
                 layerSelector.style.display = 'block';
             }
 
-            // Генерируем сетку точек для анализа
-            const gridSize = 5; // 5x5 км между точками
-            const analysisPoints = generateGridPoints(centerPoint, radiusKm, gridSize);
+            // Проверяем кэш
+            const cacheKey = `weather_cache_${centerPoint.lat.toFixed(2)}_${centerPoint.lon.toFixed(2)}_${radiusKm}`;
+            const cached = getCachedWeather(cacheKey);
+            
+            if (cached) {
+                showToast('Использование кэшированных данных', 'success');
+                displayAreaAnalysis(cached.areaAnalysis, centerPoint, radiusKm);
+                return;
+            }
 
-            // Анализируем каждую точку
-            const areaAnalysis = analysisPoints.map(point => {
-                const current = meteorologicalData[0];
-                const distanceFromCenter = Math.sqrt(
-                    Math.pow(point.lat - centerPoint.lat, 2) + 
-                    Math.pow(point.lon - centerPoint.lon, 2)
-                ) * 111; // Конвертируем в км
+            // Генерируем 5 опорных точек для интерполяции
+            const referencePoints = generateReferencePoints(centerPoint, radiusKm);
+            
+            // Запрашиваем данные для опорных точек
+            fetchReferenceData(referencePoints)
+                .then(referenceData => {
+                    // Генерируем сетку точек для анализа (шаг 5 км)
+                    const gridSize = 5;
+                    const analysisPoints = generateGridPoints(centerPoint, radiusKm, gridSize);
 
-                // Пространственная вариация на основе расстояния от центра
-                const normalizedPos = distanceFromCenter / radiusKm;
-                const variation1 = Math.sin(normalizedPos * Math.PI * 3) * 1.5;
-                const variation2 = Math.cos(normalizedPos * Math.PI * 5) * 1.0;
-                const combinedVariation = variation1 + variation2;
+                    // Интерполируем данные для каждой точки сетки
+                    const areaAnalysis = analysisPoints.map(point => {
+                        const interpolatedData = interpolateWeather(point, referencePoints, referenceData);
+                        return analyzePoint(point, interpolatedData, centerPoint);
+                    });
 
-                const windVariation = combinedVariation * 1.2;
-                const precipVariation = Math.max(0, combinedVariation * 0.4);
-                const visibilityVariation = combinedVariation * 0.8;
-                const tempVariation = combinedVariation * 0.8;
+                    // Кэшируем результат на 1 час
+                    cacheWeather(cacheKey, { areaAnalysis, timestamp: Date.now() });
 
-                const heightAnalysis = [];
-                const analysisHeights = [250, 350, 450, 550];
-                let maxRiskScore = 0;
-                let overallRisk = 'low';
+                    // Отображаем результаты
+                    displayAreaAnalysis(areaAnalysis, centerPoint, radiusKm);
+                })
+                .catch(error => {
+                    console.error('Ошибка получения данных:', error);
+                    showToast('Ошибка получения данных. Повторите попытку.', 'error');
+                });
+        }
 
-                analysisHeights.forEach(height => {
-                    const heightWind = Math.max(0, current.wind10m + (height / 100) * 0.5 + windVariation);
-                    const heightTemp = current.temp2m - (height / 100) * 0.65 + tempVariation;
-                    const heightPressure = Math.round(1013.25 * Math.pow(1 - 0.0065 * height / 288.15, 5.255) * 0.75006);
-                    const heightRh = Math.min(100, Math.max(0, current.rh - height / 50));
-                    const heightDewpoint = heightTemp - (100 - heightRh) / 5;
-                    const heightCloudCover = Math.min(100, Math.max(0, current.cloudCover + combinedVariation * 15));
-                    const turbulence = Math.min(10, Math.max(0, Math.abs(windVariation) + Math.abs(tempVariation) * 0.5));
+        // Генерация 5 опорных точек (центр + 4 стороны)
+        function generateReferencePoints(center, radiusKm) {
+            const halfRadius = radiusKm / 2; // 25 км для радиуса 50 км
+            const degLat = halfRadius / 111;
+            const degLon = halfRadius / (111 * Math.cos(center.lat * Math.PI / 180));
 
-                    let heightRisk = 'low';
-                    let heightRiskScore = 0;
+            return [
+                { lat: center.lat, lon: center.lon, name: 'center' },
+                { lat: center.lat + degLat, lon: center.lon, name: 'north' },
+                { lat: center.lat - degLat, lon: center.lon, name: 'south' },
+                { lat: center.lat, lon: center.lon + degLon, name: 'east' },
+                { lat: center.lat, lon: center.lon - degLon, name: 'west' }
+            ];
+        }
 
-                    if (heightWind > thresholds.windAlt) {
-                        heightRisk = 'high';
-                        heightRiskScore = 3;
-                    } else if (heightWind > thresholds.windAlt * 0.8) {
-                        heightRisk = 'medium';
-                        heightRiskScore = 2;
-                    }
+        // Запрос данных для опорных точек
+        async function fetchReferenceData(referencePoints) {
+            const promises = referencePoints.map(async (point, index) => {
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${point.lat}&longitude=${point.lon}&current=temperature_2m,relative_humidity_2m,precipitation,cloud_cover,pressure_msl,wind_speed_10m,wind_direction_10m&hourly=temperature_2m,relative_humidity_2m,precipitation,cloud_cover,wind_speed_10m,wind_direction_10m&timezone=auto`;
+                
+                try {
+                    const response = await fetch(url, { timeout: 10000 });
+                    if (!response.ok) throw new Error('Ошибка API');
+                    const data = await response.json();
+                    return { ...point, index, data };
+                } catch (error) {
+                    console.error(`Ошибка запроса точки ${point.name}:`, error);
+                    return { ...point, index, data: null };
+                }
+            });
 
-                    const icingRisk = (heightTemp <= 5 && heightTemp >= -10 && heightRh > 80);
-                    if (icingRisk) {
-                        if (heightTemp <= 0 && heightTemp >= -5) {
-                            heightRisk = 'high';
-                            heightRiskScore = Math.max(heightRiskScore, 3);
-                        } else {
-                            if (heightRisk === 'low') heightRisk = 'medium';
-                            heightRiskScore = Math.max(heightRiskScore, 2);
-                        }
-                    }
+            return Promise.all(promises);
+        }
 
-                    if (turbulence > 6) {
+        // Интерполяция данных для точки сетки
+        function interpolateWeather(point, referencePoints, referenceData) {
+            // Расчёт расстояний до опорных точек
+            const distances = referencePoints.map((ref, i) => {
+                const dLat = (point.lat - ref.lat) * 111;
+                const dLon = (point.lon - ref.lon) * 111 * Math.cos(point.lat * Math.PI / 180);
+                return Math.sqrt(dLat * dLat + dLon * dLon);
+            });
+
+            // Обратные веса (IDW интерполяция)
+            const weights = distances.map(d => d > 0 ? 1 / (d * d) : 1000);
+            const totalWeight = weights.reduce((sum, w) => sum + w, 0);
+            const normalizedWeights = weights.map(w => w / totalWeight);
+
+            // Интерполяция параметров
+            const interpolated = {
+                wind10m: 0,
+                temp2m: 0,
+                rh: 0,
+                precip: 0,
+                cloudCover: 0,
+                pressure: 0
+            };
+
+            referenceData.forEach((refData, i) => {
+                if (!refData.data || !refData.data.current) return;
+                
+                const current = refData.data.current;
+                const w = normalizedWeights[i];
+
+                interpolated.wind10m += (current.wind_speed_10m || 0) * w;
+                interpolated.temp2m += (current.temperature_2m || 0) * w;
+                interpolated.rh += (current.relative_humidity_2m || 0) * w;
+                interpolated.precip += (current.precipitation || 0) * w;
+                interpolated.cloudCover += (current.cloud_cover || 0) * w;
+                interpolated.pressure += (current.pressure_msl || 0) * w;
+            });
+
+            return interpolated;
+        }
+
+        // Анализ точки с интерполированными данными
+        function analyzePoint(point, data, centerPoint) {
+            const distanceFromCenter = Math.sqrt(
+                Math.pow(point.lat - centerPoint.lat, 2) + 
+                Math.pow(point.lon - centerPoint.lon, 2)
+            ) * 111;
+
+            const heightAnalysis = [];
+            const analysisHeights = [250, 350, 450, 550];
+            let maxRiskScore = 0;
+            let overallRisk = 'low';
+
+            analysisHeights.forEach(height => {
+                const heightWind = Math.max(0, data.wind10m + (height / 100) * 0.5);
+                const heightTemp = data.temp2m - (height / 100) * 0.65;
+                const heightPressure = Math.round(1013.25 * Math.pow(1 - 0.0065 * height / 288.15, 5.255) * 0.75006);
+                const heightRh = Math.min(100, Math.max(0, data.rh - height / 50));
+                const turbulence = Math.min(10, Math.max(0, (data.wind10m / 10) * (height / 100)));
+
+                let heightRisk = 'low';
+                let heightRiskScore = 0;
+
+                if (heightWind > thresholds.windAlt) {
+                    heightRisk = 'high';
+                    heightRiskScore = 3;
+                } else if (heightWind > thresholds.windAlt * 0.8) {
+                    heightRisk = 'medium';
+                    heightRiskScore = 2;
+                }
+
+                const icingRisk = (heightTemp <= 5 && heightTemp >= -10 && heightRh > 80);
+                if (icingRisk) {
+                    if (heightTemp <= 0 && heightTemp >= -5) {
                         heightRisk = 'high';
                         heightRiskScore = Math.max(heightRiskScore, 3);
-                    } else if (turbulence > 4) {
+                    } else {
                         if (heightRisk === 'low') heightRisk = 'medium';
                         heightRiskScore = Math.max(heightRiskScore, 2);
                     }
-
-                    const segmentVisibility = Math.max(1, current.visibility - visibilityVariation);
-                    if (segmentVisibility < thresholds.visibility) {
-                        heightRisk = 'high';
-                        heightRiskScore = Math.max(heightRiskScore, 3);
-                    }
-
-                    heightAnalysis.push({
-                        height,
-                        wind: heightWind.toFixed(1),
-                        temp: heightTemp.toFixed(1),
-                        pressure: heightPressure,
-                        rh: heightRh.toFixed(0),
-                        turbulence: turbulence.toFixed(1),
-                        risk: heightRisk,
-                        riskScore: heightRiskScore
-                    });
-
-                    if (heightRiskScore > maxRiskScore) {
-                        maxRiskScore = heightRiskScore;
-                        overallRisk = heightRisk;
-                    }
-                });
-
-                const segmentPrecip = Math.max(0, current.precip + precipVariation);
-                if (segmentPrecip > thresholds.precip) {
-                    overallRisk = 'high';
-                    maxRiskScore = Math.max(maxRiskScore, 3);
                 }
 
-                return {
-                    point,
-                    risk: overallRisk,
-                    riskScore: maxRiskScore,
-                    heightAnalysis,
-                    avgWind: (heightAnalysis.reduce((sum, h) => sum + parseFloat(h.wind), 0) / heightAnalysis.length).toFixed(1),
-                    avgTemp: (heightAnalysis.reduce((sum, h) => sum + parseFloat(h.temp), 0) / heightAnalysis.length).toFixed(1),
-                    precip: segmentPrecip.toFixed(1),
-                    distance: distanceFromCenter
-                };
+                if (turbulence > 6) {
+                    heightRisk = 'high';
+                    heightRiskScore = Math.max(heightRiskScore, 3);
+                } else if (turbulence > 4) {
+                    if (heightRisk === 'low') heightRisk = 'medium';
+                    heightRiskScore = Math.max(heightRiskScore, 2);
+                }
+
+                const segmentVisibility = data.precip > 0.5 ? 5 : data.precip > 0 ? 8 : 10;
+                if (segmentVisibility < thresholds.visibility) {
+                    heightRisk = 'high';
+                    heightRiskScore = Math.max(heightRiskScore, 3);
+                }
+
+                heightAnalysis.push({
+                    height,
+                    wind: heightWind.toFixed(1),
+                    temp: heightTemp.toFixed(1),
+                    pressure: heightPressure,
+                    rh: heightRh.toFixed(0),
+                    turbulence: turbulence.toFixed(1),
+                    risk: heightRisk,
+                    riskScore: heightRiskScore
+                });
+
+                if (heightRiskScore > maxRiskScore) {
+                    maxRiskScore = heightRiskScore;
+                    overallRisk = heightRisk;
+                }
             });
 
-            // Отображаем результаты анализа области
-            displayAreaAnalysis(areaAnalysis, centerPoint, radiusKm);
+            if (data.precip > thresholds.precip) {
+                overallRisk = 'high';
+                maxRiskScore = Math.max(maxRiskScore, 3);
+            }
+
+            return {
+                point,
+                risk: overallRisk,
+                riskScore: maxRiskScore,
+                heightAnalysis,
+                avgWind: (heightAnalysis.reduce((sum, h) => sum + parseFloat(h.wind), 0) / heightAnalysis.length).toFixed(1),
+                avgTemp: (heightAnalysis.reduce((sum, h) => sum + parseFloat(h.temp), 0) / heightAnalysis.length).toFixed(1),
+                precip: data.precip.toFixed(1),
+                distance: distanceFromCenter
+            };
+        }
+
+        // Кэширование данных
+        function getCachedWeather(cacheKey) {
+            try {
+                const cached = localStorage.getItem(cacheKey);
+                if (!cached) return null;
+
+                const parsed = JSON.parse(cached);
+                const age = Date.now() - parsed.timestamp;
+                
+                // Кэш действителен 1 час
+                if (age < 3600000) {
+                    return parsed;
+                }
+                
+                // Удаляем устаревший кэш
+                localStorage.removeItem(cacheKey);
+                return null;
+            } catch (error) {
+                console.error('Ошибка чтения кэша:', error);
+                return null;
+            }
+        }
+
+        function cacheWeather(cacheKey, data) {
+            try {
+                localStorage.setItem(cacheKey, JSON.stringify(data));
+            } catch (error) {
+                console.error('Ошибка записи кэша:', error);
+            }
         }
 
         function generateGridPoints(center, radiusKm, stepKm = 5) {

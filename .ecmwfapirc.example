@@ -1,5 +1,0 @@
-{
-    "url"   : "https://api.ecmwf.int/v1",
-    "key"   : "ВАШ_API_КЛЮЧ_ЗДЕСЬ",
-    "email" : "ваш@email.com"
-}

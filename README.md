@@ -78,12 +78,8 @@ deploy.bat
 MIRA 0.1.4.1/
 ├── index.html              # Основной файл
 ├── прототип.html           # Прототип (архив)
-├── ecmwf_client.py         # Клиент ECMWF API
 ├── deploy.bat              # Скрипт загрузки на GitHub
 ├── setup-git.bat           # Настройка Git
-├── ECMWF_API_SETUP.md      # Инструкция по ECMWF API
-├── .ecmwfapirc.example     # Шаблон конфигурации ECMWF
-├── .env.example            # Шаблон переменных окружения
 └── .github/
     └── workflows/
         └── deploy.yml      # GitHub Actions
@@ -91,15 +87,10 @@ MIRA 0.1.4.1/
 
 ## 🔑 API
 
-### Open-Meteo API (основное)
+Данные предоставляются **Open-Meteo API**:
 - Без необходимости API ключа
 - Бесплатно для некоммерческого использования
 - https://open-meteo.com/
-
-### ECMWF API (дополнительно)
-- Архивы TIGGE и ERA5
-- Требуется регистрация и API-ключ
-- 📖 [Инструкция по настройке](ECMWF_API_SETUP.md)
 
 ## ⚠️ Важные замечания
 
