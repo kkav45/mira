@@ -469,8 +469,11 @@ const EnergyChartsModule = {
 
         // Блок дополнительного расстояния
         let additionalRangeBlock = '';
-        if (additionalRange) {
+        if (additionalRange && additionalRange.status) {
             const rangeStatus = additionalRange.status;
+            const addDistance = additionalRange.additionalDistance || 0;
+            const addFlightTime = additionalRange.additionalFlightTime || 0;
+            
             additionalRangeBlock = `
                 <!-- Дополнительное расстояние -->
                 <div style="
@@ -499,10 +502,10 @@ const EnergyChartsModule = {
                     </div>
                     <div style="text-align: right; min-width: 120px;">
                         <div style="font-size: 28px; font-weight: 700; color: ${rangeStatus.color};">
-                            +${additionalRange.additionalDistance.toFixed(1)} <span style="font-size: 14px;">км</span>
+                            +${addDistance.toFixed(1)} <span style="font-size: 14px;">км</span>
                         </div>
                         <div style="font-size: 10px; color: rgba(0,0,0,0.5); margin-top: 4px;">
-                            (~${additionalRange.additionalFlightTime.toFixed(0)} мин туда-обратно)
+                            (~${addFlightTime.toFixed(0)} мин туда-обратно)
                         </div>
                     </div>
                 </div>

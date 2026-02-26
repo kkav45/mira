@@ -620,8 +620,17 @@ const EnergyModule = {
         // Оставшаяся энергия после основного маршрута
         const remainingEnergy = usableEnergy - mainEnergyUsed;
 
+        console.log('🔋 Расчет дополнительного расстояния:', {
+            batteryTotal: battery.total.toFixed(0) + ' Вт·ч',
+            batteryUsable: battery.usable.toFixed(0) + ' Вт·ч',
+            batteryWithReserve: battery.withReserve.toFixed(0) + ' Вт·ч',
+            mainEnergyUsed: mainEnergyUsed.toFixed(0) + ' Вт·ч',
+            remainingEnergy: remainingEnergy.toFixed(0) + ' Вт·ч'
+        });
+
         // Если энергии нет или она отрицательная — дополнительный полёт невозможен
         if (remainingEnergy <= 0) {
+            console.log('⚠️ Нет резерва для дополнительного полёта');
             return {
                 canExtend: false,
                 additionalDistance: 0,

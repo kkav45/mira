@@ -4026,6 +4026,8 @@ const WizardModule = {
                 forecast
             );
             this.stepData.additionalRange = additionalRange;
+            
+            console.log('📊 Дополнительное расстояние:', additionalRange);
 
             // Рендеринг сводки
             EnergyChartsModule.renderEnergySummary('energySummaryContainer', energyData, additionalRange);
