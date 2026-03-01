@@ -127,7 +127,7 @@ const DashboardTabsMeteo = {
                     Почасовые данные
                 </div>
                 <div style="overflow-x: auto;">
-                    ${this.renderHourlyTable(data.hourly || [])}
+                    ${this.renderHourlyTable(hourly)}
                 </div>
             </div>
         `;
