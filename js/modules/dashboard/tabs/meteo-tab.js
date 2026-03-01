@@ -8,9 +8,16 @@ const DashboardTabsMeteo = {
      * Рендер контента вкладки
      */
     render() {
-        const hasData = typeof WeatherModule !== 'undefined' && 
-                        WeatherModule.cachedData && 
-                        Object.keys(WeatherModule.cachedData).length > 0;
+        // Проверяем наличие данных из разных источников
+        const hasCachedData = typeof WeatherModule !== 'undefined' &&
+                              WeatherModule.cachedData &&
+                              Object.keys(WeatherModule.cachedData).length > 0;
+
+        const hasSegmentAnalysis = typeof RouteModule !== 'undefined' &&
+                                   RouteModule.segmentAnalysis &&
+                                   RouteModule.segmentAnalysis.length > 0;
+
+        const hasData = hasCachedData || hasSegmentAnalysis;
 
         if (!hasData) {
             return this.renderPlaceholder();
@@ -41,8 +48,20 @@ const DashboardTabsMeteo = {
      * Основной контент с данными
      */
     renderContent() {
-        const data = WeatherModule.data || {};
-        const analyzed = data.analyzed || {};
+        // Получаем данные из RouteModule.segmentAnalysis или WeatherModule
+        const segmentAnalysis = typeof RouteModule !== 'undefined' && RouteModule.segmentAnalysis
+            ? RouteModule.segmentAnalysis
+            : [];
+
+        const weatherData = typeof WeatherModule !== 'undefined'
+            ? WeatherModule.cachedData || WeatherModule.data
+            : {};
+
+        // Используем первый сегмент для общих данных
+        const firstSegment = segmentAnalysis.length > 0 ? segmentAnalysis[0] : null;
+        const analyzed = firstSegment?.analyzed || weatherData.analyzed || {};
+        const hourly = firstSegment?.analyzed?.hourly || weatherData.hourly || [];
+
         const recommendations = analyzed.recommendations || [];
         const flightWindows = analyzed.flightWindows || [];
 
@@ -239,8 +258,20 @@ const DashboardTabsMeteo = {
      * Построение графиков после рендера
      */
     afterRender() {
-        const data = typeof WeatherModule !== 'undefined' ? WeatherModule.cachedData : null;
-        if (!data || Object.keys(data).length === 0) return;
+        // Получаем данные из RouteModule.segmentAnalysis
+        const segmentAnalysis = typeof RouteModule !== 'undefined' && RouteModule.segmentAnalysis
+            ? RouteModule.segmentAnalysis
+            : [];
+
+        const weatherData = typeof WeatherModule !== 'undefined'
+            ? WeatherModule.cachedData || WeatherModule.data
+            : {};
+
+        // Используем первый сегмент
+        const firstSegment = segmentAnalysis.length > 0 ? segmentAnalysis[0] : null;
+        const data = firstSegment?.analyzed || weatherData;
+
+        if (!data || (!data.hourly && !data.timeseries)) return;
 
         // Даём DOM время на рендер
         setTimeout(() => {
@@ -257,7 +288,7 @@ const DashboardTabsMeteo = {
             return;
         }
 
-        // Получаем почасовые данные из кэша
+        // Получаем почасовые данные
         const hourly = this.extractHourlyData(data);
         const times = hourly.map(h => h.time);
 
@@ -275,15 +306,15 @@ const DashboardTabsMeteo = {
     },
 
     /**
-     * Извлечение почасовых данных из кэша
+     * Извлечение почасовых данных
      */
     extractHourlyData(data) {
         // Пытаемся получить данные из разных источников
-        if (data.hourly) return data.hourly;
+        if (data.hourly && Array.isArray(data.hourly)) return data.hourly;
         if (data.analyzed && data.analyzed.hourly) return data.analyzed.hourly;
-        
+
         // Если есть raw данные Open-Meteo
-        if (data.timeseries) {
+        if (data.timeseries && Array.isArray(data.timeseries)) {
             return data.timeseries.map((t, i) => ({
                 time: t.time ? t.time.split('T')[1] : `${i}:00`,
                 temp: t.temperature_2m || 0,
@@ -295,7 +326,7 @@ const DashboardTabsMeteo = {
                 risk: t.risk || 'low'
             }));
         }
-        
+
         return [];
     },
 
