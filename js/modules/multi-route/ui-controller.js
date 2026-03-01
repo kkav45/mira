@@ -6,9 +6,21 @@
 
 const MultiRouteUI = {
     /**
+     * Флаг инициализации
+     */
+    initialized: false,
+
+    /**
      * Инициализация
      */
     init() {
+        // Предотвращение повторной инициализации
+        if (this.initialized) {
+            console.log('⚠️ MultiRouteUI уже инициализирован');
+            return;
+        }
+
+        this.initialized = true;
         this.bindEvents();
         console.log('✅ MultiRouteUI инициализирован');
     },
