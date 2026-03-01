@@ -66,7 +66,8 @@ const DashboardTabsMeteo = {
         // Используем первый сегмент для общих данных
         const firstSegment = segmentAnalysis.length > 0 ? segmentAnalysis[0] : null;
         const analyzed = firstSegment?.analyzed || weatherData.analyzed || {};
-        
+        const summary = firstSegment?.analyzed?.summary || weatherData.summary || {};
+
         // Получаем hourly из разных источников
         let hourly = [];
         if (analyzed.hourly && Array.isArray(analyzed.hourly)) {
@@ -82,8 +83,9 @@ const DashboardTabsMeteo = {
             firstHour: hourly[0]
         });
 
-        const recommendations = analyzed.recommendations || [];
-        const flightWindows = analyzed.flightWindows || [];
+        // Получаем рекомендации и окна из summary
+        const recommendations = summary.recommendations || analyzed.recommendations || [];
+        const flightWindows = summary.flightWindows || analyzed.flightWindows || [];
 
         return `
             <!-- Рекомендации -->
@@ -168,7 +170,7 @@ const DashboardTabsMeteo = {
 
         return recommendations.map(rec => {
             const typeClass = rec.type || 'info';
-            const icon = this.getRecommendationIcon(rec.type);
+            const icon = rec.icon || this.getRecommendationIcon(rec.type);
             return `
                 <div class="dashboard-recommendation ${typeClass}">
                     <i class="fas ${icon} dashboard-rec-icon"></i>

@@ -734,9 +734,13 @@ const WeatherModule = {
         const maxWind = Math.round(Math.max(...hourly.map(h => h.wind10m)) * 10) / 10;
         const totalPrecip = Math.round(hourly.reduce((sum, h) => sum + h.precip, 0) * 10) / 10;
 
+        // Генерация рекомендаций
+        const recommendations = this.generateSummaryRecommendations(hourly, flightWindows, solar);
+
         return {
             validHoursCount: validHours.length,
             flightWindows: flightWindows,
+            recommendations: recommendations,
             avgTemp: avgTemp,
             avgWind: avgWind,
             maxWind: maxWind,
@@ -745,6 +749,83 @@ const WeatherModule = {
             solar: solar,
             isDaylightFlight: !!solar
         };
+    },
+
+    /**
+     * Генерация рекомендаций для сводки
+     */
+    generateSummaryRecommendations(hourly, flightWindows, solar) {
+        const recommendations = [];
+
+        // Рекомендации по окнам
+        if (flightWindows.length > 0) {
+            const bestWindow = flightWindows.reduce((best, w) => 
+                w.risk === 'low' && w.duration > best.duration ? w : best, flightWindows[0]);
+            
+            recommendations.push({
+                type: 'success',
+                icon: 'fa-clock',
+                text: `Лучшее время для полёта: ${bestWindow.start}–${bestWindow.end} (${bestWindow.duration} ч)`
+            });
+
+            if (solar) {
+                recommendations.push({
+                    type: 'info',
+                    icon: 'fa-sun',
+                    text: `Дневной полёт: ${solar.sunrise} – ${solar.sunset} (продолжительность ${solar.dayLengthText})`
+                });
+            }
+        } else {
+            recommendations.push({
+                type: 'warning',
+                icon: 'fa-exclamation-triangle',
+                text: 'Благоприятные окна не найдены. Рассмотрите другую дату.'
+            });
+        }
+
+        // Рекомендации по ветру
+        const avgWind = hourly.reduce((sum, h) => sum + h.wind10m, 0) / hourly.length;
+        if (avgWind > 10) {
+            recommendations.push({
+                type: 'warning',
+                icon: 'fa-wind',
+                text: `Сильный ветер: средний ${Math.round(avgWind)} м/с. Будьте осторожны.`
+            });
+        } else if (avgWind < 3) {
+            recommendations.push({
+                type: 'success',
+                icon: 'fa-wind',
+                text: `Спокойный ветер: средний ${Math.round(avgWind)} м/с. Отличные условия.`
+            });
+        }
+
+        // Рекомендации по температуре
+        const avgTemp = hourly.reduce((sum, h) => sum + h.temp2m, 0) / hourly.length;
+        if (avgTemp < -5) {
+            recommendations.push({
+                type: 'warning',
+                icon: 'fa-snowflake',
+                text: `Низкая температура: средняя ${Math.round(avgTemp)}°C. Риск обледенения.`
+            });
+        } else if (avgTemp > 30) {
+            recommendations.push({
+                type: 'warning',
+                icon: 'fa-sun',
+                text: `Высокая температура: средняя ${Math.round(avgTemp)}°C. Снижение тяги.`
+            });
+        }
+
+        // Рекомендации по осадкам
+        const totalPrecip = hourly.reduce((sum, h) => sum + h.precip, 0);
+        if (totalPrecip > 5) {
+            recommendations.push({
+                type: 'critical',
+                icon: 'fa-cloud-rain',
+                text: `Осадки: ${totalPrecip.toFixed(1)} мм. Полёт не рекомендуется.`
+            });
+        }
+
+        return recommendations;
     },
 
     /**
