@@ -241,16 +241,22 @@ const DashboardTabsMeteo = {
         const rows = hourly.slice(0, 12).map(h => {
             const riskClass = h.risk === 'low' ? 'low' : h.risk === 'medium' ? 'medium' : 'high';
             const riskLabel = h.risk === 'low' ? '🟢 Низкий' : h.risk === 'medium' ? '🟡 Средний' : '🔴 Высокий';
+            const temp = h.temp2m || h.temp || 0;
+            const wind = h.wind10m || h.wind || 0;
+            const windDir = h.windDir || h.wind_direction_10m || 0;
+            const precip = h.precip || h.precipitation || 0;
+            const humidity = h.humidity || h.relative_humidity_2m || 0;
+
             return `
                 <tr>
                     <td>${h.time || '--:--'}</td>
                     <td><span class="dashboard-status-badge ${riskClass}">${riskLabel}</span></td>
-                    <td>${h.temp > 0 ? '+' : ''}${h.temp || 0}°C</td>
-                    <td>${h.wind || 0} м/с</td>
-                    <td>${h.windDir || 0}°</td>
-                    <td>${h.precip || 0} мм/ч</td>
+                    <td>${temp > 0 ? '+' : ''}${temp}°C</td>
+                    <td>${wind} м/с</td>
+                    <td>${windDir}°</td>
+                    <td>${precip} мм/ч</td>
                     <td>${h.visibility || '>5'} км</td>
-                    <td>${h.humidity || 0}%</td>
+                    <td>${humidity}%</td>
                 </tr>
             `;
         }).join('');
@@ -376,7 +382,7 @@ const DashboardTabsMeteo = {
     initTimeSeriesChart(times, hourly) {
         const trace1 = {
             x: times,
-            y: hourly.map(h => h.temp),
+            y: hourly.map(h => h.temp2m || h.temp || 0),
             name: 'Температура, °C',
             line: { color: '#ef4444' },
             type: 'scatter'
@@ -384,7 +390,7 @@ const DashboardTabsMeteo = {
 
         const trace2 = {
             x: times,
-            y: hourly.map(h => h.wind),
+            y: hourly.map(h => h.wind10m || h.wind || 0),
             name: 'Ветер, м/с',
             line: { color: '#3b82f6' },
             type: 'scatter',
@@ -417,8 +423,8 @@ const DashboardTabsMeteo = {
         const counts = { 'С': 0, 'СВ': 0, 'В': 0, 'ЮВ': 0, 'Ю': 0, 'ЮЗ': 0, 'З': 0, 'СЗ': 0 };
 
         hourly.forEach(h => {
-            const dir = h.windDir || 0;
-            const speed = h.wind || 0;
+            const dir = h.windDir || h.wind_direction_10m || 0;
+            const speed = h.wind10m || h.wind || 0;
             let sector = 'С';
             if (dir >= 337.5 || dir < 22.5) sector = 'С';
             else if (dir >= 22.5 && dir < 67.5) sector = 'СВ';
@@ -498,7 +504,7 @@ const DashboardTabsMeteo = {
     initTurbulenceChart(times, hourly) {
         // Генерируем индекс турбулентности на основе ветра
         const turbulence = hourly.map(h => {
-            const wind = h.wind || 0;
+            const wind = h.wind10m || h.wind || 0;
             return Math.min(100, wind * 10);
         });
 
