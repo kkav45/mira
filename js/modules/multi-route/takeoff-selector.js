@@ -202,6 +202,9 @@ const TakeoffPointSelector = {
                     console.log('🆕 Новая точка взлёта');
                 }
 
+                // Отображаем маркер на карте
+                this.displayTakeoffMarker(point, route.name);
+
                 // Обновляем UI
                 this.updateRouteTakeoffUI(routeId);
             }
@@ -209,6 +212,84 @@ const TakeoffPointSelector = {
 
         // Завершаем выбор
         this.stopSelection();
+    },
+
+    /**
+     * Отображение маркера точки взлёта
+     */
+    displayTakeoffMarker(point, routeName) {
+        if (typeof MapModule === 'undefined' || !MapModule.map) return;
+
+        const marker = new ol.Overlay({
+            position: ol.proj.fromLonLat([point.lon, point.lat]),
+            positioning: 'center-center',
+            element: this.createTakeoffMarkerElement(routeName),
+            stopEvent: false
+        });
+
+        MapModule.map.addOverlay(marker);
+
+        // Сохраняем маркер для возможного удаления
+        if (!this.takeoffMarkers) this.takeoffMarkers = [];
+        this.takeoffMarkers.push(marker);
+
+        console.log('🗺️ Маркер точки взлёта добавлен:', routeName);
+    },
+
+    /**
+     * Создание элемента маркера точки взлёта
+     */
+    createTakeoffMarkerElement(routeName) {
+        const el = document.createElement('div');
+        el.style.cssText = `
+            position: relative;
+            width: 50px;
+            height: 50px;
+        `;
+        el.innerHTML = `
+            <div style="
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 0;
+                height: 0;
+                border-left: 10px solid transparent;
+                border-right: 10px solid transparent;
+                border-bottom: 15px solid #38a169;
+            "></div>
+            <div style="
+                position: absolute;
+                bottom: 12px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 30px;
+                height: 30px;
+                background: #38a169;
+                border: 3px solid white;
+                border-radius: 50%;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 16px;
+            ">🚁</div>
+            <div style="
+                position: absolute;
+                top: -25px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: white;
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 10px;
+                font-weight: 600;
+                white-space: nowrap;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+                color: #2d3748;
+            ">${routeName}</div>
+        `;
+        return el;
     },
 
     /**
