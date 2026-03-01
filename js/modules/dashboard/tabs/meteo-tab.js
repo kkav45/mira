@@ -57,10 +57,30 @@ const DashboardTabsMeteo = {
             ? WeatherModule.cachedData || WeatherModule.data
             : {};
 
+        console.log('📊 DashboardTabsMeteo.renderContent()', {
+            segmentAnalysisCount: segmentAnalysis.length,
+            weatherDataKeys: Object.keys(weatherData),
+            firstSegment: segmentAnalysis[0]
+        });
+
         // Используем первый сегмент для общих данных
         const firstSegment = segmentAnalysis.length > 0 ? segmentAnalysis[0] : null;
         const analyzed = firstSegment?.analyzed || weatherData.analyzed || {};
-        const hourly = firstSegment?.analyzed?.hourly || weatherData.hourly || [];
+        
+        // Получаем hourly из разных источников
+        let hourly = [];
+        if (analyzed.hourly && Array.isArray(analyzed.hourly)) {
+            hourly = analyzed.hourly;
+        } else if (weatherData.hourly && Array.isArray(weatherData.hourly)) {
+            hourly = weatherData.hourly;
+        } else if (analyzed.timeseries && Array.isArray(analyzed.timeseries)) {
+            hourly = analyzed.timeseries;
+        }
+
+        console.log('📊 hourly data:', {
+            count: hourly.length,
+            firstHour: hourly[0]
+        });
 
         const recommendations = analyzed.recommendations || [];
         const flightWindows = analyzed.flightWindows || [];
