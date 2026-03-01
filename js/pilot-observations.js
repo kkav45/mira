@@ -19,10 +19,15 @@ const PilotObservationsModule = {
         this.save();
 
         console.log('✅ Наблюдение добавлено:', observation);
-        
+
         // 🤖 АВТОМАТИЧЕСКИ: Сохранить для ML
         this.saveForML(observation);
-        
+
+        // 🔄 Обновляем состояние кнопки ДАШБОРД
+        if (typeof DashboardModule !== 'undefined') {
+            DashboardModule.updateButtonState();
+        }
+
         return observation;
     },
 
@@ -123,6 +128,22 @@ const PilotObservationsModule = {
      */
     getAll() {
         return WizardModule.stepData.pilotObservations || [];
+    },
+
+    /**
+     * Получить наблюдения типа "ground" (Сидя на земле)
+     */
+    getGroundObservations() {
+        const all = this.getAll();
+        return all.filter(obs => obs.type === 'ground');
+    },
+
+    /**
+     * Получить наблюдения типа "flight" (В полёте)
+     */
+    getFlightObservations() {
+        const all = this.getAll();
+        return all.filter(obs => obs.type === 'flight');
     },
 
     /**

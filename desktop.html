@@ -23,6 +23,7 @@
     <!-- Стили -->
     <link rel="stylesheet" href="https://kkav45.github.io/mira0143/css/common.css">
     <link rel="stylesheet" href="https://kkav45.github.io/mira0143/css/desktop.css">
+    <link rel="stylesheet" href="css/dashboard-modal.css">
 </head>
 <body>
     <div class="desktop-container">
@@ -52,6 +53,12 @@
             <!-- Кнопка геолокации -->
             <button class="geo-btn" onclick="getCurrentLocation()" title="Моё местоположение">
                 <i class="fas fa-location-crosshairs"></i>
+            </button>
+
+            <!-- Кнопка Дашборд -->
+            <button id="dashboardButton" class="dashboard-btn disabled" onclick="DashboardModule.open()" title="Открыть дашборд" disabled style="bottom: 80px;">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>ДАШБОРД</span>
             </button>
         </div>
 
@@ -526,7 +533,7 @@
     <script src="https://kkav45.github.io/mira0143/js/energy-model.js?v=20260227"></script>
     <script src="https://kkav45.github.io/mira0143/js/metno.js?v=20260226"></script>
     <script src="https://kkav45.github.io/mira0143/js/energy-charts.js?v=20260227"></script>
-    <script src="https://kkav45.github.io/mira0143/js/wizard.js?v=20260227"></script>
+    <script src="https://kkav45.github.io/mira0143/js/wizard.js?v=20260301"></script>
     <script src="https://kkav45.github.io/mira0143/js/pilot.js"></script>
     <script src="https://kkav45.github.io/mira0143/js/pilot-observations.js"></script>
     <script src="https://kkav45.github.io/mira0143/js/pdf-export.js"></script>
@@ -642,7 +649,46 @@
             if (e.key === 'Escape' && isFullscreen) {
                 toggleFullscreen();
             }
+            // Закрытие дашборда по Esc
+            if (e.key === 'Escape' && DashboardModule.isOpen) {
+                DashboardModule.close();
+            }
         });
     </script>
+
+    <!-- Модальное окно ДАШБОРДА -->
+    <div id="dashboardModal" class="dashboard-modal">
+        <div class="dashboard-modal-header">
+            <div class="dashboard-modal-title">
+                <h1><i class="fas fa-tachometer-alt"></i> MIRA Dashboard</h1>
+            </div>
+            <button class="dashboard-modal-close" onclick="DashboardModule.close()" title="Закрыть">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="dashboard-modal-tabs" id="dashboardTabs">
+            <!-- Генерируется через JS -->
+        </div>
+
+        <div class="dashboard-modal-body" id="dashboardBody">
+            <!-- Контент вкладок -->
+        </div>
+
+        <div class="dashboard-modal-footer">
+            <button class="dashboard-back-btn" onclick="DashboardModule.close()">
+                <i class="fas fa-arrow-left"></i> Назад к карте
+            </button>
+        </div>
+    </div>
+
+    <!-- Подключение модуля дашборда -->
+    <script src="js/modules/dashboard/dashboard.js"></script>
+    <script src="js/modules/dashboard/tabs/meteo-tab.js"></script>
+    <script src="js/modules/dashboard/tabs/ground-tab.js"></script>
+    <script src="js/modules/dashboard/tabs/flight-tab.js"></script>
+    <script src="js/modules/dashboard/tabs/segments-tab.js"></script>
+    <script src="js/modules/dashboard/tabs/energy-tab.js"></script>
+    <script src="js/modules/dashboard/tabs/report-tab.js"></script>
 </body>
 </html>

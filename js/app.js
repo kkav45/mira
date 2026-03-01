@@ -483,7 +483,7 @@ const App = {
      */
     async analyzeRoute() {
         const route = typeof RouteModule !== 'undefined' ? RouteModule.currentRoute : null;
-        
+
         if (!route) {
             showToast('Сначала создайте или загрузите маршрут', 'error');
             return;
@@ -505,6 +505,11 @@ const App = {
                 WizardModule.nextStep();
             }
 
+            // 🔄 Обновляем состояние кнопки ДАШБОРД
+            if (typeof DashboardModule !== 'undefined') {
+                DashboardModule.updateButtonState();
+            }
+
             showToast('Анализ завершён', 'success');
         } catch (error) {
             showToast('Ошибка анализа: ' + error.message, 'error');
@@ -517,7 +522,7 @@ const App = {
     async getWeather() {
         const latInput = document.getElementById('latInput');
         const lonInput = document.getElementById('lonInput');
-        
+
         const lat = parseFloat(latInput?.value);
         const lon = parseFloat(lonInput?.value);
 
@@ -539,6 +544,11 @@ const App = {
                     analyzed: analyzed,
                     coordinates: { lat, lon }
                 }];
+            }
+
+            // 🔄 Обновляем состояние кнопки ДАШБОРД
+            if (typeof DashboardModule !== 'undefined') {
+                DashboardModule.updateButtonState();
             }
 
             showToast('Данные получены', 'success');
