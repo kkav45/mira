@@ -285,27 +285,84 @@ const MultiRouteWizardIntegration = {
      */
     async analyzeAllRoutes() {
         const date = document.getElementById('analysisDate')?.value;
-        if (!date) return;
+        if (!date) {
+            showToast('Выберите дату анализа', 'error');
+            return;
+        }
 
         // Проверка: есть ли маршруты
         const routes = MultiRouteModule?.routes || [];
         if (routes.length === 0) {
-            alert('Добавьте хотя бы один маршрут');
+            showToast('Добавьте хотя бы один маршрут', 'error');
             return;
         }
 
-        // Проверка: есть ли точки взлёта
-        const takeoffPoints = MultiRouteModule?.takeoffPoints || [];
-        if (takeoffPoints.length === 0) {
-            alert('Добавьте хотя бы одну точку взлёта');
+        // Проверка: есть ли точки взлёта для маршрутов
+        const routesWithoutTakeoff = routes.filter(r => !r.takeoffPoint);
+        if (routesWithoutTakeoff.length > 0) {
+            showToast(`Выберите точки взлёта для ${routesWithoutTakeoff.length} маршр.`, 'warning');
             return;
         }
 
-        // Запуск оптимизации
-        const weatherData = WeatherModule.cachedData;
-        const assignment = MultiRouteModule.optimizeAssignment(weatherData);
+        const loading = document.getElementById('analyzeLoading');
+        const analyzeBtn = document.getElementById('analyzeBtn');
 
-        console.log('✅ Мульти-маршрут оптимизация:', assignment);
+        if (loading) loading.style.display = 'block';
+        if (analyzeBtn) analyzeBtn.disabled = true;
+
+        try {
+            // 1. Основной анализ для ПЕРВОГО маршрута (для совместимости)
+            const firstRoute = routes[0];
+            WizardModule.stepData.route = firstRoute;
+
+            RouteModule.createSegments();
+            await RouteModule.analyzeSegments(date);
+
+            WizardModule.stepData.segments = RouteModule.segments;
+            WizardModule.stepData.segmentAnalysis = RouteModule.segmentAnalysis;
+
+            // 2. Анализ ВСЕХ остальных маршрутов
+            console.log('🌤️ Анализ всех маршрутов:', routes.length);
+
+            for (let i = 1; i < routes.length; i++) {
+                const route = routes[i];
+                console.log(`🌤️ Анализ маршрута ${i + 1}:`, route.name);
+
+                // Устанавливаем маршрут как текущий
+                RouteModule.currentRoute = route;
+
+                // Создаём сегменты для этого маршрута
+                RouteModule.createSegments();
+
+                // Анализируем сегменты
+                await RouteModule.analyzeSegments(date);
+
+                // Сохраняем анализ для этого маршрута
+                route.segmentAnalysis = RouteModule.segmentAnalysis;
+
+                console.log(`✅ Маршрут ${i + 1} проанализирован:`, RouteModule.segmentAnalysis.length, 'сегментов');
+            }
+
+            // 3. Мульти-маршрут анализ (все маршруты + все точки)
+            if (typeof MultiRouteModule !== 'undefined') {
+                const weatherData = WeatherModule.cachedData;
+                const assignment = MultiRouteModule.optimizeAssignment(weatherData);
+
+                console.log('✅ Мульти-маршрут оптимизация:', assignment);
+            }
+
+            showToast('Анализ завершён', 'success');
+
+            setTimeout(() => {
+                WizardModule.nextStep();
+            }, 500);
+        } catch (error) {
+            console.error('Ошибка анализа:', error);
+            showToast('Ошибка анализа: ' + error.message, 'error');
+        } finally {
+            if (loading) loading.style.display = 'none';
+            if (analyzeBtn) analyzeBtn.disabled = false;
+        }
     }
 };
 

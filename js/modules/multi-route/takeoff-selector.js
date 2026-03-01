@@ -218,7 +218,18 @@ const TakeoffPointSelector = {
      * Отображение маркера точки взлёта
      */
     displayTakeoffMarker(point, routeName) {
-        if (typeof MapModule === 'undefined' || !MapModule.map) return;
+        console.log('🗺️ Попытка отображения маркера:', routeName, point);
+
+        if (typeof MapModule === 'undefined') {
+            console.warn('⚠️ MapModule не определён');
+            return;
+        }
+
+        if (!MapModule.map) {
+            console.warn('⚠️ MapModule.map не определён, повторная попытка...');
+            setTimeout(() => this.displayTakeoffMarker(point, routeName), 100);
+            return;
+        }
 
         const marker = new ol.Overlay({
             position: ol.proj.fromLonLat([point.lon, point.lat]),
@@ -233,7 +244,7 @@ const TakeoffPointSelector = {
         if (!this.takeoffMarkers) this.takeoffMarkers = [];
         this.takeoffMarkers.push(marker);
 
-        console.log('🗺️ Маркер точки взлёта добавлен:', routeName);
+        console.log('✅ Маркер точки взлёта добавлен:', routeName);
     },
 
     /**
