@@ -67,6 +67,7 @@ const DashboardTabsMeteo = {
         const firstSegment = segmentAnalysis.length > 0 ? segmentAnalysis[0] : null;
         const analyzed = firstSegment?.analyzed || weatherData.analyzed || {};
         const summary = firstSegment?.analyzed?.summary || weatherData.summary || {};
+        const solar = summary.solar || analyzed.solar || null;
 
         // Получаем hourly из разных источников
         let hourly = [];
@@ -88,6 +89,9 @@ const DashboardTabsMeteo = {
         const flightWindows = summary.flightWindows || analyzed.flightWindows || [];
 
         return `
+            <!-- Солнечные условия -->
+            ${solar ? this.renderSolarInfo(solar) : ''}
+
             <!-- Рекомендации -->
             <div class="dashboard-card">
                 <div class="dashboard-card-title">
@@ -178,6 +182,66 @@ const DashboardTabsMeteo = {
                 </div>
             `;
         }).join('');
+    },
+
+    /**
+     * Рендер солнечной информации
+     */
+    renderSolarInfo(solar) {
+        const sunriseTime = solar.sunrise || '—';
+        const sunsetTime = solar.sunset || '—';
+        const dayLength = solar.dayLengthText || '—';
+        
+        // Расчёт рабочего времени (рассвет + 30 мин, закат - 30 мин)
+        let workStart = '—';
+        let workEnd = '—';
+        
+        if (solar.sunrise && solar.sunrise !== '—') {
+            const [hours, minutes] = sunriseTime.split(':').map(Number);
+            const startDate = new Date();
+            startDate.setHours(hours, minutes + 30, 0);
+            workStart = startDate.toLocaleTimeString('ru-RU', {hour: '2-digit', minute: '2-digit'});
+        }
+        
+        if (solar.sunset && solar.sunset !== '—') {
+            const [hours, minutes] = sunsetTime.split(':').map(Number);
+            const endDate = new Date();
+            endDate.setHours(hours, minutes - 30, 0);
+            workEnd = endDate.toLocaleTimeString('ru-RU', {hour: '2-digit', minute: '2-digit'});
+        }
+
+        return `
+            <div class="dashboard-card">
+                <div class="dashboard-card-title">
+                    <i class="fas fa-sun" style="color: #f59e0b;"></i>
+                    Солнечные условия
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;">
+                    <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(245, 158, 11, 0.05) 100%); padding: 15px; border-radius: 10px; text-align: center; border: 1px solid rgba(245, 158, 11, 0.2);">
+                        <div style="font-size: 10px; color: #718096; text-transform: uppercase; margin-bottom: 6px;">🌅 Рассвет</div>
+                        <div style="font-size: 20px; font-weight: 700; color: #2d3748;">${sunriseTime}</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, rgba(56, 161, 105, 0.1) 0%, rgba(56, 161, 105, 0.05) 100%); padding: 15px; border-radius: 10px; text-align: center; border: 1px solid rgba(56, 161, 105, 0.2);">
+                        <div style="font-size: 10px; color: #718096; text-transform: uppercase; margin-bottom: 6px;">⏰ Рабочее время</div>
+                        <div style="font-size: 20px; font-weight: 700; color: #2d3748;">${workStart} – ${workEnd}</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, rgba(237, 137, 54, 0.1) 0%, rgba(237, 137, 54, 0.05) 100%); padding: 15px; border-radius: 10px; text-align: center; border: 1px solid rgba(237, 137, 54, 0.2);">
+                        <div style="font-size: 10px; color: #718096; text-transform: uppercase; margin-bottom: 6px;">🌇 Закат</div>
+                        <div style="font-size: 20px; font-weight: 700; color: #2d3748;">${sunsetTime}</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%); padding: 15px; border-radius: 10px; text-align: center; border: 1px solid rgba(59, 130, 246, 0.2);">
+                        <div style="font-size: 10px; color: #718096; text-transform: uppercase; margin-bottom: 6px;">⏱️ Продолжительность</div>
+                        <div style="font-size: 20px; font-weight: 700; color: #2d3748;">${dayLength}</div>
+                    </div>
+                </div>
+                <div style="margin-top: 12px; padding: 10px; background: rgba(56, 161, 105, 0.05); border-radius: 8px; border: 1px solid rgba(56, 161, 105, 0.2);">
+                    <div style="font-size: 11px; color: #276749; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-info-circle" style="color: #38a169;"></i>
+                        <span>Рабочее время для дневного полёта: <strong>рассвет + 30 мин</strong> до <strong>закат - 30 мин</strong></span>
+                    </div>
+                </div>
+            </div>
+        `;
     },
 
     /**
