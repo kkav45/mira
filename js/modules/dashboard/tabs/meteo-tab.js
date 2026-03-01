@@ -322,6 +322,16 @@ const DashboardTabsMeteo = {
         const hourly = this.extractHourlyData(data);
         const times = hourly.map(h => h.time);
 
+        console.log('📉 initCharts():', {
+            hourlyCount: hourly.length,
+            timesCount: times.length,
+            firstHour: hourly[0],
+            hasTime: !!hourly[0]?.time,
+            hasTemp: !!hourly[0]?.temp,
+            hasWind: !!hourly[0]?.wind,
+            hasWindDir: !!hourly[0]?.windDir
+        });
+
         // Временной ряд
         this.initTimeSeriesChart(times, hourly);
 
