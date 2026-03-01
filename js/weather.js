@@ -64,7 +64,12 @@ const WeatherModule = {
             ].join(','),
             current_weather: true,
             timezone: 'auto',
-            forecast_days: 7
+            forecast_days: 7,
+            // Единицы измерения (явно указываем)
+            temperature_unit: 'celsius',      // °C (по умолчанию)
+            windspeed_unit: 'ms',             // м/с (по умолчанию km/h)
+            precipitation_unit: 'mm',         // мм (по умолчанию)
+            visibility_unit: 'km'             // км (по умолчанию m)
         };
     },
 
@@ -361,19 +366,19 @@ const WeatherModule = {
         for (let i = 0; i < hourly.time.length; i++) {
             const hour = {
                 time: hourly.time[i],
-                temp2m: hourly.temperature_2m?.[i] || 0,
-                humidity: hourly.relative_humidity_2m?.[i] || 0,
-                dewPoint: hourly.dew_point_2m?.[i] || 0,
-                wind10m: hourly.wind_speed_10m?.[i] || 0,
-                windDir: hourly.wind_direction_10m?.[i] || 0,
-                windGust: hourly.wind_gusts_10m?.[i] || 0,
-                precip: hourly.precipitation?.[i] || 0,
-                rain: hourly.rain?.[i] || 0,
-                snow: hourly.snowfall?.[i] || 0,
-                cloudCover: hourly.cloud_cover?.[i] || 0,
-                cloudCoverLow: hourly.cloud_cover_low?.[i] || 0,
-                pressure: hourly.pressure_msl?.[i] || 0,
-                visibility: (hourly.visibility?.[i] || 20000) / 1000, // км
+                temp2m: hourly.temperature_2m?.[i] || 0,           // °C
+                humidity: hourly.relative_humidity_2m?.[i] || 0,   // %
+                dewPoint: hourly.dew_point_2m?.[i] || 0,           // °C
+                wind10m: hourly.wind_speed_10m?.[i] || 0,          // м/с
+                windDir: hourly.wind_direction_10m?.[i] || 0,      // °
+                windGust: hourly.wind_gusts_10m?.[i] || 0,         // м/с
+                precip: hourly.precipitation?.[i] || 0,            // мм
+                rain: hourly.rain?.[i] || 0,                       // мм
+                snow: hourly.snowfall?.[i] || 0,                   // мм
+                cloudCover: hourly.cloud_cover?.[i] || 0,          // %
+                cloudCoverLow: hourly.cloud_cover_low?.[i] || 0,   // %
+                pressure: hourly.pressure_msl?.[i] || 0,           // гПа
+                visibility: hourly.visibility?.[i] || 10,          // км (API возвращает км)
                 weatherCode: hourly.weather_code?.[i] || 0
             };
 
@@ -395,10 +400,10 @@ const WeatherModule = {
 
         // ✅ Расчёт трендов для первого часа
         const trends = this.calculateTrends(analyzed, 0);
-        
+
         // ✅ Вертикальный профиль
         const verticalProfile = this.getVerticalProfile({hourly: analyzed});
-        
+
         // ✅ Солнечные условия
         const solar = this.getSolarConditions(forecast);
 
