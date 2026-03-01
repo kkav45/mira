@@ -17,6 +17,7 @@ const DashboardModule = {
         { id: 'flight',   label: 'В полёте',      icon: 'fa-plane',        enabled: false },
         { id: 'segments', label: 'Сегменты',      icon: 'fa-map',          enabled: false },
         { id: 'energy',   label: 'Энергия',       icon: 'fa-battery-three-quarters', enabled: false },
+        { id: 'multiroute', label: 'Мульти-маршрут', icon: 'fa-globe',     enabled: true },
         { id: 'report',   label: 'Отчёт',         icon: 'fa-file-pdf',     enabled: true }
     ],
 
@@ -132,6 +133,10 @@ const DashboardModule = {
             case 'energy':
                 body.innerHTML = DashboardTabsEnergy.render();
                 DashboardTabsEnergy.afterRender();
+                break;
+            case 'multiroute':
+                body.innerHTML = DashboardTabsMultiRoute.render();
+                DashboardTabsMultiRoute.afterRender();
                 break;
             case 'report':
                 body.innerHTML = DashboardTabsReport.render();
