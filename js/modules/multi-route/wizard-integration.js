@@ -243,11 +243,18 @@ const MultiRouteWizardIntegration = {
 };
 
 // Инициализация при загрузке
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => MultiRouteWizardIntegration.init());
-} else {
+// ВАЖНО: Должно быть после загрузки wizard.js
+setTimeout(() => {
+    console.log('🔍 Попытка инициализации MultiRouteWizardIntegration...');
+    
+    if (typeof WizardModule === 'undefined') {
+        console.warn('⚠️ WizardModule не найден, повторная попытка через 200мс...');
+        setTimeout(arguments.callee, 200);
+        return;
+    }
+    
     MultiRouteWizardIntegration.init();
-}
+}, 100);
 
 // Экспорт
 if (typeof module !== 'undefined' && module.exports) {
