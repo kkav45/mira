@@ -268,7 +268,7 @@ const DashboardTabsEnergy = {
         const rows = segments.map(s => `
             <tr>
                 <td><strong>С${s.segment}</strong></td>
-                <td>${s.distance} км</td>
+                <td>${Math.round(s.distance)} км</td>
                 <td>${s.wind} м/с</td>
                 <td>${s.headwind > 0 ? '+' : ''}${Math.round(s.headwind * 10) / 10} м/с</td>
                 <td>${Math.round(s.groundSpeed)} км/ч</td>
