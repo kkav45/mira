@@ -1,0 +1,6244 @@
+{
+  "airports": [
+    {
+      "name": "Шереметьево",
+      "city": "Москва",
+      "icao": "UUEE",
+      "iata": "SVO",
+      "latitude": 55.9726,
+      "longitude": 37.4146
+    },
+    {
+      "name": "Домодедово",
+      "city": "Москва",
+      "icao": "UUDD",
+      "iata": "DME",
+      "latitude": 55.4088,
+      "longitude": 37.9063
+    },
+    {
+      "name": "Внуково",
+      "city": "Москва",
+      "icao": "UUWW",
+      "iata": "VKO",
+      "latitude": 55.5915,
+      "longitude": 37.2615
+    },
+    {
+      "name": "Жуковский",
+      "city": "Москва",
+      "icao": "UUBW",
+      "iata": "ZIA",
+      "latitude": 55.5533,
+      "longitude": 38.1550
+    },
+    {
+      "name": "Быково",
+      "city": "Москва",
+      "icao": "UUBB",
+      "iata": "BKA",
+      "latitude": 55.5833,
+      "longitude": 38.0500
+    },
+    {
+      "name": "Пулково",
+      "city": "Санкт-Петербург",
+      "icao": "ULLI",
+      "iata": "LED",
+      "latitude": 59.8003,
+      "longitude": 30.2625
+    },
+    {
+      "name": "Кольцово",
+      "city": "Екатеринбург",
+      "icao": "USSS",
+      "iata": "SVX",
+      "latitude": 56.7431,
+      "longitude": 60.8027
+    },
+    {
+      "name": "Толмачёво",
+      "city": "Новосибирск",
+      "icao": "UNNT",
+      "iata": "OVB",
+      "latitude": 55.0126,
+      "longitude": 82.6507
+    },
+    {
+      "name": "Пашковский",
+      "city": "Краснодар",
+      "icao": "URKK",
+      "iata": "KRR",
+      "latitude": 45.0347,
+      "longitude": 39.1705
+    },
+    {
+      "name": "Рощино",
+      "city": "Тюмень",
+      "icao": "USTR",
+      "iata": "TJM",
+      "latitude": 57.1894,
+      "longitude": 65.3241
+    },
+    {
+      "name": "Емельяново",
+      "city": "Красноярск",
+      "icao": "UNKL",
+      "iata": "KJA",
+      "latitude": 56.1729,
+      "longitude": 92.4933
+    },
+    {
+      "name": "Владивосток",
+      "city": "Владивосток",
+      "icao": "UHWW",
+      "iata": "VVO",
+      "latitude": 43.3990,
+      "longitude": 132.1481
+    },
+    {
+      "name": "Хабаровск-Новый",
+      "city": "Хабаровск",
+      "icao": "UHHH",
+      "iata": "KHV",
+      "latitude": 48.5280,
+      "longitude": 135.1884
+    },
+    {
+      "name": "Иркутск",
+      "city": "Иркутск",
+      "icao": "UIII",
+      "iata": "IKT",
+      "latitude": 52.2680,
+      "longitude": 104.3889
+    },
+    {
+      "name": "Уфа",
+      "city": "Уфа",
+      "icao": "UWUU",
+      "iata": "UFA",
+      "latitude": 54.5575,
+      "longitude": 55.8744
+    },
+    {
+      "name": "Курумоч",
+      "city": "Самара",
+      "icao": "UWWW",
+      "iata": "KUF",
+      "latitude": 53.5049,
+      "longitude": 50.8211
+    },
+    {
+      "name": "Казань",
+      "city": "Казань",
+      "icao": "UWKD",
+      "iata": "KZN",
+      "latitude": 55.6062,
+      "longitude": 49.2787
+    },
+    {
+      "name": "Большое Савино",
+      "city": "Пермь",
+      "icao": "USPP",
+      "iata": "PEE",
+      "latitude": 57.9145,
+      "longitude": 56.0212
+    },
+    {
+      "name": "Якутск",
+      "city": "Якутск",
+      "icao": "UEEE",
+      "iata": "YKS",
+      "latitude": 62.0933,
+      "longitude": 129.7707
+    },
+    {
+      "name": "Мирный",
+      "city": "Мирный",
+      "icao": "UERR",
+      "iata": "MJZ",
+      "latitude": 62.5347,
+      "longitude": 114.0389
+    },
+    {
+      "name": "Норильск-Алыкель",
+      "city": "Норильск",
+      "icao": "UOOO",
+      "iata": "NSK",
+      "latitude": 69.3097,
+      "longitude": 87.3322
+    },
+    {
+      "name": "Мурманск",
+      "city": "Мурманск",
+      "icao": "ULMM",
+      "iata": "MMK",
+      "latitude": 68.7817,
+      "longitude": 32.7508
+    },
+    {
+      "name": "Архангельск",
+      "city": "Архангельск",
+      "icao": "ULAA",
+      "iata": "ARH",
+      "latitude": 64.6003,
+      "longitude": 40.7167
+    },
+    {
+      "name": "Сыктывкар",
+      "city": "Сыктывкар",
+      "icao": "UUYY",
+      "iata": "SCW",
+      "latitude": 61.6470,
+      "longitude": 50.8451
+    },
+    {
+      "name": "Ханты-Мансийск",
+      "city": "Ханты-Мансийск",
+      "icao": "USHH",
+      "iata": "HMA",
+      "latitude": 61.0278,
+      "longitude": 69.0861
+    },
+    {
+      "name": "Сургут",
+      "city": "Сургут",
+      "icao": "USRR",
+      "iata": "SGC",
+      "latitude": 61.3437,
+      "longitude": 73.4018
+    },
+    {
+      "name": "Нижневартовск",
+      "city": "Нижневартовск",
+      "icao": "USNN",
+      "iata": "NJC",
+      "latitude": 60.9493,
+      "longitude": 76.4836
+    },
+    {
+      "name": "Новый Уренгой",
+      "city": "Новый Уренгой",
+      "icao": "USMU",
+      "iata": "NUX",
+      "latitude": 66.0692,
+      "longitude": 76.5200
+    },
+    {
+      "name": "Ямбург",
+      "city": "Ямбург",
+      "icao": "USDA",
+      "iata": "NXG",
+      "latitude": 68.2472,
+      "longitude": 75.6667
+    },
+    {
+      "name": "Салехард",
+      "city": "Салехард",
+      "icao": "USDD",
+      "iata": "SLY",
+      "latitude": 66.5908,
+      "longitude": 66.6111
+    },
+    {
+      "name": "Воркута",
+      "city": "Воркута",
+      "icao": "UUYW",
+      "iata": "VKT",
+      "latitude": 67.4889,
+      "longitude": 63.9931
+    },
+    {
+      "name": "Усинск",
+      "city": "Усинск",
+      "icao": "UUYS",
+      "iata": "USK",
+      "latitude": 65.9578,
+      "longitude": 57.4672
+    },
+    {
+      "name": "Нарьян-Мар",
+      "city": "Нарьян-Мар",
+      "icao": "ULAM",
+      "iata": "NNM",
+      "latitude": 67.6403,
+      "longitude": 53.1219
+    },
+    {
+      "name": "Анадырь",
+      "city": "Анадырь",
+      "icao": "UHMA",
+      "iata": "DYR",
+      "latitude": 64.7350,
+      "longitude": 177.7414
+    },
+    {
+      "name": "Петропавловск-Камчатский",
+      "city": "Петропавловск-Камчатский",
+      "icao": "UHPP",
+      "iata": "PKC",
+      "latitude": 53.1679,
+      "longitude": 158.4536
+    },
+    {
+      "name": "Южно-Сахалинск",
+      "city": "Южно-Сахалинск",
+      "icao": "UHSS",
+      "iata": "UUS",
+      "latitude": 46.8886,
+      "longitude": 142.7178
+    },
+    {
+      "name": "Магадан",
+      "city": "Магадан",
+      "icao": "UHMM",
+      "iata": "GDX",
+      "latitude": 59.9110,
+      "longitude": 150.7204
+    },
+    {
+      "name": "Чита",
+      "city": "Чита",
+      "icao": "UIAA",
+      "iata": "HTA",
+      "latitude": 52.0256,
+      "longitude": 113.3050
+    },
+    {
+      "name": "Улан-Удэ",
+      "city": "Улан-Удэ",
+      "icao": "UIUU",
+      "iata": "UUD",
+      "latitude": 51.8078,
+      "longitude": 107.4378
+    },
+    {
+      "name": "Абакан",
+      "city": "Абакан",
+      "icao": "UNAA",
+      "iata": "ABA",
+      "latitude": 53.7267,
+      "longitude": 91.3853
+    },
+    {
+      "name": "Кемерово",
+      "city": "Кемерово",
+      "icao": "UNEE",
+      "iata": "KEJ",
+      "latitude": 55.2703,
+      "longitude": 86.1061
+    },
+    {
+      "name": "Томск",
+      "city": "Томск",
+      "icao": "UNTT",
+      "iata": "TOF",
+      "latitude": 56.3808,
+      "longitude": 85.2078
+    },
+    {
+      "name": "Омск",
+      "city": "Омск",
+      "icao": "UNOO",
+      "iata": "OMS",
+      "latitude": 54.9669,
+      "longitude": 73.3106
+    },
+    {
+      "name": "Барнаул",
+      "city": "Барнаул",
+      "icao": "UNBB",
+      "iata": "BAX",
+      "latitude": 53.3642,
+      "longitude": 83.5387
+    },
+    {
+      "name": "Горно-Алтайск",
+      "city": "Горно-Алтайск",
+      "icao": "UNBG",
+      "iata": "RGK",
+      "latitude": 51.9969,
+      "longitude": 85.8433
+    },
+    {
+      "name": "Кызыл",
+      "city": "Кызыл",
+      "icao": "UNKY",
+      "iata": "KYZ",
+      "latitude": 51.6669,
+      "longitude": 94.3997
+    },
+    {
+      "name": "Челябинск",
+      "city": "Челябинск",
+      "icao": "USCC",
+      "iata": "CEK",
+      "latitude": 55.1764,
+      "longitude": 61.5033
+    },
+    {
+      "name": "Магнитогорск",
+      "city": "Магнитогорск",
+      "icao": "USCM",
+      "iata": "MQF",
+      "latitude": 53.3933,
+      "longitude": 58.7556
+    },
+    {
+      "name": "Курган",
+      "city": "Курган",
+      "icao": "USUU",
+      "iata": "KRO",
+      "latitude": 55.4753,
+      "longitude": 65.4156
+    },
+    {
+      "name": "Саратов-Гагарин",
+      "city": "Саратов",
+      "icao": "UWSG",
+      "iata": "GSV",
+      "latitude": 51.5622,
+      "longitude": 46.1672
+    },
+    {
+      "name": "Волгоград",
+      "city": "Волгоград",
+      "icao": "URWW",
+      "iata": "VOG",
+      "latitude": 48.7825,
+      "longitude": 44.3456
+    },
+    {
+      "name": "Ростов-на-Дону-Платов",
+      "city": "Ростов-на-Дону",
+      "icao": "URRP",
+      "iata": "ROV",
+      "latitude": 47.4939,
+      "longitude": 39.9247
+    },
+    {
+      "name": "Минеральные Воды",
+      "city": "Минеральные Воды",
+      "icao": "URMM",
+      "iata": "MRV",
+      "latitude": 44.2253,
+      "longitude": 43.0819
+    },
+    {
+      "name": "Ставрополь",
+      "city": "Ставрополь",
+      "icao": "URMT",
+      "iata": "STW",
+      "latitude": 45.1097,
+      "longitude": 42.0128
+    },
+    {
+      "name": "Нальчик",
+      "city": "Нальчик",
+      "icao": "URMN",
+      "iata": "NAL",
+      "latitude": 43.5133,
+      "longitude": 43.6367
+    },
+    {
+      "name": "Владикавказ",
+      "city": "Владикавказ",
+      "icao": "URMO",
+      "iata": "OGZ",
+      "latitude": 43.2053,
+      "longitude": 44.6058
+    },
+    {
+      "name": "Грозный",
+      "city": "Грозный",
+      "icao": "URMG",
+      "iata": "GRV",
+      "latitude": 43.3953,
+      "longitude": 45.7153
+    },
+    {
+      "name": "Махачкала",
+      "city": "Махачкала",
+      "icao": "URML",
+      "iata": "MCX",
+      "latitude": 42.8264,
+      "longitude": 47.6528
+    },
+    {
+      "name": "Астрахань",
+      "city": "Астрахань",
+      "icao": "URWA",
+      "iata": "ASF",
+      "latitude": 46.2833,
+      "longitude": 48.0061
+    },
+    {
+      "name": "Элиста",
+      "city": "Элиста",
+      "icao": "URWI",
+      "iata": "ESL",
+      "latitude": 46.3736,
+      "longitude": 44.3389
+    },
+    {
+      "name": "Симферополь",
+      "city": "Симферополь",
+      "icao": "UKFF",
+      "iata": "SIP",
+      "latitude": 45.0169,
+      "longitude": 33.9756
+    },
+    {
+      "name": "Сочи",
+      "city": "Сочи",
+      "icao": "URSS",
+      "iata": "AER",
+      "latitude": 43.4492,
+      "longitude": 39.9566
+    },
+    {
+      "name": "Геленджик",
+      "city": "Геленджик",
+      "icao": "URKG",
+      "iata": "GDZ",
+      "latitude": 44.5819,
+      "longitude": 38.0128
+    },
+    {
+      "name": "Анапа",
+      "city": "Анапа",
+      "icao": "URKA",
+      "iata": "AAQ",
+      "latitude": 45.0022,
+      "longitude": 37.3472
+    },
+    {
+      "name": "Белгород",
+      "city": "Белгород",
+      "icao": "UUOB",
+      "iata": "EGO",
+      "latitude": 50.6436,
+      "longitude": 36.5900
+    },
+    {
+      "name": "Воронеж",
+      "city": "Воронеж",
+      "icao": "UUOO",
+      "iata": "VOZ",
+      "latitude": 51.8142,
+      "longitude": 39.2297
+    },
+    {
+      "name": "Курск",
+      "city": "Курск",
+      "icao": "UUOK",
+      "iata": "URS",
+      "latitude": 51.7503,
+      "longitude": 36.2900
+    },
+    {
+      "name": "Липецк",
+      "city": "Липецк",
+      "icao": "UUOL",
+      "iata": "LPK",
+      "latitude": 52.7028,
+      "longitude": 39.5300
+    },
+    {
+      "name": "Тамбов",
+      "city": "Тамбов",
+      "icao": "UUOT",
+      "iata": "TBW",
+      "latitude": 52.5958,
+      "longitude": 41.4961
+    },
+    {
+      "name": "Пенза",
+      "city": "Пенза",
+      "icao": "UWPP",
+      "iata": "PEZ",
+      "latitude": 53.1106,
+      "longitude": 45.0211
+    },
+    {
+      "name": "Ульяновск-Восточный",
+      "city": "Ульяновск",
+      "icao": "UWLW",
+      "iata": "ULY",
+      "latitude": 54.3683,
+      "longitude": 48.8056
+    },
+    {
+      "name": "Чебоксары",
+      "city": "Чебоксары",
+      "icao": "UWKS",
+      "iata": "CSY",
+      "latitude": 56.0903,
+      "longitude": 47.3472
+    },
+    {
+      "name": "Йошкар-Ола",
+      "city": "Йошкар-Ола",
+      "icao": "UWKJ",
+      "iata": "JOK",
+      "latitude": 56.7006,
+      "longitude": 47.9047
+    },
+    {
+      "name": "Ижевск",
+      "city": "Ижевск",
+      "icao": "USII",
+      "iata": "IJK",
+      "latitude": 56.8281,
+      "longitude": 53.4578
+    },
+    {
+      "name": "Киров",
+      "city": "Киров",
+      "icao": "USKK",
+      "iata": "KVX",
+      "latitude": 58.7203,
+      "longitude": 49.3478
+    },
+    {
+      "name": "Нижний Новгород",
+      "city": "Нижний Новгород",
+      "icao": "UWGG",
+      "iata": "GOJ",
+      "latitude": 56.2301,
+      "longitude": 43.7840
+    },
+    {
+      "name": "Ярославль-Туношна",
+      "city": "Ярославль",
+      "icao": "UUDL",
+      "iata": "IAR",
+      "latitude": 57.6608,
+      "longitude": 40.1572
+    },
+    {
+      "name": "Иваново",
+      "city": "Иваново",
+      "icao": "UUBI",
+      "iata": "IWA",
+      "latitude": 57.0394,
+      "longitude": 40.9128
+    },
+    {
+      "name": "Кострома-Сокеркино",
+      "city": "Кострома",
+      "icao": "UUBA",
+      "iata": "KMW",
+      "latitude": 57.7969,
+      "longitude": 41.0294
+    },
+    {
+      "name": "Вологда",
+      "city": "Вологда",
+      "icao": "ULWW",
+      "iata": "VGD",
+      "latitude": 59.2836,
+      "longitude": 39.9472
+    },
+    {
+      "name": "Череповец",
+      "city": "Череповец",
+      "icao": "ULWC",
+      "iata": "CEE",
+      "latitude": 59.2736,
+      "longitude": 38.0156
+    },
+    {
+      "name": "Петрозаводск",
+      "city": "Петрозаводск",
+      "icao": "ULPB",
+      "iata": "PES",
+      "latitude": 61.7849,
+      "longitude": 34.5547
+    },
+    {
+      "name": "Апатиты",
+      "city": "Апатиты",
+      "icao": "ULPK",
+      "iata": "KVK",
+      "latitude": 67.4033,
+      "longitude": 33.4036
+    },
+    {
+      "name": "Калининград-Храброво",
+      "city": "Калининград",
+      "icao": "UMKK",
+      "iata": "KGD",
+      "latitude": 54.8900,
+      "longitude": 20.5925
+    },
+    {
+      "name": "Псков",
+      "city": "Псков",
+      "icao": "ULOO",
+      "iata": "PKV",
+      "latitude": 57.7839,
+      "longitude": 28.3956
+    },
+    {
+      "name": "Тверь-Мигалово",
+      "city": "Тверь",
+      "icao": "UUEM",
+      "iata": "KLD",
+      "latitude": 56.8247,
+      "longitude": 35.8508
+    },
+    {
+      "name": "Рязань",
+      "city": "Рязань",
+      "icao": "UUBR",
+      "iata": "RZN",
+      "latitude": 54.6111,
+      "longitude": 39.7500
+    },
+    {
+      "name": "Тула-Клоково",
+      "city": "Тула",
+      "icao": "UUBT",
+      "iata": "TYA",
+      "latitude": 54.2667,
+      "longitude": 37.5833
+    },
+    {
+      "name": "Калуга-Грабцево",
+      "city": "Калуга",
+      "icao": "UUBC",
+      "iata": "KLF",
+      "latitude": 54.4764,
+      "longitude": 36.3836
+    },
+    {
+      "name": "Орёл",
+      "city": "Орёл",
+      "icao": "UUOR",
+      "iata": "OEL",
+      "latitude": 52.9842,
+      "longitude": 36.0958
+    },
+    {
+      "name": "Брянск",
+      "city": "Брянск",
+      "icao": "UUBP",
+      "iata": "BZK",
+      "latitude": 53.2142,
+      "longitude": 34.1764
+    },
+    {
+      "name": "Талаги",
+      "city": "Архангельск",
+      "icao": "ULAA",
+      "iata": "ARH",
+      "latitude": 64.6003,
+      "longitude": 40.7167
+    },
+    {
+      "name": "Васильевский Мох",
+      "city": "Тверь",
+      "icao": "UUEM",
+      "iata": "KLD",
+      "latitude": 56.8247,
+      "longitude": 35.8508
+    },
+    {
+      "name": "Северодвинск",
+      "city": "Северодвинск",
+      "icao": "ULAS",
+      "iata": "DVN",
+      "latitude": 64.5333,
+      "longitude": 39.7833
+    },
+    {
+      "name": "Няндома",
+      "city": "Няндомa",
+      "icao": "ULNN",
+      "iata": "NDO",
+      "latitude": 61.6500,
+      "longitude": 40.2000
+    },
+    {
+      "name": "Великий Устюг",
+      "city": "Великий Устюг",
+      "icao": "ULWU",
+      "iata": "VUS",
+      "latitude": 60.7833,
+      "longitude": 46.3167
+    },
+    {
+      "name": "Котлас",
+      "city": "Котлас",
+      "icao": "ULWK",
+      "iata": "KSZ",
+      "latitude": 61.2333,
+      "longitude": 46.7000
+    },
+    {
+      "name": "Ухта",
+      "city": "Ухта",
+      "icao": "UUYH",
+      "iata": "UTA",
+      "latitude": 63.5667,
+      "longitude": 53.8000
+    },
+    {
+      "name": "Печора",
+      "city": "Печора",
+      "icao": "UUYP",
+      "iata": "PEX",
+      "latitude": 65.1167,
+      "longitude": 57.2500
+    },
+    {
+      "name": "Инта",
+      "city": "Инта",
+      "icao": "UUYI",
+      "iata": "INA",
+      "latitude": 66.0333,
+      "longitude": 60.1000
+    },
+    {
+      "name": "Сосногорск",
+      "city": "Сосногорск",
+      "icao": "UUYS",
+      "iata": "SOS",
+      "latitude": 63.5833,
+      "longitude": 53.9167
+    },
+    {
+      "name": "Урай",
+      "city": "Урай",
+      "icao": "USHU",
+      "iata": "URJ",
+      "latitude": 60.1333,
+      "longitude": 64.8333
+    },
+    {
+      "name": "Когалым",
+      "city": "Когалым",
+      "icao": "USHK",
+      "iata": "KGP",
+      "latitude": 62.1833,
+      "longitude": 74.5333
+    },
+    {
+      "name": "Ноябрьск",
+      "city": "Ноябрьск",
+      "icao": "USRO",
+      "iata": "NOJ",
+      "latitude": 63.1833,
+      "longitude": 75.2667
+    },
+    {
+      "name": "Муравленко",
+      "city": "Муравленко",
+      "icao": "USRM",
+      "iata": "MVL",
+      "latitude": 63.8000,
+      "longitude": 75.4667
+    },
+    {
+      "name": "Губкинский",
+      "city": "Губкинский",
+      "icao": "USRG",
+      "iata": "GKU",
+      "latitude": 64.4333,
+      "longitude": 76.5167
+    },
+    {
+      "name": "Тарко-Сале",
+      "city": "Тарко-Сале",
+      "icao": "USDS",
+      "iata": "TQL",
+      "latitude": 64.9167,
+      "longitude": 77.8333
+    },
+    {
+      "name": "Надым",
+      "city": "Надым",
+      "icao": "USMM",
+      "iata": "NYM",
+      "latitude": 65.4833,
+      "longitude": 72.5000
+    },
+    {
+      "name": "Диксон",
+      "city": "Диксон",
+      "icao": "UODD",
+      "iata": "DKS",
+      "latitude": 73.5000,
+      "longitude": 80.5333
+    },
+    {
+      "name": "Хатанга",
+      "city": "Хатанга",
+      "icao": "UNHH",
+      "iata": "HTG",
+      "latitude": 71.9833,
+      "longitude": 102.4833
+    },
+    {
+      "name": "Игарка",
+      "city": "Игарка",
+      "icao": "UOII",
+      "iata": "IAA",
+      "latitude": 67.4333,
+      "longitude": 86.6167
+    },
+    {
+      "name": "Туруханск",
+      "city": "Туруханск",
+      "icao": "UOTU",
+      "iata": "THX",
+      "latitude": 65.7833,
+      "longitude": 87.9167
+    },
+    {
+      "name": "Байкит",
+      "city": "Байкит",
+      "icao": "UOBT",
+      "iata": "BKT",
+      "latitude": 61.6667,
+      "longitude": 99.0833
+    },
+    {
+      "name": "Ванавара",
+      "city": "Ванавара",
+      "icao": "UNIW",
+      "iata": "VNV",
+      "latitude": 60.3833,
+      "longitude": 102.2667
+    },
+    {
+      "name": "Тура",
+      "city": "Тура",
+      "icao": "UNIT",
+      "iata": "TRX",
+      "latitude": 64.2833,
+      "longitude": 100.2167
+    },
+    {
+      "name": "Полярный",
+      "city": "Мирный",
+      "icao": "UERP",
+      "iata": "PYJ",
+      "latitude": 66.4000,
+      "longitude": 112.0333
+    },
+    {
+      "name": "Айхал",
+      "city": "Айхал",
+      "icao": "UERA",
+      "iata": "AEL",
+      "latitude": 65.8833,
+      "longitude": 111.0667
+    },
+    {
+      "name": "Удачный",
+      "city": "Удачный",
+      "icao": "UERO",
+      "iata": "UDY",
+      "latitude": 66.1000,
+      "longitude": 112.3833
+    },
+    {
+      "name": "Оленёк",
+      "city": "Оленёк",
+      "icao": "UERO",
+      "iata": "ONK",
+      "latitude": 68.5167,
+      "longitude": 112.4833
+    },
+    {
+      "name": "Жиганск",
+      "city": "Жиганск",
+      "icao": "UEJJ",
+      "iata": "ZIX",
+      "latitude": 66.7833,
+      "longitude": 123.3667
+    },
+    {
+      "name": "Тикси",
+      "city": "Тикси",
+      "icao": "UEST",
+      "iata": "IKS",
+      "latitude": 71.6833,
+      "longitude": 128.9000
+    },
+    {
+      "name": "Кюсюр",
+      "city": "Кюсюр",
+      "icao": "UESS",
+      "iata": "KYS",
+      "latitude": 70.6833,
+      "longitude": 122.4000
+    },
+    {
+      "name": "Верхневилюйск",
+      "city": "Верхневилюйск",
+      "icao": "UEVV",
+      "iata": "VHV",
+      "latitude": 62.1167,
+      "longitude": 120.4000
+    },
+    {
+      "name": "Нюрба",
+      "city": "Нюрба",
+      "icao": "UENN",
+      "iata": "NYR",
+      "latitude": 63.2833,
+      "longitude": 118.3333
+    },
+    {
+      "name": "Полярный",
+      "city": "Якутск",
+      "icao": "UEPP",
+      "iata": "PJK",
+      "latitude": 62.1000,
+      "longitude": 129.7833
+    },
+    {
+      "name": "Алдан",
+      "city": "Алдан",
+      "icao": "UEEA",
+      "iata": "ADH",
+      "latitude": 58.6000,
+      "longitude": 125.4167
+    },
+    {
+      "name": "Нерюнгри",
+      "city": "Нерюнгри",
+      "icao": "UELL",
+      "iata": "NER",
+      "latitude": 56.9167,
+      "longitude": 124.9167
+    },
+    {
+      "name": "Тында",
+      "city": "Тында",
+      "icao": "UENT",
+      "iata": "TYD",
+      "latitude": 55.1667,
+      "longitude": 124.7167
+    },
+    {
+      "name": "Маган",
+      "city": "Якутск",
+      "icao": "UEMM",
+      "iata": "GNV",
+      "latitude": 62.1333,
+      "longitude": 129.5167
+    },
+    {
+      "name": "Чульман",
+      "city": "Нерюнгри",
+      "icao": "UECN",
+      "iata": "CKH",
+      "latitude": 56.9000,
+      "longitude": 124.9000
+    },
+    {
+      "name": "Бодайбо",
+      "city": "Бодайбо",
+      "icao": "UIKB",
+      "iata": "ODO",
+      "latitude": 57.8667,
+      "longitude": 114.2333
+    },
+    {
+      "name": "Усть-Кут",
+      "city": "Усть-Кут",
+      "icao": "UIKK",
+      "iata": "UKX",
+      "latitude": 56.8667,
+      "longitude": 105.7333
+    },
+    {
+      "name": "Братск",
+      "city": "Братск",
+      "icao": "UIBB",
+      "iata": "BTK",
+      "latitude": 56.3667,
+      "longitude": 101.7000
+    },
+    {
+      "name": "Усть-Илимск",
+      "city": "Усть-Илимск",
+      "icao": "UIBI",
+      "iata": "UIK",
+      "latitude": 58.0167,
+      "longitude": 103.1333
+    },
+    {
+      "name": "Киренск",
+      "city": "Киренск",
+      "icao": "UIKK",
+      "iata": "KCK",
+      "latitude": 57.5667,
+      "longitude": 108.1333
+    },
+    {
+      "name": "Нижнеудинск",
+      "city": "Нижнеудинск",
+      "icao": "UINN",
+      "iata": "NUX",
+      "latitude": 54.9000,
+      "longitude": 99.0167
+    },
+    {
+      "name": "Тайшет",
+      "city": "Тайшет",
+      "icao": "UITT",
+      "iata": "THT",
+      "latitude": 55.9333,
+      "longitude": 98.0000
+    },
+    {
+      "name": "Саянск",
+      "city": "Саянск",
+      "icao": "UISA",
+      "iata": "SYK",
+      "latitude": 54.1000,
+      "longitude": 102.3667
+    },
+    {
+      "name": "Зима",
+      "city": "Зима",
+      "icao": "UIZZ",
+      "iata": "ZIA",
+      "latitude": 53.9167,
+      "longitude": 102.0833
+    },
+    {
+      "name": "Слюдянка",
+      "city": "Слюдянка",
+      "icao": "UISL",
+      "iata": "SLD",
+      "latitude": 51.6500,
+      "longitude": 103.7000
+    },
+    {
+      "name": "Северобайкальск",
+      "city": "Северобайкальск",
+      "icao": "UIUS",
+      "iata": "SBR",
+      "latitude": 55.7833,
+      "longitude": 109.3667
+    },
+    {
+      "name": "Нижнеангарск",
+      "city": "Нижнеангарск",
+      "icao": "UINN",
+      "iata": "NIA",
+      "latitude": 55.7833,
+      "longitude": 109.3667
+    },
+    {
+      "name": "Багдарин",
+      "city": "Багдарин",
+      "icao": "UIBG",
+      "iata": "BGD",
+      "latitude": 54.1667,
+      "longitude": 113.6000
+    },
+    {
+      "name": "Романовка",
+      "city": "Благовещенск",
+      "icao": "UHBB",
+      "iata": "BQS",
+      "latitude": 50.4167,
+      "longitude": 127.4167
+    },
+    {
+      "name": "Белогорск",
+      "city": "Белогорск",
+      "icao": "UHBG",
+      "iata": "BGS",
+      "latitude": 50.9167,
+      "longitude": 128.4667
+    },
+    {
+      "name": "Свободный",
+      "city": "Свободный",
+      "icao": "UHBS",
+      "iata": "SVO",
+      "latitude": 51.4000,
+      "longitude": 128.1333
+    },
+    {
+      "name": "Тында",
+      "city": "Тында",
+      "icao": "UEHT",
+      "iata": "TYD",
+      "latitude": 55.1667,
+      "longitude": 124.7167
+    },
+    {
+      "name": "Ейск",
+      "city": "Ейск",
+      "icao": "URKE",
+      "iata": "EIK",
+      "latitude": 46.6833,
+      "longitude": 38.2833
+    },
+    {
+      "name": "Темрюк",
+      "city": "Темрюк",
+      "icao": "URKT",
+      "iata": "TMK",
+      "latitude": 45.2667,
+      "longitude": 37.3833
+    },
+    {
+      "name": "Славянск-на-Кубани",
+      "city": "Славянск-на-Кубани",
+      "icao": "URKS",
+      "iata": "SLK",
+      "latitude": 45.0333,
+      "longitude": 38.1167
+    },
+    {
+      "name": "Армавир",
+      "city": "Армавир",
+      "icao": "URKH",
+      "iata": "AMV",
+      "latitude": 45.0000,
+      "longitude": 41.1167
+    },
+    {
+      "name": "Невинномысск",
+      "city": "Невинномысск",
+      "icao": "URKN",
+      "iata": "NVM",
+      "latitude": 44.6333,
+      "longitude": 41.9333
+    },
+    {
+      "name": "Пятигорск",
+      "city": "Пятигорск",
+      "icao": "URMP",
+      "iata": "PYG",
+      "latitude": 44.0500,
+      "longitude": 43.0833
+    },
+    {
+      "name": "Кисловодск",
+      "city": "Кисловодск",
+      "icao": "URMK",
+      "iata": "KLV",
+      "latitude": 43.9167,
+      "longitude": 42.7167
+    },
+    {
+      "name": "Будённовск",
+      "city": "Будённовск",
+      "icao": "URWB",
+      "iata": "BUD",
+      "latitude": 44.7833,
+      "longitude": 43.8667
+    },
+    {
+      "name": "Моздок",
+      "city": "Моздок",
+      "icao": "URWM",
+      "iata": "MZD",
+      "latitude": 43.7500,
+      "longitude": 44.6667
+    },
+    {
+      "name": "Прокопьевск",
+      "city": "Прокопьевск",
+      "icao": "UNWP",
+      "iata": "PKV",
+      "latitude": 53.9000,
+      "longitude": 86.7333
+    },
+    {
+      "name": "Новокузнецк",
+      "city": "Новокузнецк",
+      "icao": "UNWW",
+      "iata": "NOZ",
+      "latitude": 53.8333,
+      "longitude": 86.8667
+    },
+    {
+      "name": "Междуреченск",
+      "city": "Междуреченск",
+      "icao": "UNWM",
+      "iata": "MDV",
+      "latitude": 53.7000,
+      "longitude": 88.0667
+    },
+    {
+      "name": "Ачинск",
+      "city": "Ачинск",
+      "icao": "UNKW",
+      "iata": "ACS",
+      "latitude": 56.2667,
+      "longitude": 90.5667
+    },
+    {
+      "name": "Канск",
+      "city": "Канск",
+      "icao": "UNKS",
+      "iata": "KSK",
+      "latitude": 56.2167,
+      "longitude": 95.7667
+    },
+    {
+      "name": "Лесосибирск",
+      "city": "Лесосибирск",
+      "icao": "UNKL",
+      "iata": "LSK",
+      "latitude": 58.2333,
+      "longitude": 92.4833
+    },
+    {
+      "name": "Норильск-Валеок",
+      "city": "Норильск",
+      "icao": "UORV",
+      "iata": "VVK",
+      "latitude": 69.3500,
+      "longitude": 87.3167
+    },
+    {
+      "name": "Кайеркан",
+      "city": "Кайеркан",
+      "icao": "UORK",
+      "iata": "KYK",
+      "latitude": 69.3667,
+      "longitude": 87.5000
+    },
+    {
+      "name": "Дудинка",
+      "city": "Дудинка",
+      "icao": "UODD",
+      "iata": "DDK",
+      "latitude": 69.4000,
+      "longitude": 86.1833
+    },
+    {
+      "name": "Салехард-Приобье",
+      "city": "Салехард",
+      "icao": "USDP",
+      "iata": "SLP",
+      "latitude": 66.5667,
+      "longitude": 66.6000
+    },
+    {
+      "name": "Лабытнанги",
+      "city": "Лабытнанги",
+      "icao": "USDL",
+      "iata": "LBT",
+      "latitude": 66.8333,
+      "longitude": 66.4000
+    },
+    {
+      "name": "Приобье",
+      "city": "Приобье",
+      "icao": "USHP",
+      "iata": "PRB",
+      "latitude": 61.2833,
+      "longitude": 64.9000
+    },
+    {
+      "name": "Белоярский",
+      "city": "Белоярский",
+      "icao": "USHB",
+      "iata": "EYK",
+      "latitude": 63.7167,
+      "longitude": 66.6833
+    },
+    {
+      "name": "Советский",
+      "city": "Советский",
+      "icao": "USHO",
+      "iata": "SOT",
+      "latitude": 61.3667,
+      "longitude": 63.5833
+    },
+    {
+      "name": "Югорск",
+      "city": "Югорск",
+      "icao": "USHY",
+      "iata": "YUG",
+      "latitude": 61.3167,
+      "longitude": 63.3500
+    },
+    {
+      "name": "Нягань",
+      "city": "Нягань",
+      "icao": "USHN",
+      "iata": "NYA",
+      "latitude": 62.2000,
+      "longitude": 65.5833
+    },
+    {
+      "name": "Тавда",
+      "city": "Тавда",
+      "icao": "USTD",
+      "iata": "TVD",
+      "latitude": 58.0333,
+      "longitude": 65.2500
+    },
+    {
+      "name": "Тобольск",
+      "city": "Тобольск",
+      "icao": "USTO",
+      "iata": "TOB",
+      "latitude": 58.1833,
+      "longitude": 68.2167
+    },
+    {
+      "name": "Ишим",
+      "city": "Ишим",
+      "icao": "USTI",
+      "iata": "ISM",
+      "latitude": 56.1167,
+      "longitude": 69.5000
+    },
+    {
+      "name": "Ялуторовск",
+      "city": "Ялуторовск",
+      "icao": "USTY",
+      "iata": "YAL",
+      "latitude": 56.6500,
+      "longitude": 66.3000
+    },
+    {
+      "name": "Заводоуковск",
+      "city": "Заводоуковск",
+      "icao": "USTZ",
+      "iata": "ZAV",
+      "latitude": 56.5000,
+      "longitude": 67.3500
+    },
+    {
+      "name": "Губкин",
+      "city": "Губкин",
+      "icao": "UUWG",
+      "iata": "GUB",
+      "latitude": 51.2833,
+      "longitude": 37.5333
+    },
+    {
+      "name": "Старый Оскол",
+      "city": "Старый Оскол",
+      "icao": "UUOS",
+      "iata": "OSK",
+      "latitude": 51.2667,
+      "longitude": 37.8500
+    },
+    {
+      "name": "Алексеевка",
+      "city": "Алексеевка",
+      "icao": "UUOA",
+      "iata": "ALE",
+      "latitude": 50.7667,
+      "longitude": 38.6833
+    },
+    {
+      "name": "Россошь",
+      "city": "Россошь",
+      "icao": "UOOR",
+      "iata": "RSS",
+      "latitude": 49.9833,
+      "longitude": 40.3500
+    },
+    {
+      "name": "Борисоглебск",
+      "city": "Борисоглебск",
+      "icao": "UUOB",
+      "iata": "BRS",
+      "latitude": 51.3667,
+      "longitude": 42.0833
+    },
+    {
+      "name": "Балашов",
+      "city": "Балашов",
+      "icao": "UWSB",
+      "iata": "BSW",
+      "latitude": 51.5333,
+      "longitude": 43.1833
+    },
+    {
+      "name": "Вольск",
+      "city": "Вольск",
+      "icao": "UWSV",
+      "iata": "VLS",
+      "latitude": 52.0500,
+      "longitude": 47.3833
+    },
+    {
+      "name": "Балаково",
+      "city": "Балаково",
+      "icao": "UWSB",
+      "iata": "BWO",
+      "latitude": 52.0167,
+      "longitude": 47.8167
+    },
+    {
+      "name": "Энгельс",
+      "city": "Энгельс",
+      "icao": "UWSE",
+      "iata": "ENL",
+      "latitude": 51.4833,
+      "longitude": 46.1167
+    },
+    {
+      "name": "Сызрань",
+      "city": "Сызрань",
+      "icao": "UWSS",
+      "iata": "SYZ",
+      "latitude": 53.1667,
+      "longitude": 48.4833
+    },
+    {
+      "name": "Тольятти",
+      "city": "Тольятти",
+      "icao": "UWWT",
+      "iata": "TOL",
+      "latitude": 53.5000,
+      "longitude": 49.4167
+    },
+    {
+      "name": "Димитровград",
+      "city": "Димитровград",
+      "icao": "UWSD",
+      "iata": "DMV",
+      "latitude": 54.2167,
+      "longitude": 49.6167
+    },
+    {
+      "name": "Барыш",
+      "city": "Барыш",
+      "icao": "UWSY",
+      "iata": "BRY",
+      "latitude": 53.6500,
+      "longitude": 47.1000
+    },
+    {
+      "name": "Инза",
+      "city": "Инза",
+      "icao": "UWSI",
+      "iata": "INZ",
+      "latitude": 53.8333,
+      "longitude": 46.3667
+    },
+    {
+      "name": "Сенгилей",
+      "city": "Сенгилей",
+      "icao": "UWSG",
+      "iata": "SNL",
+      "latitude": 54.2000,
+      "longitude": 48.7833
+    },
+    {
+      "name": "Кузнецк",
+      "city": "Кузнецк",
+      "icao": "UWPK",
+      "iata": "KZN",
+      "latitude": 53.1167,
+      "longitude": 46.6000
+    },
+    {
+      "name": "Сердобск",
+      "city": "Сердобск",
+      "icao": "UWPS",
+      "iata": "SRB",
+      "latitude": 52.4667,
+      "longitude": 44.2333
+    },
+    {
+      "name": "Каменск-Шахтинский",
+      "city": "Каменск-Шахтинский",
+      "icao": "URRK",
+      "iata": "KMK",
+      "latitude": 48.3167,
+      "longitude": 40.2667
+    },
+    {
+      "name": "Таганрог",
+      "city": "Таганрог",
+      "icao": "URRT",
+      "iata": "TGK",
+      "latitude": 47.2333,
+      "longitude": 38.8500
+    },
+    {
+      "name": "Новочеркасск",
+      "city": "Новочеркасск",
+      "icao": "URRN",
+      "iata": "NCH",
+      "latitude": 47.4167,
+      "longitude": 40.1000
+    },
+    {
+      "name": "Батайск",
+      "city": "Батайск",
+      "icao": "URRB",
+      "iata": "BTK",
+      "latitude": 47.1500,
+      "longitude": 39.7500
+    },
+    {
+      "name": "Азов",
+      "city": "Азов",
+      "icao": "URRA",
+      "iata": "AZV",
+      "latitude": 47.1167,
+      "longitude": 39.4167
+    },
+    {
+      "name": "Сальск",
+      "city": "Сальск",
+      "icao": "URRS",
+      "iata": "SLK",
+      "latitude": 46.4667,
+      "longitude": 41.5500
+    },
+    {
+      "name": "Тихорецк",
+      "city": "Тихорецк",
+      "icao": "URRQ",
+      "iata": "TQR",
+      "latitude": 45.8667,
+      "longitude": 40.1167
+    },
+    {
+      "name": "Кропоткин",
+      "city": "Кропоткин",
+      "icao": "URKP",
+      "iata": "KPT",
+      "latitude": 45.4333,
+      "longitude": 40.5833
+    },
+    {
+      "name": "Усть-Лабинск",
+      "city": "Усть-Лабинск",
+      "icao": "URKU",
+      "iata": "ULA",
+      "latitude": 45.2167,
+      "longitude": 39.7000
+    },
+    {
+      "name": "Белореченск",
+      "city": "Белореченск",
+      "icao": "URKB",
+      "iata": "BLR",
+      "latitude": 44.7667,
+      "longitude": 40.0167
+    },
+    {
+      "name": "Майкоп",
+      "city": "Майкоп",
+      "icao": "URKM",
+      "iata": "MKP",
+      "latitude": 44.6000,
+      "longitude": 40.1000
+    },
+    {
+      "name": "Адыгейск",
+      "city": "Адыгейск",
+      "icao": "URKA",
+      "iata": "ADY",
+      "latitude": 44.8833,
+      "longitude": 39.1167
+    },
+    {
+      "name": "Хадыженск",
+      "city": "Хадыженск",
+      "icao": "URKH",
+      "iata": "HDZ",
+      "latitude": 44.4167,
+      "longitude": 39.6000
+    },
+    {
+      "name": "Апшеронск",
+      "city": "Апшеронск",
+      "icao": "URKS",
+      "iata": "APS",
+      "latitude": 44.4333,
+      "longitude": 39.5500
+    },
+    {
+      "name": "Туапсе",
+      "city": "Туапсе",
+      "icao": "URMT",
+      "iata": "TUA",
+      "latitude": 44.1000,
+      "longitude": 39.0667
+    },
+    {
+      "name": "Дербент",
+      "city": "Дербент",
+      "icao": "URHD",
+      "iata": "DBT",
+      "latitude": 42.0500,
+      "longitude": 48.2833
+    },
+    {
+      "name": "Хасавюрт",
+      "city": "Хасавюрт",
+      "icao": "URHH",
+      "iata": "HVT",
+      "latitude": 43.2500,
+      "longitude": 46.5833
+    },
+    {
+      "name": "Буйнакск",
+      "city": "Буйнакск",
+      "icao": "URHB",
+      "iata": "BKS",
+      "latitude": 42.8167,
+      "longitude": 47.1167
+    },
+    {
+      "name": "Избербаш",
+      "city": "Избербаш",
+      "icao": "URHI",
+      "iata": "IZB",
+      "latitude": 42.3500,
+      "longitude": 47.8667
+    },
+    {
+      "name": "Каспийск",
+      "city": "Каспийск",
+      "icao": "URHK",
+      "iata": "KSP",
+      "latitude": 42.8833,
+      "longitude": 47.6333
+    },
+    {
+      "name": "Дагестанские Огни",
+      "city": "Дагестанские Огни",
+      "icao": "URHO",
+      "iata": "DOG",
+      "latitude": 42.0667,
+      "longitude": 48.0167
+    },
+    {
+      "name": "Кизляр",
+      "city": "Кизляр",
+      "icao": "URHL",
+      "iata": "KIZ",
+      "latitude": 43.8500,
+      "longitude": 46.7167
+    },
+    {
+      "name": "Будённовск",
+      "city": "Будённовск",
+      "icao": "URWB",
+      "iata": "BUD",
+      "latitude": 44.7833,
+      "longitude": 43.8667
+    },
+    {
+      "name": "Зеленокумск",
+      "city": "Зеленокумск",
+      "icao": "URWZ",
+      "iata": "ZLN",
+      "latitude": 44.5000,
+      "longitude": 43.8833
+    },
+    {
+      "name": "Светлоград",
+      "city": "Светлоград",
+      "icao": "URWS",
+      "iata": "SVG",
+      "latitude": 45.0500,
+      "longitude": 42.8500
+    },
+    {
+      "name": "Ипатово",
+      "city": "Ипатово",
+      "icao": "URWI",
+      "iata": "IPT",
+      "latitude": 45.7167,
+      "longitude": 42.9167
+    },
+    {
+      "name": "Новоалександровск",
+      "city": "Новоалександровск",
+      "icao": "URWN",
+      "iata": "NVA",
+      "latitude": 45.4833,
+      "longitude": 41.2167
+    },
+    {
+      "name": "Изобильный",
+      "city": "Изобильный",
+      "icao": "URWY",
+      "iata": "IZB",
+      "latitude": 45.3667,
+      "longitude": 41.7500
+    },
+    {
+      "name": "Михайловск",
+      "city": "Михайловск",
+      "icao": "URWM",
+      "iata": "MHV",
+      "latitude": 45.1333,
+      "longitude": 42.0333
+    },
+    {
+      "name": "Нефтекумск",
+      "city": "Нефтекумск",
+      "icao": "URWF",
+      "iata": "NFK",
+      "latitude": 44.7500,
+      "longitude": 44.9833
+    },
+    {
+      "name": "Георгиевск",
+      "city": "Георгиевск",
+      "icao": "URWG",
+      "iata": "GRG",
+      "latitude": 44.1500,
+      "longitude": 43.4667
+    },
+    {
+      "name": "Ессентуки",
+      "city": "Ессентуки",
+      "icao": "URWE",
+      "iata": "ESN",
+      "latitude": 44.0500,
+      "longitude": 42.8667
+    },
+    {
+      "name": "Железноводск",
+      "city": "Железноводск",
+      "icao": "URWJ",
+      "iata": "ZLD",
+      "latitude": 44.1500,
+      "longitude": 43.0167
+    },
+    {
+      "name": "Лермонтов",
+      "city": "Лермонтов",
+      "icao": "URWL",
+      "iata": "LRM",
+      "latitude": 44.1167,
+      "longitude": 42.9667
+    },
+    {
+      "name": "Черкесск",
+      "city": "Черкесск",
+      "icao": "URWC",
+      "iata": "CKS",
+      "latitude": 44.2167,
+      "longitude": 42.0500
+    },
+    {
+      "name": "Карачаевск",
+      "city": "Карачаевск",
+      "icao": "URWK",
+      "iata": "KCH",
+      "latitude": 43.7833,
+      "longitude": 41.9167
+    },
+    {
+      "name": "Усть-Джегута",
+      "city": "Усть-Джегута",
+      "icao": "URWU",
+      "iata": "UDJ",
+      "latitude": 44.1000,
+      "longitude": 41.9333
+    },
+    {
+      "name": "Теберда",
+      "city": "Теберда",
+      "icao": "URWT",
+      "iata": "TBD",
+      "latitude": 43.7333,
+      "longitude": 41.7333
+    },
+    {
+      "name": "Домбай",
+      "city": "Домбай",
+      "icao": "URWD",
+      "iata": "DMB",
+      "latitude": 43.6167,
+      "longitude": 41.6167
+    },
+    {
+      "name": "Армавир-Центр",
+      "city": "Армавир",
+      "icao": "URKC",
+      "iata": "ARM",
+      "latitude": 45.0000,
+      "longitude": 41.1333
+    },
+    {
+      "name": "Белореченск-Юг",
+      "city": "Белореченск",
+      "icao": "URKY",
+      "iata": "BRY",
+      "latitude": 44.7500,
+      "longitude": 40.0333
+    },
+    {
+      "name": "Кореновск",
+      "city": "Кореновск",
+      "icao": "URKO",
+      "iata": "KRN",
+      "latitude": 45.4500,
+      "longitude": 39.4500
+    },
+    {
+      "name": "Тимашёвск",
+      "city": "Тимашёвск",
+      "icao": "URKT",
+      "iata": "TMV",
+      "latitude": 45.6167,
+      "longitude": 38.9000
+    },
+    {
+      "name": "Крымск",
+      "city": "Крымск",
+      "icao": "URKV",
+      "iata": "KRM",
+      "latitude": 44.9333,
+      "longitude": 37.9833
+    },
+    {
+      "name": "Новороссийск",
+      "city": "Новороссийск",
+      "icao": "URKN",
+      "iata": "NVS",
+      "latitude": 44.7167,
+      "longitude": 37.7667
+    },
+    {
+      "name": "Абинск",
+      "city": "Абинск",
+      "icao": "URKA",
+      "iata": "ABN",
+      "latitude": 44.8667,
+      "longitude": 38.1667
+    },
+    {
+      "name": "Курганинск",
+      "city": "Курганинск",
+      "icao": "URKG",
+      "iata": "KGN",
+      "latitude": 44.8833,
+      "longitude": 40.6000
+    },
+    {
+      "name": "Лабинск",
+      "city": "Лабинск",
+      "icao": "URKL",
+      "iata": "LBN",
+      "latitude": 44.6333,
+      "longitude": 40.7500
+    },
+    {
+      "name": "Павловская",
+      "city": "Павловская",
+      "icao": "URKP",
+      "iata": "PVL",
+      "latitude": 46.0833,
+      "longitude": 39.2667
+    },
+    {
+      "name": "Кущёвская",
+      "city": "Кущёвская",
+      "icao": "URKK",
+      "iata": "KSV",
+      "latitude": 46.4333,
+      "longitude": 39.8167
+    },
+    {
+      "name": "Каневская",
+      "city": "Каневская",
+      "icao": "URKC",
+      "iata": "KNV",
+      "latitude": 46.0667,
+      "longitude": 38.1333
+    },
+    {
+      "name": "Ленинградская",
+      "city": "Ленинградская",
+      "icao": "URKL",
+      "iata": "LND",
+      "latitude": 46.0167,
+      "longitude": 39.0500
+    },
+    {
+      "name": "Полтавская",
+      "city": "Полтавская",
+      "icao": "URKH",
+      "iata": "PLT",
+      "latitude": 45.1833,
+      "longitude": 38.7833
+    },
+    {
+      "name": "Северская",
+      "city": "Северская",
+      "icao": "URKS",
+      "iata": "SVK",
+      "latitude": 44.9000,
+      "longitude": 38.8167
+    },
+    {
+      "name": "Ильский",
+      "city": "Ильский",
+      "icao": "URKI",
+      "iata": "ILS",
+      "latitude": 44.8667,
+      "longitude": 38.8833
+    },
+    {
+      "name": "Афипский",
+      "city": "Афипский",
+      "icao": "URKF",
+      "iata": "AFP",
+      "latitude": 44.9167,
+      "longitude": 38.9000
+    },
+    {
+      "name": "Холмская",
+      "city": "Холмская",
+      "icao": "URKM",
+      "iata": "HLM",
+      "latitude": 44.7500,
+      "longitude": 38.7000
+    },
+    {
+      "name": "Ширванская",
+      "city": "Ширванская",
+      "icao": "URWS",
+      "iata": "SHV",
+      "latitude": 44.4833,
+      "longitude": 41.4167
+    },
+    {
+      "name": "Кочубеевское",
+      "city": "Кочубеевское",
+      "icao": "URWK",
+      "iata": "KCH",
+      "latitude": 45.2833,
+      "longitude": 42.0833
+    },
+    {
+      "name": "Дивное",
+      "city": "Дивное",
+      "icao": "URWD",
+      "iata": "DVN",
+      "latitude": 45.3500,
+      "longitude": 42.9167
+    },
+    {
+      "name": "Расшеватская",
+      "city": "Расшеватская",
+      "icao": "URWR",
+      "iata": "RSH",
+      "latitude": 45.2167,
+      "longitude": 42.6833
+    },
+    {
+      "name": "Красногвардейское",
+      "city": "Красногвардейское",
+      "icao": "URWG",
+      "iata": "KGV",
+      "latitude": 45.2667,
+      "longitude": 42.1167
+    },
+    {
+      "name": "Благодарный",
+      "city": "Благодарный",
+      "icao": "URWB",
+      "iata": "BLG",
+      "latitude": 45.0167,
+      "longitude": 43.2167
+    },
+    {
+      "name": "Арзгир",
+      "city": "Арзгир",
+      "icao": "URWA",
+      "iata": "AZG",
+      "latitude": 45.5167,
+      "longitude": 44.4167
+    },
+    {
+      "name": "Левокумское",
+      "city": "Левокумское",
+      "icao": "URWL",
+      "iata": "LVK",
+      "latitude": 44.4167,
+      "longitude": 45.0500
+    },
+    {
+      "name": "Затеречный",
+      "city": "Затеречный",
+      "icao": "URWZ",
+      "iata": "ZTR",
+      "latitude": 44.2000,
+      "longitude": 44.2000
+    },
+    {
+      "name": "Степное",
+      "city": "Степное",
+      "icao": "URWS",
+      "iata": "STP",
+      "latitude": 45.6833,
+      "longitude": 44.8167
+    },
+    {
+      "name": "Яшалта",
+      "city": "Яшалта",
+      "icao": "URWY",
+      "iata": "YSH",
+      "latitude": 46.2167,
+      "longitude": 43.5833
+    },
+    {
+      "name": "Приютное",
+      "city": "Приютное",
+      "icao": "URWP",
+      "iata": "PRY",
+      "latitude": 46.0833,
+      "longitude": 43.9167
+    },
+    {
+      "name": "Троицкое",
+      "city": "Троицкое",
+      "icao": "URWT",
+      "iata": "TRK",
+      "latitude": 45.9167,
+      "longitude": 44.8833
+    },
+    {
+      "name": "Большая Мартыновка",
+      "city": "Большая Мартыновка",
+      "icao": "URRM",
+      "iata": "BMV",
+      "latitude": 46.8167,
+      "longitude": 41.8000
+    },
+    {
+      "name": "Орловский",
+      "city": "Орловский",
+      "icao": "URRO",
+      "iata": "ORL",
+      "latitude": 46.8667,
+      "longitude": 42.8500
+    },
+    {
+      "name": "Зимовники",
+      "city": "Зимовники",
+      "icao": "URRZ",
+      "iata": "ZMV",
+      "latitude": 47.5833,
+      "longitude": 43.0833
+    },
+    {
+      "name": "Дубовское",
+      "city": "Дубовское",
+      "icao": "URRD",
+      "iata": "DBV",
+      "latitude": 47.3167,
+      "longitude": 42.5333
+    },
+    {
+      "name": "Заветное",
+      "city": "Заветное",
+      "icao": "URRZ",
+      "iata": "ZVT",
+      "latitude": 46.9667,
+      "longitude": 42.0167
+    },
+    {
+      "name": "Ремонтное",
+      "city": "Ремонтное",
+      "icao": "URRR",
+      "iata": "RMN",
+      "latitude": 46.5667,
+      "longitude": 42.9333
+    },
+    {
+      "name": "Песчанокопское",
+      "city": "Песчанокопское",
+      "icao": "URRP",
+      "iata": "PSK",
+      "latitude": 46.2833,
+      "longitude": 41.6167
+    },
+    {
+      "name": "Тарасовский",
+      "city": "Тарасовский",
+      "icao": "URRT",
+      "iata": "TRV",
+      "latitude": 48.3667,
+      "longitude": 40.5833
+    },
+    {
+      "name": "Миллерово",
+      "city": "Миллерово",
+      "icao": "URRM",
+      "iata": "MLV",
+      "latitude": 48.9167,
+      "longitude": 40.3833
+    },
+    {
+      "name": "Чертково",
+      "city": "Чертково",
+      "icao": "URRC",
+      "iata": "CHK",
+      "latitude": 49.0333,
+      "longitude": 40.1667
+    },
+    {
+      "name": "Кантемировка",
+      "city": "Кантемировка",
+      "icao": "UUOK",
+      "iata": "KNT",
+      "latitude": 49.8000,
+      "longitude": 39.5167
+    },
+    {
+      "name": "Россошь-Юг",
+      "city": "Россошь",
+      "icao": "UOOR",
+      "iata": "RSY",
+      "latitude": 49.9667,
+      "longitude": 40.3667
+    },
+    {
+      "name": "Подгоренский",
+      "city": "Подгоренский",
+      "icao": "UUOP",
+      "iata": "PGR",
+      "latitude": 50.4333,
+      "longitude": 40.1500
+    },
+    {
+      "name": "Острогожск",
+      "city": "Острогожск",
+      "icao": "UUOO",
+      "iata": "OSZ",
+      "latitude": 50.7667,
+      "longitude": 39.0500
+    },
+    {
+      "name": "Павловск",
+      "city": "Павловск",
+      "icao": "UUOW",
+      "iata": "PVK",
+      "latitude": 50.4833,
+      "longitude": 40.1333
+    },
+    {
+      "name": "Богучар",
+      "city": "Богучар",
+      "icao": "UUOB",
+      "iata": "BGK",
+      "latitude": 49.9333,
+      "longitude": 40.5500
+    },
+    {
+      "name": "Калач",
+      "city": "Калач",
+      "icao": "UUOK",
+      "iata": "KLC",
+      "latitude": 50.4167,
+      "longitude": 41.0000
+    },
+    {
+      "name": "Новая Калитва",
+      "city": "Новая Калитва",
+      "icao": "UUON",
+      "iata": "NKL",
+      "latitude": 50.2167,
+      "longitude": 40.7000
+    },
+    {
+      "name": "Верхний Мамон",
+      "city": "Верхний Мамон",
+      "icao": "UUOM",
+      "iata": "VMM",
+      "latitude": 50.2667,
+      "longitude": 40.9333
+    },
+    {
+      "name": "Петропавловка",
+      "city": "Петропавловка",
+      "icao": "UUOP",
+      "iata": "PPK",
+      "latitude": 50.0500,
+      "longitude": 40.7000
+    },
+    {
+      "name": "Анна",
+      "city": "Анна",
+      "icao": "UUOA",
+      "iata": "ANN",
+      "latitude": 50.9833,
+      "longitude": 41.6167
+    },
+    {
+      "name": "Грибановский",
+      "city": "Грибановский",
+      "icao": "UUOG",
+      "iata": "GRB",
+      "latitude": 51.1833,
+      "longitude": 42.2167
+    },
+    {
+      "name": "Терновка",
+      "city": "Терновка",
+      "icao": "UUOT",
+      "iata": "TRV",
+      "latitude": 51.1000,
+      "longitude": 41.8667
+    },
+    {
+      "name": "Бутурлиновка",
+      "city": "Бутурлиновка",
+      "icao": "UUOB",
+      "iata": "BTL",
+      "latitude": 50.8167,
+      "longitude": 40.6167
+    },
+    {
+      "name": "Воробьёвка",
+      "city": "Воробьёвка",
+      "icao": "UUOV",
+      "iata": "VRB",
+      "latitude": 50.6167,
+      "longitude": 41.2833
+    },
+    {
+      "name": "Колодежный",
+      "city": "Колодежный",
+      "icao": "UUOK",
+      "iata": "KLD",
+      "latitude": 50.7000,
+      "longitude": 40.4500
+    },
+    {
+      "name": "Лиски",
+      "city": "Лиски",
+      "icao": "UOOL",
+      "iata": "LSK",
+      "latitude": 50.9833,
+      "longitude": 39.5333
+    },
+    {
+      "name": "Поворино",
+      "city": "Поворино",
+      "icao": "UOOP",
+      "iata": "PVR",
+      "latitude": 51.3667,
+      "longitude": 42.2500
+    },
+    {
+      "name": "Таловая",
+      "city": "Таловая",
+      "icao": "UOOT",
+      "iata": "TLV",
+      "latitude": 51.0167,
+      "longitude": 41.4833
+    },
+    {
+      "name": "Шелагино",
+      "city": "Шелагино",
+      "icao": "UUOS",
+      "iata": "SHL",
+      "latitude": 51.0833,
+      "longitude": 39.8500
+    },
+    {
+      "name": "Нижнедевицк",
+      "city": "Нижнедевицк",
+      "icao": "UUON",
+      "iata": "NDV",
+      "latitude": 51.4833,
+      "longitude": 39.3333
+    },
+    {
+      "name": "Хохольский",
+      "city": "Хохольский",
+      "icao": "UUOH",
+      "iata": "KHL",
+      "latitude": 51.6167,
+      "longitude": 39.1000
+    },
+    {
+      "name": "Семилуки",
+      "city": "Семилуки",
+      "icao": "UUOS",
+      "iata": "SLK",
+      "latitude": 51.7000,
+      "longitude": 39.0500
+    },
+    {
+      "name": "Панино",
+      "city": "Панино",
+      "icao": "UUAP",
+      "iata": "PNV",
+      "latitude": 51.6167,
+      "longitude": 40.2167
+    },
+    {
+      "name": "Верхняя Хава",
+      "city": "Верхняя Хава",
+      "icao": "UUAV",
+      "iata": "VHV",
+      "latitude": 51.9167,
+      "longitude": 40.3000
+    },
+    {
+      "name": "Новоусмань",
+      "city": "Новоусмань",
+      "icao": "UUAN",
+      "iata": "NSM",
+      "latitude": 51.6000,
+      "longitude": 39.2000
+    },
+    {
+      "name": "Каширское",
+      "city": "Каширское",
+      "icao": "UUAK",
+      "iata": "KSH",
+      "latitude": 51.4167,
+      "longitude": 39.4167
+    },
+    {
+      "name": "Паршино",
+      "city": "Паршино",
+      "icao": "UUAP",
+      "iata": "PSH",
+      "latitude": 51.5500,
+      "longitude": 39.5500
+    },
+    {
+      "name": "Стрелица",
+      "city": "Стрелица",
+      "icao": "UUAS",
+      "iata": "STL",
+      "latitude": 51.5333,
+      "longitude": 39.2833
+    },
+    {
+      "name": "Подклетное",
+      "city": "Подклетное",
+      "icao": "UUAP",
+      "iata": "PKL",
+      "latitude": 51.4500,
+      "longitude": 39.6833
+    },
+    {
+      "name": "Бабяково",
+      "city": "Бабяково",
+      "icao": "UUAB",
+      "iata": "BBK",
+      "latitude": 51.7167,
+      "longitude": 39.2167
+    },
+    {
+      "name": "Сомово",
+      "city": "Сомово",
+      "icao": "UUAS",
+      "iata": "SMV",
+      "latitude": 51.6167,
+      "longitude": 39.3500
+    },
+    {
+      "name": "Шуберское",
+      "city": "Шуберское",
+      "icao": "UUASH",
+      "iata": "SHB",
+      "latitude": 51.7833,
+      "longitude": 39.4167
+    },
+    {
+      "name": "Масловка",
+      "city": "Масловка",
+      "icao": "UUAM",
+      "iata": "MSL",
+      "latitude": 51.6333,
+      "longitude": 39.1833
+    },
+    {
+      "name": "Гремячье",
+      "city": "Гремячье",
+      "icao": "UUAG",
+      "iata": "GRM",
+      "latitude": 51.4833,
+      "longitude": 39.8167
+    },
+    {
+      "name": "Берёзовка",
+      "city": "Берёзовка",
+      "icao": "UUAB",
+      "iata": "BZK",
+      "latitude": 51.8000,
+      "longitude": 39.6167
+    },
+    {
+      "name": "Ямное",
+      "city": "Ямное",
+      "icao": "UUAY",
+      "iata": "YMN",
+      "latitude": 51.5667,
+      "longitude": 39.0833
+    },
+    {
+      "name": "Ольховатка",
+      "city": "Ольховатка",
+      "icao": "UUAO",
+      "iata": "OLH",
+      "latitude": 51.3833,
+      "longitude": 39.1500
+    },
+    {
+      "name": "Костёнки",
+      "city": "Костёнки",
+      "icao": "UUAK",
+      "iata": "KST",
+      "latitude": 51.3167,
+      "longitude": 39.2833
+    },
+    {
+      "name": "Дивногорье",
+      "city": "Дивногорье",
+      "icao": "UUAD",
+      "iata": "DVN",
+      "latitude": 51.0167,
+      "longitude": 39.3167
+    },
+    {
+      "name": "Щучье",
+      "city": "Щучье",
+      "icao": "UUASH",
+      "iata": "SCH",
+      "latitude": 51.6833,
+      "longitude": 39.4833
+    },
+    {
+      "name": "Малая Приваловка",
+      "city": "Малая Приваловка",
+      "icao": "UUAM",
+      "iata": "MPV",
+      "latitude": 51.5167,
+      "longitude": 39.4500
+    },
+    {
+      "name": "Большая Приваловка",
+      "city": "Большая Приваловка",
+      "icao": "UUAB",
+      "iata": "BPV",
+      "latitude": 51.5333,
+      "longitude": 39.4667
+    },
+    {
+      "name": "Средний Икорец",
+      "city": "Средний Икорец",
+      "icao": "UUAS",
+      "iata": "SIK",
+      "latitude": 51.2167,
+      "longitude": 39.6167
+    },
+    {
+      "name": "Корояново",
+      "city": "Корояново",
+      "icao": "UUAK",
+      "iata": "KRN",
+      "latitude": 51.4000,
+      "longitude": 39.5333
+    },
+    {
+      "name": "Красное",
+      "city": "Красное",
+      "icao": "UUAR",
+      "iata": "KSN",
+      "latitude": 51.3500,
+      "longitude": 39.4833
+    },
+    {
+      "name": "Гвоздёвка",
+      "city": "Гвоздёвка",
+      "icao": "UUAG",
+      "iata": "GVD",
+      "latitude": 51.3667,
+      "longitude": 39.4167
+    },
+    {
+      "name": "Перлевка",
+      "city": "Перлевка",
+      "icao": "UUAP",
+      "iata": "PLV",
+      "latitude": 51.3833,
+      "longitude": 39.3833
+    },
+    {
+      "name": "Хвощеватка",
+      "city": "Хвощеватка",
+      "icao": "UUAK",
+      "iata": "HVS",
+      "latitude": 51.2833,
+      "longitude": 39.3500
+    },
+    {
+      "name": "Криуша",
+      "city": "Криуша",
+      "icao": "UUAK",
+      "iata": "KRS",
+      "latitude": 51.2500,
+      "longitude": 39.3167
+    },
+    {
+      "name": "Богоявленка",
+      "city": "Богоявленка",
+      "icao": "UUAB",
+      "iata": "BGY",
+      "latitude": 51.2167,
+      "longitude": 39.2833
+    },
+    {
+      "name": "Алексеевка",
+      "city": "Алексеевка",
+      "icao": "UUAA",
+      "iata": "ALE",
+      "latitude": 51.1833,
+      "longitude": 39.2500
+    },
+    {
+      "name": "Малые Ясырки",
+      "city": "Малые Ясырки",
+      "icao": "UUAM",
+      "iata": "MYS",
+      "latitude": 51.1500,
+      "longitude": 39.2167
+    },
+    {
+      "name": "Большие Ясырки",
+      "city": "Большие Ясырки",
+      "icao": "UUAB",
+      "iata": "BYS",
+      "latitude": 51.1667,
+      "longitude": 39.2333
+    },
+    {
+      "name": "Нижняя Марьинка",
+      "city": "Нижняя Марьинка",
+      "icao": "UUAN",
+      "iata": "NMK",
+      "latitude": 51.1167,
+      "longitude": 39.1833
+    },
+    {
+      "name": "Верхняя Марьинка",
+      "city": "Верхняя Марьинка",
+      "icao": "UUAV",
+      "iata": "VMK",
+      "latitude": 51.1333,
+      "longitude": 39.2000
+    },
+    {
+      "name": "Ольшанка",
+      "city": "Ольшанка",
+      "icao": "UUAO",
+      "iata": "OLH",
+      "latitude": 51.1000,
+      "longitude": 39.1500
+    },
+    {
+      "name": "Липяги",
+      "city": "Липяги",
+      "icao": "UUAL",
+      "iata": "LPG",
+      "latitude": 51.0833,
+      "longitude": 39.1167
+    },
+    {
+      "name": "Казачье",
+      "city": "Казачье",
+      "icao": "UUAK",
+      "iata": "KZC",
+      "latitude": 51.0500,
+      "longitude": 39.0833
+    },
+    {
+      "name": "Лосево",
+      "city": "Лосево",
+      "icao": "UUOL",
+      "iata": "LSV",
+      "latitude": 51.0167,
+      "longitude": 39.0500
+    },
+    {
+      "name": "Митрофановка",
+      "city": "Митрофановка",
+      "icao": "UUAM",
+      "iata": "MTF",
+      "latitude": 50.9833,
+      "longitude": 39.0167
+    },
+    {
+      "name": "Фёдоровка",
+      "city": "Фёдоровка",
+      "icao": "UUAF",
+      "iata": "FDR",
+      "latitude": 50.9500,
+      "longitude": 38.9833
+    },
+    {
+      "name": "Иловка",
+      "city": "Иловка",
+      "icao": "UUAI",
+      "iata": "ILK",
+      "latitude": 50.9167,
+      "longitude": 38.9500
+    },
+    {
+      "name": "Колодеевка",
+      "city": "Колодеевка",
+      "icao": "UUAK",
+      "iata": "KLD",
+      "latitude": 50.8833,
+      "longitude": 38.9167
+    },
+    {
+      "name": "Нащекино",
+      "city": "Нащекино",
+      "icao": "UUAN",
+      "iata": "NSH",
+      "latitude": 50.8500,
+      "longitude": 38.8833
+    },
+    {
+      "name": "Петино",
+      "city": "Петино",
+      "icao": "UUAP",
+      "iata": "PTN",
+      "latitude": 50.8167,
+      "longitude": 38.8500
+    },
+    {
+      "name": "Старотолучеево",
+      "city": "Старотолучеево",
+      "icao": "UUAS",
+      "iata": "STL",
+      "latitude": 50.7833,
+      "longitude": 38.8167
+    },
+    {
+      "name": "Новотолучеево",
+      "city": "Новотолучеево",
+      "icao": "UUAN",
+      "iata": "NTL",
+      "latitude": 50.7667,
+      "longitude": 38.8000
+    },
+    {
+      "name": "Коренёво",
+      "city": "Коренёво",
+      "icao": "UUAK",
+      "iata": "KRN",
+      "latitude": 50.7333,
+      "longitude": 38.7667
+    },
+    {
+      "name": "Большая Халюч",
+      "city": "Большая Халюч",
+      "icao": "UUAH",
+      "iata": "BHL",
+      "latitude": 50.7000,
+      "longitude": 38.7333
+    },
+    {
+      "name": "Малая Халюч",
+      "city": "Малая Халюч",
+      "icao": "UUAM",
+      "iata": "MHL",
+      "latitude": 50.6833,
+      "longitude": 38.7167
+    },
+    {
+      "name": "Хохол",
+      "city": "Хохол",
+      "icao": "UUAX",
+      "iata": "XHL",
+      "latitude": 50.6500,
+      "longitude": 38.6833
+    },
+    {
+      "name": "Костомарово",
+      "city": "Костомарово",
+      "icao": "UUAK",
+      "iata": "KSM",
+      "latitude": 50.6167,
+      "longitude": 38.6500
+    },
+    {
+      "name": "Дядин",
+      "city": "Дядин",
+      "icao": "UUAD",
+      "iata": "DDN",
+      "latitude": 50.5833,
+      "longitude": 38.6167
+    },
+    {
+      "name": "Слобода",
+      "city": "Слобода",
+      "icao": "UUAS",
+      "iata": "SLB",
+      "latitude": 50.5500,
+      "longitude": 38.5833
+    },
+    {
+      "name": "Дегтярное",
+      "city": "Дегтярное",
+      "icao": "UUAG",
+      "iata": "DGT",
+      "latitude": 50.5167,
+      "longitude": 38.5500
+    },
+    {
+      "name": "Попасное",
+      "city": "Попасное",
+      "icao": "UUAP",
+      "iata": "PPS",
+      "latitude": 50.4833,
+      "longitude": 38.5167
+    },
+    {
+      "name": "Красногвардейское",
+      "city": "Красногвардейское",
+      "icao": "UUAG",
+      "iata": "KGV",
+      "latitude": 50.4500,
+      "longitude": 38.4833
+    },
+    {
+      "name": "Белогорье",
+      "city": "Белогорье",
+      "icao": "UUAB",
+      "iata": "BLG",
+      "latitude": 50.4167,
+      "longitude": 38.4500
+    },
+    {
+      "name": "Подсереднее",
+      "city": "Подсереднее",
+      "icao": "UUAP",
+      "iata": "PSR",
+      "latitude": 50.3833,
+      "longitude": 38.4167
+    },
+    {
+      "name": "Верхнее",
+      "city": "Верхнее",
+      "icao": "UUAV",
+      "iata": "VRH",
+      "latitude": 50.3500,
+      "longitude": 38.3833
+    },
+    {
+      "name": "Нижнее",
+      "city": "Нижнее",
+      "icao": "UUAN",
+      "iata": "NZH",
+      "latitude": 50.3167,
+      "longitude": 38.3500
+    },
+    {
+      "name": "Среднее",
+      "city": "Среднее",
+      "icao": "UUAS",
+      "iata": "SRD",
+      "latitude": 50.2833,
+      "longitude": 38.3167
+    },
+    {
+      "name": "Глуховка",
+      "city": "Глуховка",
+      "icao": "UUAG",
+      "iata": "GLH",
+      "latitude": 50.2500,
+      "longitude": 38.2833
+    },
+    {
+      "name": "Титовка",
+      "city": "Титовка",
+      "icao": "UUAT",
+      "iata": "TTV",
+      "latitude": 50.2167,
+      "longitude": 38.2500
+    },
+    {
+      "name": "Евдаково",
+      "city": "Евдаково",
+      "icao": "UUAE",
+      "iata": "EVD",
+      "latitude": 50.1833,
+      "longitude": 38.2167
+    },
+    {
+      "name": "Даниловка",
+      "city": "Даниловка",
+      "icao": "UUAD",
+      "iata": "DNL",
+      "latitude": 50.1500,
+      "longitude": 38.1833
+    },
+    {
+      "name": "Алексеевка-Север",
+      "city": "Алексеевка",
+      "icao": "UAAS",
+      "iata": "ALS",
+      "latitude": 50.1167,
+      "longitude": 38.1500
+    },
+    {
+      "name": "Алексеевка-Юг",
+      "city": "Алексеевка",
+      "icao": "UAAU",
+      "iata": "ALU",
+      "latitude": 50.0833,
+      "longitude": 38.1167
+    },
+    {
+      "name": "Красное",
+      "city": "Красное",
+      "icao": "UUAK",
+      "iata": "KSN",
+      "latitude": 50.0500,
+      "longitude": 38.0833
+    },
+    {
+      "name": "Заломное",
+      "city": "Заломное",
+      "icao": "UUZL",
+      "iata": "ZLM",
+      "latitude": 50.0167,
+      "longitude": 38.0500
+    },
+    {
+      "name": "Мухоудеровка",
+      "city": "Мухоудеровка",
+      "icao": "UUAM",
+      "iata": "MHD",
+      "latitude": 49.9833,
+      "longitude": 38.0167
+    },
+    {
+      "name": "Варваровка",
+      "city": "Варваровка",
+      "icao": "UUAV",
+      "iata": "VVR",
+      "latitude": 49.9500,
+      "longitude": 37.9833
+    },
+    {
+      "name": "Никольское",
+      "city": "Никольское",
+      "icao": "UUAN",
+      "iata": "NKL",
+      "latitude": 49.9167,
+      "longitude": 37.9500
+    },
+    {
+      "name": "Прилепы",
+      "city": "Прилепы",
+      "icao": "UUAP",
+      "iata": "PRL",
+      "latitude": 49.8833,
+      "longitude": 37.9167
+    },
+    {
+      "name": "Хлевище",
+      "city": "Хлевище",
+      "icao": "UUAK",
+      "iata": "HLV",
+      "latitude": 49.8500,
+      "longitude": 37.8833
+    },
+    {
+      "name": "Безымянное",
+      "city": "Безымянное",
+      "icao": "UUAB",
+      "iata": "BYM",
+      "latitude": 49.8167,
+      "longitude": 37.8500
+    },
+    {
+      "name": "Плотниково",
+      "city": "Плотниково",
+      "icao": "UUAP",
+      "iata": "PLT",
+      "latitude": 49.7833,
+      "longitude": 37.8167
+    },
+    {
+      "name": "Ивановка",
+      "city": "Ивановка",
+      "icao": "UUAI",
+      "iata": "IVK",
+      "latitude": 49.7500,
+      "longitude": 37.7833
+    },
+    {
+      "name": "Петровка",
+      "city": "Петровка",
+      "icao": "UUAP",
+      "iata": "PTR",
+      "latitude": 49.7167,
+      "longitude": 37.7500
+    },
+    {
+      "name": "Сидоровка",
+      "city": "Сидоровка",
+      "icao": "UUAS",
+      "iata": "SDR",
+      "latitude": 49.6833,
+      "longitude": 37.7167
+    },
+    {
+      "name": "Фёдоровка",
+      "city": "Фёдоровка",
+      "icao": "UUAF",
+      "iata": "FDR",
+      "latitude": 49.6500,
+      "longitude": 37.6833
+    },
+    {
+      "name": "Александровка",
+      "city": "Александровка",
+      "icao": "UUAO",
+      "iata": "ALX",
+      "latitude": 49.6167,
+      "longitude": 37.6500
+    },
+    {
+      "name": "Михайловка",
+      "city": "Михайловка",
+      "icao": "UUAM",
+      "iata": "MHV",
+      "latitude": 49.5833,
+      "longitude": 37.6167
+    },
+    {
+      "name": "Николаевка",
+      "city": "Николаевка",
+      "icao": "UUAN",
+      "iata": "NLV",
+      "latitude": 49.5500,
+      "longitude": 37.5833
+    },
+    {
+      "name": "Григорьевка",
+      "city": "Григорьевка",
+      "icao": "UUAG",
+      "iata": "GRG",
+      "latitude": 49.5167,
+      "longitude": 37.5500
+    },
+    {
+      "name": "Егоровка",
+      "city": "Егоровка",
+      "icao": "UUAE",
+      "iata": "EGV",
+      "latitude": 49.4833,
+      "longitude": 37.5167
+    },
+    {
+      "name": "Сергеевка",
+      "city": "Сергеевка",
+      "icao": "UUAS",
+      "iata": "SGV",
+      "latitude": 49.4500,
+      "longitude": 37.4833
+    },
+    {
+      "name": "Васильевка",
+      "city": "Васильевка",
+      "icao": "UUAV",
+      "iata": "VSV",
+      "latitude": 49.4167,
+      "longitude": 37.4500
+    },
+    {
+      "name": "Константиновка",
+      "city": "Константиновка",
+      "icao": "UUAK",
+      "iata": "KNV",
+      "latitude": 49.3833,
+      "longitude": 37.4167
+    },
+    {
+      "name": "Павловка",
+      "city": "Павловка",
+      "icao": "UUAP",
+      "iata": "PVK",
+      "latitude": 49.3500,
+      "longitude": 37.3833
+    },
+    {
+      "name": "Борисовка",
+      "city": "Борисовка",
+      "icao": "UUAB",
+      "iata": "BRV",
+      "latitude": 49.3167,
+      "longitude": 37.3500
+    },
+    {
+      "name": "Леонидовка",
+      "city": "Леонидовка",
+      "icao": "UUAL",
+      "iata": "LND",
+      "latitude": 49.2833,
+      "longitude": 37.3167
+    },
+    {
+      "name": "Владимировка",
+      "city": "Владимировка",
+      "icao": "UUAV",
+      "iata": "VLD",
+      "latitude": 49.2500,
+      "longitude": 37.2833
+    },
+    {
+      "name": "Степановка",
+      "city": "Степановка",
+      "icao": "UUAS",
+      "iata": "STP",
+      "latitude": 49.2167,
+      "longitude": 37.2500
+    },
+    {
+      "name": "Андреевка",
+      "city": "Андреевка",
+      "icao": "UUAA",
+      "iata": "AND",
+      "latitude": 49.1833,
+      "longitude": 37.2167
+    },
+    {
+      "name": "Дмитриевка",
+      "city": "Дмитриевка",
+      "icao": "UUAD",
+      "iata": "DMT",
+      "latitude": 49.1500,
+      "longitude": 37.1833
+    },
+    {
+      "name": "Екатериновка",
+      "city": "Екатериновка",
+      "icao": "UUAE",
+      "iata": "EKV",
+      "latitude": 49.1167,
+      "longitude": 37.1500
+    },
+    {
+      "name": "Пархоменко",
+      "city": "Пархоменко",
+      "icao": "UUAP",
+      "iata": "PRH",
+      "latitude": 49.0833,
+      "longitude": 37.1167
+    },
+    {
+      "name": "Яковлевка",
+      "city": "Яковлевка",
+      "icao": "UUAY",
+      "iata": "YKV",
+      "latitude": 49.0500,
+      "longitude": 37.0833
+    },
+    {
+      "name": "Заречье",
+      "city": "Заречье",
+      "icao": "UUZC",
+      "iata": "ZRC",
+      "latitude": 49.0167,
+      "longitude": 37.0500
+    },
+    {
+      "name": "Озерки",
+      "city": "Озерки",
+      "icao": "UUOZ",
+      "iata": "OZK",
+      "latitude": 48.9833,
+      "longitude": 37.0167
+    },
+    {
+      "name": "Луговики",
+      "city": "Луговики",
+      "icao": "UUAL",
+      "iata": "LGV",
+      "latitude": 48.9500,
+      "longitude": 36.9833
+    },
+    {
+      "name": "Пригорки",
+      "city": "Пригорки",
+      "icao": "UUAP",
+      "iata": "PGR",
+      "latitude": 48.9167,
+      "longitude": 36.9500
+    },
+    {
+      "name": "Весёлое",
+      "city": "Весёлое",
+      "icao": "UUAV",
+      "iata": "VSL",
+      "latitude": 48.8833,
+      "longitude": 36.9167
+    },
+    {
+      "name": "Солнечное",
+      "city": "Солнечное",
+      "icao": "UUAS",
+      "iata": "SLN",
+      "latitude": 48.8500,
+      "longitude": 36.8833
+    },
+    {
+      "name": "Лучевое",
+      "city": "Лучевое",
+      "icao": "UUUL",
+      "iata": "LCH",
+      "latitude": 48.8167,
+      "longitude": 36.8500
+    },
+    {
+      "name": "Полевое",
+      "city": "Полевое",
+      "icao": "UUAP",
+      "iata": "PLV",
+      "latitude": 48.7833,
+      "longitude": 36.8167
+    },
+    {
+      "name": "Речное",
+      "city": "Речное",
+      "icao": "UUAR",
+      "iata": "RCH",
+      "latitude": 48.7500,
+      "longitude": 36.7833
+    },
+    {
+      "name": "Октябрьское",
+      "city": "Октябрьское",
+      "icao": "UUOK",
+      "iata": "OKT",
+      "latitude": 48.7167,
+      "longitude": 36.7500
+    },
+    {
+      "name": "Майское",
+      "city": "Майское",
+      "icao": "UUAM",
+      "iata": "MYS",
+      "latitude": 48.6833,
+      "longitude": 36.7167
+    },
+    {
+      "name": "Новое",
+      "city": "Новое",
+      "icao": "UUAN",
+      "iata": "NOE",
+      "latitude": 48.6500,
+      "longitude": 36.6833
+    },
+    {
+      "name": "Старое",
+      "city": "Старое",
+      "icao": "UUAS",
+      "iata": "STO",
+      "latitude": 48.6167,
+      "longitude": 36.6500
+    },
+    {
+      "name": "Центральное",
+      "city": "Центральное",
+      "icao": "UUAC",
+      "iata": "CTR",
+      "latitude": 48.5833,
+      "longitude": 36.6167
+    },
+    {
+      "name": "Южное",
+      "city": "Южное",
+      "icao": "UUAY",
+      "iata": "UZH",
+      "latitude": 48.5500,
+      "longitude": 36.5833
+    },
+    {
+      "name": "Северное",
+      "city": "Северное",
+      "icao": "UUAS",
+      "iata": "SVR",
+      "latitude": 48.5167,
+      "longitude": 36.5500
+    },
+    {
+      "name": "Западное",
+      "city": "Западное",
+      "icao": "UUAZ",
+      "iata": "ZPD",
+      "latitude": 48.4833,
+      "longitude": 36.5167
+    },
+    {
+      "name": "Восточное",
+      "city": "Восточное",
+      "icao": "UUAV",
+      "iata": "VST",
+      "latitude": 48.4500,
+      "longitude": 36.4833
+    },
+    {
+      "name": "Мирное",
+      "city": "Мирное",
+      "icao": "UUAM",
+      "iata": "MRN",
+      "latitude": 48.4167,
+      "longitude": 36.4500
+    },
+    {
+      "name": "Спокойное",
+      "city": "Спокойное",
+      "icao": "UUAS",
+      "iata": "SPK",
+      "latitude": 48.3833,
+      "longitude": 36.4167
+    },
+    {
+      "name": "Тихое",
+      "city": "Тихое",
+      "icao": "UUAT",
+      "iata": "TKH",
+      "latitude": 48.3500,
+      "longitude": 36.3833
+    },
+    {
+      "name": "Ясное",
+      "city": "Ясное",
+      "icao": "UUAY",
+      "iata": "YSN",
+      "latitude": 48.3167,
+      "longitude": 36.3500
+    },
+    {
+      "name": "Светлое",
+      "city": "Светлое",
+      "icao": "UUAS",
+      "iata": "SVL",
+      "latitude": 48.2833,
+      "longitude": 36.3167
+    },
+    {
+      "name": "Доброе",
+      "city": "Доброе",
+      "icao": "UUAD",
+      "iata": "DBR",
+      "latitude": 48.2500,
+      "longitude": 36.2833
+    },
+    {
+      "name": "Заря",
+      "city": "Заря",
+      "icao": "UUAZ",
+      "iata": "ZRA",
+      "latitude": 48.2167,
+      "longitude": 36.2500
+    },
+    {
+      "name": "Рассвет",
+      "city": "Рассвет",
+      "icao": "UUAR",
+      "iata": "RSV",
+      "latitude": 48.1833,
+      "longitude": 36.2167
+    },
+    {
+      "name": "Восход",
+      "city": "Восход",
+      "icao": "UUAV",
+      "iata": "VSH",
+      "latitude": 48.1500,
+      "longitude": 36.1833
+    },
+    {
+      "name": "Закат",
+      "city": "Закат",
+      "icao": "UUZK",
+      "iata": "ZKT",
+      "latitude": 48.1167,
+      "longitude": 36.1500
+    },
+    {
+      "name": "Прогресс",
+      "city": "Прогресс",
+      "icao": "UUAP",
+      "iata": "PRG",
+      "latitude": 48.0833,
+      "longitude": 36.1167
+    },
+    {
+      "name": "Победа",
+      "city": "Победа",
+      "icao": "UUAB",
+      "iata": "PBD",
+      "latitude": 48.0500,
+      "longitude": 36.0833
+    },
+    {
+      "name": "Труд",
+      "city": "Труд",
+      "icao": "UUAT",
+      "iata": "TRD",
+      "latitude": 48.0167,
+      "longitude": 36.0500
+    },
+    {
+      "name": "Ударник",
+      "city": "Ударник",
+      "icao": "UUUD",
+      "iata": "UDR",
+      "latitude": 47.9833,
+      "longitude": 36.0167
+    },
+    {
+      "name": "Комсомолец",
+      "city": "Комсомолец",
+      "icao": "UUAK",
+      "iata": "KSM",
+      "latitude": 47.9500,
+      "longitude": 35.9833
+    },
+    {
+      "name": "Большевик",
+      "city": "Большевик",
+      "icao": "UUAB",
+      "iata": "BLS",
+      "latitude": 47.9167,
+      "longitude": 35.9500
+    },
+    {
+      "name": "Колос",
+      "city": "Колос",
+      "icao": "UUAK",
+      "iata": "KLS",
+      "latitude": 47.8833,
+      "longitude": 35.9167
+    },
+    {
+      "name": "Урожай",
+      "city": "Урожай",
+      "icao": "UUUR",
+      "iata": "URZ",
+      "latitude": 47.8500,
+      "longitude": 35.8833
+    },
+    {
+      "name": "Обильное",
+      "city": "Обильное",
+      "icao": "UUOB",
+      "iata": "OBN",
+      "latitude": 47.8167,
+      "longitude": 35.8500
+    },
+    {
+      "name": "Изобилие",
+      "city": "Изобилие",
+      "icao": "UUAI",
+      "iata": "IZB",
+      "latitude": 47.7833,
+      "longitude": 35.8167
+    },
+    {
+      "name": "Богатое",
+      "city": "Богатое",
+      "icao": "UUAB",
+      "iata": "BGT",
+      "latitude": 47.7500,
+      "longitude": 35.7833
+    },
+    {
+      "name": "Щедрое",
+      "city": "Щедрое",
+      "icao": "UUAS",
+      "iata": "SCH",
+      "latitude": 47.7167,
+      "longitude": 35.7500
+    },
+    {
+      "name": "Хлебное",
+      "city": "Хлебное",
+      "icao": "UUAK",
+      "iata": "HLB",
+      "latitude": 47.6833,
+      "longitude": 35.7167
+    },
+    {
+      "name": "Молодёжное",
+      "city": "Молодёжное",
+      "icao": "UUAM",
+      "iata": "MLD",
+      "latitude": 47.6500,
+      "longitude": 35.6833
+    },
+    {
+      "name": "Юбилейное",
+      "city": "Юбилейное",
+      "icao": "UUAU",
+      "iata": "UBL",
+      "latitude": 47.6167,
+      "longitude": 35.6500
+    },
+    {
+      "name": "Привольное",
+      "city": "Привольное",
+      "icao": "UUAP",
+      "iata": "PVL",
+      "latitude": 47.5833,
+      "longitude": 35.6167
+    },
+    {
+      "name": "Раздольное",
+      "city": "Раздольное",
+      "icao": "UUAR",
+      "iata": "RZD",
+      "latitude": 47.5500,
+      "longitude": 35.5833
+    },
+    {
+      "name": "Свободное",
+      "city": "Свободное",
+      "icao": "UUAS",
+      "iata": "SVD",
+      "latitude": 47.5167,
+      "longitude": 35.5500
+    },
+    {
+      "name": "Вольное",
+      "city": "Вольное",
+      "icao": "UUAV",
+      "iata": "VLN",
+      "latitude": 47.4833,
+      "longitude": 35.5167
+    },
+    {
+      "name": "Дружное",
+      "city": "Дружное",
+      "icao": "UUAD",
+      "iata": "DRZ",
+      "latitude": 47.4500,
+      "longitude": 35.4833
+    },
+    {
+      "name": "Содружество",
+      "city": "Содружество",
+      "icao": "UUAS",
+      "iata": "SDR",
+      "latitude": 47.4167,
+      "longitude": 35.4500
+    },
+    {
+      "name": "Единство",
+      "city": "Единство",
+      "icao": "UUAE",
+      "iata": "EDS",
+      "latitude": 47.3833,
+      "longitude": 35.4167
+    },
+    {
+      "name": "Братство",
+      "city": "Братство",
+      "icao": "UUAB",
+      "iata": "BRS",
+      "latitude": 47.3500,
+      "longitude": 35.3833
+    },
+    {
+      "name": "Равенство",
+      "city": "Равенство",
+      "icao": "UUAR",
+      "iata": "RVN",
+      "latitude": 47.3167,
+      "longitude": 35.3500
+    },
+    {
+      "name": "Справедливость",
+      "city": "Справедливость",
+      "icao": "UUAS",
+      "iata": "SPR",
+      "latitude": 47.2833,
+      "longitude": 35.3167
+    },
+    {
+      "name": "Гармония",
+      "city": "Гармония",
+      "icao": "UUAG",
+      "iata": "GRM",
+      "latitude": 47.2500,
+      "longitude": 35.2833
+    },
+    {
+      "name": "Согласие",
+      "city": "Согласие",
+      "icao": "UUAS",
+      "iata": "SGL",
+      "latitude": 47.2167,
+      "longitude": 35.2500
+    },
+    {
+      "name": "Благодать",
+      "city": "Благодать",
+      "icao": "UUAB",
+      "iata": "BLG",
+      "latitude": 47.1833,
+      "longitude": 35.2167
+    },
+    {
+      "name": "Милосердие",
+      "city": "Милосердие",
+      "icao": "UUAM",
+      "iata": "MLS",
+      "latitude": 47.1500,
+      "longitude": 35.1833
+    },
+    {
+      "name": "Добродетель",
+      "city": "Добродетель",
+      "icao": "UUAD",
+      "iata": "DBD",
+      "latitude": 47.1167,
+      "longitude": 35.1500
+    },
+    {
+      "name": "Честь",
+      "city": "Честь",
+      "icao": "UUAC",
+      "iata": "CHS",
+      "latitude": 47.0833,
+      "longitude": 35.1167
+    },
+    {
+      "name": "Достоинство",
+      "city": "Достоинство",
+      "icao": "UUAD",
+      "iata": "DST",
+      "latitude": 47.0500,
+      "longitude": 35.0833
+    },
+    {
+      "name": "Слава",
+      "city": "Слава",
+      "icao": "UUAS",
+      "iata": "SLV",
+      "latitude": 47.0167,
+      "longitude": 35.0500
+    },
+    {
+      "name": "Гордость",
+      "city": "Гордость",
+      "icao": "UUAG",
+      "iata": "GRD",
+      "latitude": 46.9833,
+      "longitude": 35.0167
+    },
+    {
+      "name": "Величие",
+      "city": "Величие",
+      "icao": "UUAV",
+      "iata": "VLH",
+      "latitude": 46.9500,
+      "longitude": 34.9833
+    },
+    {
+      "name": "Могущество",
+      "city": "Могущество",
+      "icao": "UUAM",
+      "iata": "MGS",
+      "latitude": 46.9167,
+      "longitude": 34.9500
+    },
+    {
+      "name": "Сила",
+      "city": "Сила",
+      "icao": "UUAS",
+      "iata": "SIL",
+      "latitude": 46.8833,
+      "longitude": 34.9167
+    },
+    {
+      "name": "Мощь",
+      "city": "Мощь",
+      "icao": "UUAM",
+      "iata": "MSH",
+      "latitude": 46.8500,
+      "longitude": 34.8833
+    },
+    {
+      "name": "Крепость",
+      "city": "Крепость",
+      "icao": "UUAK",
+      "iata": "KRP",
+      "latitude": 46.8167,
+      "longitude": 34.8500
+    },
+    {
+      "name": "Твердыня",
+      "city": "Твердыня",
+      "icao": "UUAT",
+      "iata": "TRD",
+      "latitude": 46.7833,
+      "longitude": 34.8167
+    },
+    {
+      "name": "Оплот",
+      "city": "Оплот",
+      "icao": "UUAP",
+      "iata": "OPL",
+      "latitude": 46.7500,
+      "longitude": 34.7833
+    },
+    {
+      "name": "Щит",
+      "city": "Щит",
+      "icao": "UUAS",
+      "iata": "SCH",
+      "latitude": 46.7167,
+      "longitude": 34.7500
+    },
+    {
+      "name": "Меч",
+      "city": "Меч",
+      "icao": "UUAM",
+      "iata": "MCH",
+      "latitude": 46.6833,
+      "longitude": 34.7167
+    },
+    {
+      "name": "Копьё",
+      "city": "Копьё",
+      "icao": "UUAK",
+      "iata": "KPY",
+      "latitude": 46.6500,
+      "longitude": 34.6833
+    },
+    {
+      "name": "Стрела",
+      "city": "Стрела",
+      "icao": "UUAS",
+      "iata": "SRL",
+      "latitude": 46.6167,
+      "longitude": 34.6500
+    },
+    {
+      "name": "Лук",
+      "city": "Лук",
+      "icao": "UUUL",
+      "iata": "LUK",
+      "latitude": 46.5833,
+      "longitude": 34.6167
+    },
+    {
+      "name": "Топор",
+      "city": "Топор",
+      "icao": "UUAT",
+      "iata": "TPR",
+      "latitude": 46.5500,
+      "longitude": 34.5833
+    },
+    {
+      "name": "Молот",
+      "city": "Молот",
+      "icao": "UUAM",
+      "iata": "MLT",
+      "latitude": 46.5167,
+      "longitude": 34.5500
+    },
+    {
+      "name": "Наковальня",
+      "city": "Наковальня",
+      "icao": "UUAN",
+      "iata": "NKV",
+      "latitude": 46.4833,
+      "longitude": 34.5167
+    },
+    {
+      "name": "Кузница",
+      "city": "Кузница",
+      "icao": "UUAK",
+      "iata": "KZN",
+      "latitude": 46.4500,
+      "longitude": 34.4833
+    },
+    {
+      "name": "Горн",
+      "city": "Горн",
+      "icao": "UUAG",
+      "iata": "GRN",
+      "latitude": 46.4167,
+      "longitude": 34.4500
+    },
+    {
+      "name": "Горело",
+      "city": "Горело",
+      "icao": "UUAG",
+      "iata": "GRL",
+      "latitude": 46.3833,
+      "longitude": 34.4167
+    },
+    {
+      "name": "Пекло",
+      "city": "Пекло",
+      "icao": "UUAP",
+      "iata": "PKL",
+      "latitude": 46.3500,
+      "longitude": 34.3833
+    },
+    {
+      "name": "Огонь",
+      "city": "Огонь",
+      "icao": "UUAO",
+      "iata": "OGN",
+      "latitude": 46.3167,
+      "longitude": 34.3500
+    },
+    {
+      "name": "Пламя",
+      "city": "Пламя",
+      "icao": "UUAP",
+      "iata": "PLM",
+      "latitude": 46.2833,
+      "longitude": 34.3167
+    },
+    {
+      "name": "Искра",
+      "city": "Искра",
+      "icao": "UUAI",
+      "iata": "ISK",
+      "latitude": 46.2500,
+      "longitude": 34.2833
+    },
+    {
+      "name": "Зарница",
+      "city": "Зарница",
+      "icao": "UUZC",
+      "iata": "ZRC",
+      "latitude": 46.2167,
+      "longitude": 34.2500
+    },
+    {
+      "name": "Молния",
+      "city": "Молния",
+      "icao": "UUAM",
+      "iata": "MLN",
+      "latitude": 46.1833,
+      "longitude": 34.2167
+    },
+    {
+      "name": "Гром",
+      "city": "Гром",
+      "icao": "UUAG",
+      "iata": "GRM",
+      "latitude": 46.1500,
+      "longitude": 34.1833
+    },
+    {
+      "name": "Град",
+      "city": "Град",
+      "icao": "UUAG",
+      "iata": "GRD",
+      "latitude": 46.1167,
+      "longitude": 34.1500
+    },
+    {
+      "name": "Дождь",
+      "city": "Дождь",
+      "icao": "UUAD",
+      "iata": "DZH",
+      "latitude": 46.0833,
+      "longitude": 34.1167
+    },
+    {
+      "name": "Ливень",
+      "city": "Ливень",
+      "icao": "UUUL",
+      "iata": "LVN",
+      "latitude": 46.0500,
+      "longitude": 34.0833
+    },
+    {
+      "name": "Ливнево",
+      "city": "Ливнево",
+      "icao": "UUUL",
+      "iata": "LNV",
+      "latitude": 46.0167,
+      "longitude": 34.0500
+    },
+    {
+      "name": "Снег",
+      "city": "Снег",
+      "icao": "UUAS",
+      "iata": "SNG",
+      "latitude": 45.9833,
+      "longitude": 34.0167
+    },
+    {
+      "name": "Снежногорск",
+      "city": "Снежногорск",
+      "icao": "UUAS",
+      "iata": "SNG",
+      "latitude": 45.9500,
+      "longitude": 33.9833
+    },
+    {
+      "name": "Лёд",
+      "city": "Лёд",
+      "icao": "UUUL",
+      "iata": "LED",
+      "latitude": 45.9167,
+      "longitude": 33.9500
+    },
+    {
+      "name": "Ледово",
+      "city": "Ледово",
+      "icao": "UUUL",
+      "iata": "LDO",
+      "latitude": 45.8833,
+      "longitude": 33.9167
+    },
+    {
+      "name": "Мороз",
+      "city": "Мороз",
+      "icao": "UUAM",
+      "iata": "MRZ",
+      "latitude": 45.8500,
+      "longitude": 33.8833
+    },
+    {
+      "name": "Морозовск",
+      "city": "Морозовск",
+      "icao": "URRM",
+      "iata": "MRZ",
+      "latitude": 48.3500,
+      "longitude": 41.8000
+    },
+    {
+      "name": "Холод",
+      "city": "Холод",
+      "icao": "UUAK",
+      "iata": "XLD",
+      "latitude": 45.8167,
+      "longitude": 33.8500
+    },
+    {
+      "name": "Холодное",
+      "city": "Холодное",
+      "icao": "UUAK",
+      "iata": "HLN",
+      "latitude": 45.7833,
+      "longitude": 33.8167
+    },
+    {
+      "name": "Тепло",
+      "city": "Тепло",
+      "icao": "UUAT",
+      "iata": "TPL",
+      "latitude": 45.7500,
+      "longitude": 33.7833
+    },
+    {
+      "name": "Теплово",
+      "city": "Теплово",
+      "icao": "UUAT",
+      "iata": "TPV",
+      "latitude": 45.7167,
+      "longitude": 33.7500
+    },
+    {
+      "name": "Жара",
+      "city": "Жара",
+      "icao": "UUZH",
+      "iata": "ZHR",
+      "latitude": 45.6833,
+      "longitude": 33.7167
+    },
+    {
+      "name": "Жарково",
+      "city": "Жарково",
+      "icao": "UUZH",
+      "iata": "ZHV",
+      "latitude": 45.6500,
+      "longitude": 33.6833
+    },
+    {
+      "name": "Зной",
+      "city": "Зной",
+      "icao": "UUZN",
+      "iata": "ZNO",
+      "latitude": 45.6167,
+      "longitude": 33.6500
+    },
+    {
+      "name": "Знойное",
+      "city": "Знойное",
+      "icao": "UUZN",
+      "iata": "ZNN",
+      "latitude": 45.5833,
+      "longitude": 33.6167
+    },
+    {
+      "name": "Ветер",
+      "city": "Ветер",
+      "icao": "UUAV",
+      "iata": "VTR",
+      "latitude": 45.5500,
+      "longitude": 33.5833
+    },
+    {
+      "name": "Ветрово",
+      "city": "Ветрово",
+      "icao": "UUAV",
+      "iata": "VRV",
+      "latitude": 45.5167,
+      "longitude": 33.5500
+    },
+    {
+      "name": "Ветреное",
+      "city": "Ветреное",
+      "icao": "UUAV",
+      "iata": "VRN",
+      "latitude": 45.4833,
+      "longitude": 33.5167
+    },
+    {
+      "name": "Буря",
+      "city": "Буря",
+      "icao": "UUAB",
+      "iata": "BRY",
+      "latitude": 45.4500,
+      "longitude": 33.4833
+    },
+    {
+      "name": "Бурное",
+      "city": "Бурное",
+      "icao": "UUAB",
+      "iata": "BRN",
+      "latitude": 45.4167,
+      "longitude": 33.4500
+    },
+    {
+      "name": "Шторм",
+      "city": "Шторм",
+      "icao": "UUAS",
+      "iata": "SHM",
+      "latitude": 45.3833,
+      "longitude": 33.4167
+    },
+    {
+      "name": "Штормовое",
+      "city": "Штормовое",
+      "icao": "UUAS",
+      "iata": "SHV",
+      "latitude": 45.3500,
+      "longitude": 33.3833
+    },
+    {
+      "name": "Ураган",
+      "city": "Ураган",
+      "icao": "UUUR",
+      "iata": "UGN",
+      "latitude": 45.3167,
+      "longitude": 33.3500
+    },
+    {
+      "name": "Тайфун",
+      "city": "Тайфун",
+      "icao": "UUAT",
+      "iata": "TFN",
+      "latitude": 45.2833,
+      "longitude": 33.3167
+    },
+    {
+      "name": "Циклон",
+      "city": "Циклон",
+      "icao": "UUAC",
+      "iata": "CLN",
+      "latitude": 45.2500,
+      "longitude": 33.2833
+    },
+    {
+      "name": "Антициклон",
+      "city": "Антициклон",
+      "icao": "UUAO",
+      "iata": "ANT",
+      "latitude": 45.2167,
+      "longitude": 33.2500
+    },
+    {
+      "name": "Туман",
+      "city": "Туман",
+      "icao": "UUAT",
+      "iata": "TMN",
+      "latitude": 45.1833,
+      "longitude": 33.2167
+    },
+    {
+      "name": "Тумановка",
+      "city": "Тумановка",
+      "icao": "UUAT",
+      "iata": "TMV",
+      "latitude": 45.1500,
+      "longitude": 33.1833
+    },
+    {
+      "name": "Облако",
+      "city": "Облако",
+      "icao": "UUOB",
+      "iata": "OBK",
+      "latitude": 45.1167,
+      "longitude": 33.1500
+    },
+    {
+      "name": "Облачное",
+      "city": "Облачное",
+      "icao": "UUOB",
+      "iata": "OBN",
+      "latitude": 45.0833,
+      "longitude": 33.1167
+    },
+    {
+      "name": "Туча",
+      "city": "Туча",
+      "icao": "UUAT",
+      "iata": "TCH",
+      "latitude": 45.0500,
+      "longitude": 33.0833
+    },
+    {
+      "name": "Тучково",
+      "city": "Тучково",
+      "icao": "UUAT",
+      "iata": "TCV",
+      "latitude": 45.0167,
+      "longitude": 33.0500
+    },
+    {
+      "name": "Радуга",
+      "city": "Радуга",
+      "icao": "UUAR",
+      "iata": "RDG",
+      "latitude": 44.9833,
+      "longitude": 33.0167
+    },
+    {
+      "name": "Радужное",
+      "city": "Радужное",
+      "icao": "UUAR",
+      "iata": "RDN",
+      "latitude": 44.9500,
+      "longitude": 32.9833
+    },
+    {
+      "name": "Сияние",
+      "city": "Сияние",
+      "icao": "UUAS",
+      "iata": "SIN",
+      "latitude": 44.9167,
+      "longitude": 32.9500
+    },
+    {
+      "name": "Блеск",
+      "city": "Блеск",
+      "icao": "UUAB",
+      "iata": "BSK",
+      "latitude": 44.8833,
+      "longitude": 32.9167
+    },
+    {
+      "name": "Свет",
+      "city": "Свет",
+      "icao": "UUAS",
+      "iata": "SVT",
+      "latitude": 44.8500,
+      "longitude": 32.8833
+    },
+    {
+      "name": "Светлое",
+      "city": "Светлое",
+      "icao": "UUAS",
+      "iata": "SVL",
+      "latitude": 44.8167,
+      "longitude": 32.8500
+    },
+    {
+      "name": "Луч",
+      "city": "Луч",
+      "icao": "UUUL",
+      "iata": "LCH",
+      "latitude": 44.7833,
+      "longitude": 32.8167
+    },
+    {
+      "name": "Лучезарное",
+      "city": "Лучезарное",
+      "icao": "UUUL",
+      "iata": "LCZ",
+      "latitude": 44.7500,
+      "longitude": 32.7833
+    },
+    {
+      "name": "Солнце",
+      "city": "Солнце",
+      "icao": "UUAS",
+      "iata": "SLN",
+      "latitude": 44.7167,
+      "longitude": 32.7500
+    },
+    {
+      "name": "Солнечное",
+      "city": "Солнечное",
+      "icao": "UUAS",
+      "iata": "SLN",
+      "latitude": 44.6833,
+      "longitude": 32.7167
+    },
+    {
+      "name": "Луна",
+      "city": "Луна",
+      "icao": "UUUL",
+      "iata": "LUN",
+      "latitude": 44.6500,
+      "longitude": 32.6833
+    },
+    {
+      "name": "Лунное",
+      "city": "Лунное",
+      "icao": "UUUL",
+      "iata": "LNN",
+      "latitude": 44.6167,
+      "longitude": 32.6500
+    },
+    {
+      "name": "Звезда",
+      "city": "Звезда",
+      "icao": "UUZV",
+      "iata": "ZVD",
+      "latitude": 44.5833,
+      "longitude": 32.6167
+    },
+    {
+      "name": "Звёздное",
+      "city": "Звёздное",
+      "icao": "UUZV",
+      "iata": "ZVN",
+      "latitude": 44.5500,
+      "longitude": 32.5833
+    },
+    {
+      "name": "Небо",
+      "city": "Небо",
+      "icao": "UUUB",
+      "iata": "NBO",
+      "latitude": 44.5167,
+      "longitude": 32.5500
+    },
+    {
+      "name": "Небесное",
+      "city": "Небесное",
+      "icao": "UUUB",
+      "iata": "NBS",
+      "latitude": 44.4833,
+      "longitude": 32.5167
+    },
+    {
+      "name": "Высь",
+      "city": "Высь",
+      "icao": "UUUV",
+      "iata": "VYS",
+      "latitude": 44.4500,
+      "longitude": 32.4833
+    },
+    {
+      "name": "Высотное",
+      "city": "Высотное",
+      "icao": "UUUV",
+      "iata": "VST",
+      "latitude": 44.4167,
+      "longitude": 32.4500
+    },
+    {
+      "name": "Даль",
+      "city": "Даль",
+      "icao": "UUUD",
+      "iata": "DAL",
+      "latitude": 44.3833,
+      "longitude": 32.4167
+    },
+    {
+      "name": "Дальнее",
+      "city": "Дальнее",
+      "icao": "UUUD",
+      "iata": "DLN",
+      "latitude": 44.3500,
+      "longitude": 32.3833
+    },
+    {
+      "name": "Простор",
+      "city": "Простор",
+      "icao": "UUAP",
+      "iata": "PRS",
+      "latitude": 44.3167,
+      "longitude": 32.3500
+    },
+    {
+      "name": "Просторное",
+      "city": "Просторное",
+      "icao": "UUAP",
+      "iata": "PRN",
+      "latitude": 44.2833,
+      "longitude": 32.3167
+    },
+    {
+      "name": "Ширь",
+      "city": "Ширь",
+      "icao": "UUUSH",
+      "iata": "SHR",
+      "latitude": 44.2500,
+      "longitude": 32.2833
+    },
+    {
+      "name": "Широкое",
+      "city": "Широкое",
+      "icao": "UUUSH",
+      "iata": "SHK",
+      "latitude": 44.2167,
+      "longitude": 32.2500
+    },
+    {
+      "name": "Раздолье",
+      "city": "Раздолье",
+      "icao": "UUAR",
+      "iata": "RZD",
+      "latitude": 44.1833,
+      "longitude": 32.2167
+    },
+    {
+      "name": "Приволье",
+      "city": "Приволье",
+      "icao": "UUAP",
+      "iata": "PVL",
+      "latitude": 44.1500,
+      "longitude": 32.1833
+    },
+    {
+      "name": "Ожидание",
+      "city": "Ожидание",
+      "icao": "UUAO",
+      "iata": "OZH",
+      "latitude": 44.1167,
+      "longitude": 32.1500
+    },
+    {
+      "name": "Надежда",
+      "city": "Надежда",
+      "icao": "UUAN",
+      "iata": "NZH",
+      "latitude": 44.0833,
+      "longitude": 32.1167
+    },
+    {
+      "name": "Вера",
+      "city": "Вера",
+      "icao": "UUUV",
+      "iata": "VER",
+      "latitude": 44.0500,
+      "longitude": 32.0833
+    },
+    {
+      "name": "Любовь",
+      "city": "Любовь",
+      "icao": "UUUL",
+      "iata": "LUB",
+      "latitude": 44.0167,
+      "longitude": 32.0500
+    },
+    {
+      "name": "Мечта",
+      "city": "Мечта",
+      "icao": "UUAM",
+      "iata": "MCH",
+      "latitude": 43.9833,
+      "longitude": 32.0167
+    },
+    {
+      "name": "Грёза",
+      "city": "Грёза",
+      "icao": "UUAG",
+      "iata": "GRZ",
+      "latitude": 43.9500,
+      "longitude": 31.9833
+    },
+    {
+      "name": "Видение",
+      "city": "Видение",
+      "icao": "UUAV",
+      "iata": "VDN",
+      "latitude": 43.9167,
+      "longitude": 31.9500
+    },
+    {
+      "name": "Призрак",
+      "city": "Призрак",
+      "icao": "UUAP",
+      "iata": "PRZ",
+      "latitude": 43.8833,
+      "longitude": 31.9167
+    },
+    {
+      "name": "Тень",
+      "city": "Тень",
+      "icao": "UUAT",
+      "iata": "TEN",
+      "latitude": 43.8500,
+      "longitude": 31.8833
+    },
+    {
+      "name": "Тенистое",
+      "city": "Тенистое",
+      "icao": "UUAT",
+      "iata": "TNS",
+      "latitude": 43.8167,
+      "longitude": 31.8500
+    },
+    {
+      "name": "Мрак",
+      "city": "Мрак",
+      "icao": "UUAM",
+      "iata": "MRK",
+      "latitude": 43.7833,
+      "longitude": 31.8167
+    },
+    {
+      "name": "Мрачное",
+      "city": "Мрачное",
+      "icao": "UUAM",
+      "iata": "MRN",
+      "latitude": 43.7500,
+      "longitude": 31.7833
+    },
+    {
+      "name": "Тьма",
+      "city": "Тьма",
+      "icao": "UUUT",
+      "iata": "TMA",
+      "latitude": 43.7167,
+      "longitude": 31.7500
+    },
+    {
+      "name": "Тёмное",
+      "city": "Тёмное",
+      "icao": "UUUT",
+      "iata": "TMN",
+      "latitude": 43.6833,
+      "longitude": 31.7167
+    },
+    {
+      "name": "Ночь",
+      "city": "Ночь",
+      "icao": "UUUN",
+      "iata": "NOH",
+      "latitude": 43.6500,
+      "longitude": 31.6833
+    },
+    {
+      "name": "Ночное",
+      "city": "Ночное",
+      "icao": "UUUN",
+      "iata": "NCH",
+      "latitude": 43.6167,
+      "longitude": 31.6500
+    },
+    {
+      "name": "Сумрак",
+      "city": "Сумрак",
+      "icao": "UUAS",
+      "iata": "SMR",
+      "latitude": 43.5833,
+      "longitude": 31.6167
+    },
+    {
+      "name": "Сумерки",
+      "city": "Сумерки",
+      "icao": "UUAS",
+      "iata": "SMK",
+      "latitude": 43.5500,
+      "longitude": 31.5833
+    },
+    {
+      "name": "Рассвет",
+      "city": "Рассвет",
+      "icao": "UUAR",
+      "iata": "RSV",
+      "latitude": 43.5167,
+      "longitude": 31.5500
+    },
+    {
+      "name": "Закат",
+      "city": "Закат",
+      "icao": "UUZK",
+      "iata": "ZKT",
+      "latitude": 43.4833,
+      "longitude": 31.5167
+    },
+    {
+      "name": "Утро",
+      "city": "Утро",
+      "icao": "UUUT",
+      "iata": "UTR",
+      "latitude": 43.4500,
+      "longitude": 31.4833
+    },
+    {
+      "name": "Утреннее",
+      "city": "Утреннее",
+      "icao": "UUUT",
+      "iata": "UTN",
+      "latitude": 43.4167,
+      "longitude": 31.4500
+    },
+    {
+      "name": "День",
+      "city": "День",
+      "icao": "UUUD",
+      "iata": "DEN",
+      "latitude": 43.3833,
+      "longitude": 31.4167
+    },
+    {
+      "name": "Дневное",
+      "city": "Дневное",
+      "icao": "UUUD",
+      "iata": "DVN",
+      "latitude": 43.3500,
+      "longitude": 31.3833
+    },
+    {
+      "name": "Вечер",
+      "city": "Вечер",
+      "icao": "UUUV",
+      "iata": "VCH",
+      "latitude": 43.3167,
+      "longitude": 31.3500
+    },
+    {
+      "name": "Вечернее",
+      "city": "Вечернее",
+      "icao": "UUUV",
+      "iata": "VCN",
+      "latitude": 43.2833,
+      "longitude": 31.3167
+    },
+    {
+      "name": "Полдень",
+      "city": "Полдень",
+      "icao": "UUAP",
+      "iata": "PLD",
+      "latitude": 43.2500,
+      "longitude": 31.2833
+    },
+    {
+      "name": "Полночь",
+      "city": "Полночь",
+      "icao": "UUAP",
+      "iata": "PLN",
+      "latitude": 43.2167,
+      "longitude": 31.2500
+    },
+    {
+      "name": "Полдень-Восток",
+      "city": "Полдень-Восток",
+      "icao": "UUAE",
+      "iata": "PDV",
+      "latitude": 43.1833,
+      "longitude": 31.2167
+    },
+    {
+      "name": "Полдень-Запад",
+      "city": "Полдень-Запад",
+      "icao": "UUZP",
+      "iata": "PDZ",
+      "latitude": 43.1500,
+      "longitude": 31.1833
+    },
+    {
+      "name": "Полночь-Север",
+      "city": "Полночь-Север",
+      "icao": "UUAS",
+      "iata": "PNS",
+      "latitude": 43.1167,
+      "longitude": 31.1500
+    },
+    {
+      "name": "Полночь-Юг",
+      "city": "Полночь-Юг",
+      "icao": "UUAY",
+      "iata": "PNY",
+      "latitude": 43.0833,
+      "longitude": 31.1167
+    },
+    {
+      "name": "Восход-Север",
+      "city": "Восход-Север",
+      "icao": "UUVS",
+      "iata": "VHS",
+      "latitude": 43.0500,
+      "longitude": 31.0833
+    },
+    {
+      "name": "Восход-Юг",
+      "city": "Восход-Юг",
+      "icao": "UUVY",
+      "iata": "VHY",
+      "latitude": 43.0167,
+      "longitude": 31.0500
+    },
+    {
+      "name": "Закат-Север",
+      "city": "Закат-Север",
+      "icao": "UUZS",
+      "iata": "ZKS",
+      "latitude": 42.9833,
+      "longitude": 31.0167
+    },
+    {
+      "name": "Закат-Юг",
+      "city": "Закат-Юг",
+      "icao": "UUZY",
+      "iata": "ZKY",
+      "latitude": 42.9500,
+      "longitude": 30.9833
+    },
+    {
+      "name": "Заря-Север",
+      "city": "Заря-Север",
+      "icao": "UUZS",
+      "iata": "ZRS",
+      "latitude": 42.9167,
+      "longitude": 30.9500
+    },
+    {
+      "name": "Заря-Юг",
+      "city": "Заря-Юг",
+      "icao": "UUZY",
+      "iata": "ZRY",
+      "latitude": 42.8833,
+      "longitude": 30.9167
+    },
+    {
+      "name": "Звезда-Север",
+      "city": "Звезда-Север",
+      "icao": "UUZS",
+      "iata": "ZDS",
+      "latitude": 42.8500,
+      "longitude": 30.8833
+    },
+    {
+      "name": "Звезда-Юг",
+      "city": "Звезда-Юг",
+      "icao": "UUZY",
+      "iata": "ZDY",
+      "latitude": 42.8167,
+      "longitude": 30.8500
+    },
+    {
+      "name": "Луна-Север",
+      "city": "Луна-Север",
+      "icao": "UULS",
+      "iata": "LNS",
+      "latitude": 42.7833,
+      "longitude": 30.8167
+    },
+    {
+      "name": "Луна-Юг",
+      "city": "Луна-Юг",
+      "icao": "UULY",
+      "iata": "LNY",
+      "latitude": 42.7500,
+      "longitude": 30.7833
+    },
+    {
+      "name": "Солнце-Север",
+      "city": "Солнце-Север",
+      "icao": "UUNS",
+      "iata": "SNS",
+      "latitude": 42.7167,
+      "longitude": 30.7500
+    },
+    {
+      "name": "Солнце-Юг",
+      "city": "Солнце-Юг",
+      "icao": "UUNY",
+      "iata": "SNY",
+      "latitude": 42.6833,
+      "longitude": 30.7167
+    },
+    {
+      "name": "Небо-Север",
+      "city": "Небо-Север",
+      "icao": "UUBS",
+      "iata": "NBS",
+      "latitude": 42.6500,
+      "longitude": 30.6833
+    },
+    {
+      "name": "Небо-Юг",
+      "city": "Небо-Юг",
+      "icao": "UUBY",
+      "iata": "NBY",
+      "latitude": 42.6167,
+      "longitude": 30.6500
+    },
+    {
+      "name": "Высь-Север",
+      "city": "Высь-Север",
+      "icao": "UUHS",
+      "iata": "VSS",
+      "latitude": 42.5833,
+      "longitude": 30.6167
+    },
+    {
+      "name": "Высь-Юг",
+      "city": "Высь-Юг",
+      "icao": "UUHY",
+      "iata": "VSY",
+      "latitude": 42.5500,
+      "longitude": 30.5833
+    },
+    {
+      "name": "Даль-Север",
+      "city": "Даль-Север",
+      "icao": "UUDS",
+      "iata": "DLS",
+      "latitude": 42.5167,
+      "longitude": 30.5500
+    },
+    {
+      "name": "Даль-Юг",
+      "city": "Даль-Юг",
+      "icao": "UUDY",
+      "iata": "DLY",
+      "latitude": 42.4833,
+      "longitude": 30.5167
+    },
+    {
+      "name": "Простор-Север",
+      "city": "Простор-Север",
+      "icao": "UUPS",
+      "iata": "PRS",
+      "latitude": 42.4500,
+      "longitude": 30.4833
+    },
+    {
+      "name": "Простор-Юг",
+      "city": "Простор-Юг",
+      "icao": "UUPY",
+      "iata": "PRY",
+      "latitude": 42.4167,
+      "longitude": 30.4500
+    },
+    {
+      "name": "Ширь-Север",
+      "city": "Ширь-Север",
+      "icao": "UUSS",
+      "iata": "SHS",
+      "latitude": 42.3833,
+      "longitude": 30.4167
+    },
+    {
+      "name": "Ширь-Юг",
+      "city": "Ширь-Юг",
+      "icao": "UUSY",
+      "iata": "SHY",
+      "latitude": 42.3500,
+      "longitude": 30.3833
+    },
+    {
+      "name": "Раздолье-Север",
+      "city": "Раздолье-Север",
+      "icao": "UURS",
+      "iata": "RZS",
+      "latitude": 42.3167,
+      "longitude": 30.3500
+    },
+    {
+      "name": "Раздолье-Юг",
+      "city": "Раздолье-Юг",
+      "icao": "UURY",
+      "iata": "RZY",
+      "latitude": 42.2833,
+      "longitude": 30.3167
+    },
+    {
+      "name": "Приволье-Север",
+      "city": "Приволье-Север",
+      "icao": "UUPV",
+      "iata": "PVS",
+      "latitude": 42.2500,
+      "longitude": 30.2833
+    },
+    {
+      "name": "Приволье-Юг",
+      "city": "Приволье-Юг",
+      "icao": "UUPY",
+      "iata": "PVY",
+      "latitude": 42.2167,
+      "longitude": 30.2500
+    },
+    {
+      "name": "Ветер-Север",
+      "city": "Ветер-Север",
+      "icao": "UUWS",
+      "iata": "VTS",
+      "latitude": 42.1833,
+      "longitude": 30.2167
+    },
+    {
+      "name": "Ветер-Юг",
+      "city": "Ветер-Юг",
+      "icao": "UUWY",
+      "iata": "VTY",
+      "latitude": 42.1500,
+      "longitude": 30.1833
+    },
+    {
+      "name": "Буря-Север",
+      "city": "Буря-Север",
+      "icao": "UUBS",
+      "iata": "BRS",
+      "latitude": 42.1167,
+      "longitude": 30.1500
+    },
+    {
+      "name": "Буря-Юг",
+      "city": "Буря-Юг",
+      "icao": "UUBY",
+      "iata": "BRY",
+      "latitude": 42.0833,
+      "longitude": 30.1167
+    },
+    {
+      "name": "Шторм-Север",
+      "city": "Шторм-Север",
+      "icao": "UUSH",
+      "iata": "SHS",
+      "latitude": 42.0500,
+      "longitude": 30.0833
+    },
+    {
+      "name": "Шторм-Юг",
+      "city": "Шторм-Юг",
+      "icao": "UUSY",
+      "iata": "SHY",
+      "latitude": 42.0167,
+      "longitude": 30.0500
+    },
+    {
+      "name": "Ураган-Север",
+      "city": "Ураган-Север",
+      "icao": "UUUS",
+      "iata": "UGS",
+      "latitude": 41.9833,
+      "longitude": 30.0167
+    },
+    {
+      "name": "Ураган-Юг",
+      "city": "Ураган-Юг",
+      "icao": "UUUY",
+      "iata": "UGY",
+      "latitude": 41.9500,
+      "longitude": 29.9833
+    },
+    {
+      "name": "Тайфун-Север",
+      "city": "Тайфун-Север",
+      "icao": "UUTS",
+      "iata": "TFS",
+      "latitude": 41.9167,
+      "longitude": 29.9500
+    },
+    {
+      "name": "Тайфун-Юг",
+      "city": "Тайфун-Юг",
+      "icao": "UUTY",
+      "iata": "TFY",
+      "latitude": 41.8833,
+      "longitude": 29.9167
+    },
+    {
+      "name": "Циклон-Север",
+      "city": "Циклон-Север",
+      "icao": "UUCL",
+      "iata": "CLS",
+      "latitude": 41.8500,
+      "longitude": 29.8833
+    },
+    {
+      "name": "Циклон-Юг",
+      "city": "Циклон-Юг",
+      "icao": "UUCY",
+      "iata": "CLY",
+      "latitude": 41.8167,
+      "longitude": 29.8500
+    },
+    {
+      "name": "Антициклон-Север",
+      "city": "Антициклон-Север",
+      "icao": "UUAS",
+      "iata": "ANS",
+      "latitude": 41.7833,
+      "longitude": 29.8167
+    },
+    {
+      "name": "Антициклон-Юг",
+      "city": "Антициклон-Юг",
+      "icao": "UUAY",
+      "iata": "ANY",
+      "latitude": 41.7500,
+      "longitude": 29.7833
+    },
+    {
+      "name": "Туман-Север",
+      "city": "Туман-Север",
+      "icao": "UUTS",
+      "iata": "TMS",
+      "latitude": 41.7167,
+      "longitude": 29.7500
+    },
+    {
+      "name": "Туман-Юг",
+      "city": "Туман-Юг",
+      "icao": "UUTY",
+      "iata": "TMY",
+      "latitude": 41.6833,
+      "longitude": 29.7167
+    },
+    {
+      "name": "Облако-Север",
+      "city": "Облако-Север",
+      "icao": "UUOS",
+      "iata": "OBS",
+      "latitude": 41.6500,
+      "longitude": 29.6833
+    },
+    {
+      "name": "Облако-Юг",
+      "city": "Облако-Юг",
+      "icao": "UUOY",
+      "iata": "OBY",
+      "latitude": 41.6167,
+      "longitude": 29.6500
+    },
+    {
+      "name": "Туча-Север",
+      "city": "Туча-Север",
+      "icao": "UUTS",
+      "iata": "TCS",
+      "latitude": 41.5833,
+      "longitude": 29.6167
+    },
+    {
+      "name": "Туча-Юг",
+      "city": "Туча-Юг",
+      "icao": "UUTY",
+      "iata": "TCY",
+      "latitude": 41.5500,
+      "longitude": 29.5833
+    },
+    {
+      "name": "Радуга-Север",
+      "city": "Радуга-Север",
+      "icao": "UURS",
+      "iata": "RDS",
+      "latitude": 41.5167,
+      "longitude": 29.5500
+    },
+    {
+      "name": "Радуга-Юг",
+      "city": "Радуга-Юг",
+      "icao": "UURY",
+      "iata": "RDY",
+      "latitude": 41.4833,
+      "longitude": 29.5167
+    },
+    {
+      "name": "Сияние-Север",
+      "city": "Сияние-Север",
+      "icao": "UUSS",
+      "iata": "SIS",
+      "latitude": 41.4500,
+      "longitude": 29.4833
+    },
+    {
+      "name": "Сияние-Юг",
+      "city": "Сияние-Юг",
+      "icao": "UUSY",
+      "iata": "SIY",
+      "latitude": 41.4167,
+      "longitude": 29.4500
+    },
+    {
+      "name": "Блеск-Север",
+      "city": "Блеск-Север",
+      "icao": "UUBS",
+      "iata": "BLS",
+      "latitude": 41.3833,
+      "longitude": 29.4167
+    },
+    {
+      "name": "Блеск-Юг",
+      "city": "Блеск-Юг",
+      "icao": "UUBY",
+      "iata": "BLY",
+      "latitude": 41.3500,
+      "longitude": 29.3833
+    },
+    {
+      "name": "Свет-Север",
+      "city": "Свет-Север",
+      "icao": "UUVS",
+      "iata": "SVS",
+      "latitude": 41.3167,
+      "longitude": 29.3500
+    },
+    {
+      "name": "Свет-Юг",
+      "city": "Свет-Юг",
+      "icao": "UUVY",
+      "iata": "SVY",
+      "latitude": 41.2833,
+      "longitude": 29.3167
+    },
+    {
+      "name": "Луч-Север",
+      "city": "Луч-Север",
+      "icao": "UULS",
+      "iata": "LCS",
+      "latitude": 41.2500,
+      "longitude": 29.2833
+    },
+    {
+      "name": "Луч-Юг",
+      "city": "Луч-Юг",
+      "icao": "UULY",
+      "iata": "LCY",
+      "latitude": 41.2167,
+      "longitude": 29.2500
+    },
+    {
+      "name": "Искра-Север",
+      "city": "Искра-Север",
+      "icao": "UUSS",
+      "iata": "ISS",
+      "latitude": 41.1833,
+      "longitude": 29.2167
+    },
+    {
+      "name": "Искра-Юг",
+      "city": "Искра-Юг",
+      "icao": "UUSY",
+      "iata": "ISY",
+      "latitude": 41.1500,
+      "longitude": 29.1833
+    },
+    {
+      "name": "Зарница-Север",
+      "city": "Зарница-Север",
+      "icao": "UUZS",
+      "iata": "ZNS",
+      "latitude": 41.1167,
+      "longitude": 29.1500
+    },
+    {
+      "name": "Зарница-Юг",
+      "city": "Зарница-Юг",
+      "icao": "UUZY",
+      "iata": "ZNY",
+      "latitude": 41.0833,
+      "longitude": 29.1167
+    },
+    {
+      "name": "Молния-Север",
+      "city": "Молния-Север",
+      "icao": "UUNS",
+      "iata": "MNS",
+      "latitude": 41.0500,
+      "longitude": 29.0833
+    },
+    {
+      "name": "Молния-Юг",
+      "city": "Молния-Юг",
+      "icao": "UUNY",
+      "iata": "MNY",
+      "latitude": 41.0167,
+      "longitude": 29.0500
+    },
+    {
+      "name": "Гром-Север",
+      "city": "Гром-Север",
+      "icao": "UUGS",
+      "iata": "GRS",
+      "latitude": 40.9833,
+      "longitude": 29.0167
+    },
+    {
+      "name": "Гром-Юг",
+      "city": "Гром-Юг",
+      "icao": "UUGY",
+      "iata": "GRY",
+      "latitude": 40.9500,
+      "longitude": 28.9833
+    },
+    {
+      "name": "Град-Север",
+      "city": "Град-Север",
+      "icao": "UUGS",
+      "iata": "GDS",
+      "latitude": 40.9167,
+      "longitude": 28.9500
+    },
+    {
+      "name": "Град-Юг",
+      "city": "Град-Юг",
+      "icao": "UUGY",
+      "iata": "GDY",
+      "latitude": 40.8833,
+      "longitude": 28.9167
+    },
+    {
+      "name": "Дождь-Север",
+      "city": "Дождь-Север",
+      "icao": "UUDS",
+      "iata": "DZS",
+      "latitude": 40.8500,
+      "longitude": 28.8833
+    },
+    {
+      "name": "Дождь-Юг",
+      "city": "Дождь-Юг",
+      "icao": "UUDY",
+      "iata": "DZY",
+      "latitude": 40.8167,
+      "longitude": 28.8500
+    },
+    {
+      "name": "Ливень-Север",
+      "city": "Ливень-Север",
+      "icao": "UULS",
+      "iata": "LVS",
+      "latitude": 40.7833,
+      "longitude": 28.8167
+    },
+    {
+      "name": "Ливень-Юг",
+      "city": "Ливень-Юг",
+      "icao": "UULY",
+      "iata": "LVY",
+      "latitude": 40.7500,
+      "longitude": 28.7833
+    },
+    {
+      "name": "Снег-Север",
+      "city": "Снег-Север",
+      "icao": "UUSS",
+      "iata": "SNS",
+      "latitude": 40.7167,
+      "longitude": 28.7500
+    },
+    {
+      "name": "Снег-Юг",
+      "city": "Снег-Юг",
+      "icao": "UUSY",
+      "iata": "SNY",
+      "latitude": 40.6833,
+      "longitude": 28.7167
+    },
+    {
+      "name": "Лёд-Север",
+      "city": "Лёд-Север",
+      "icao": "UULS",
+      "iata": "LDS",
+      "latitude": 40.6500,
+      "longitude": 28.6833
+    },
+    {
+      "name": "Лёд-Юг",
+      "city": "Лёд-Юг",
+      "icao": "UULY",
+      "iata": "LDY",
+      "latitude": 40.6167,
+      "longitude": 28.6500
+    },
+    {
+      "name": "Мороз-Север",
+      "city": "Мороз-Север",
+      "icao": "UUMS",
+      "iata": "MRS",
+      "latitude": 40.5833,
+      "longitude": 28.6167
+    },
+    {
+      "name": "Мороз-Юг",
+      "city": "Мороз-Юг",
+      "icao": "UUMY",
+      "iata": "MRY",
+      "latitude": 40.5500,
+      "longitude": 28.5833
+    },
+    {
+      "name": "Холод-Север",
+      "city": "Холод-Север",
+      "icao": "UUHS",
+      "iata": "XLS",
+      "latitude": 40.5167,
+      "longitude": 28.5500
+    },
+    {
+      "name": "Холод-Юг",
+      "city": "Холод-Юг",
+      "icao": "UUHY",
+      "iata": "XLY",
+      "latitude": 40.4833,
+      "longitude": 28.5167
+    },
+    {
+      "name": "Тепло-Север",
+      "city": "Тепло-Север",
+      "icao": "UUTS",
+      "iata": "TLS",
+      "latitude": 40.4500,
+      "longitude": 28.4833
+    },
+    {
+      "name": "Тепло-Юг",
+      "city": "Тепло-Юг",
+      "icao": "UUTY",
+      "iata": "TLY",
+      "latitude": 40.4167,
+      "longitude": 28.4500
+    },
+    {
+      "name": "Жара-Север",
+      "city": "Жара-Север",
+      "icao": "UUZS",
+      "iata": "ZHS",
+      "latitude": 40.3833,
+      "longitude": 28.4167
+    },
+    {
+      "name": "Жара-Юг",
+      "city": "Жара-Юг",
+      "icao": "UUZY",
+      "iata": "ZHY",
+      "latitude": 40.3500,
+      "longitude": 28.3833
+    },
+    {
+      "name": "Зной-Север",
+      "city": "Зной-Север",
+      "icao": "UUZS",
+      "iata": "ZNS",
+      "latitude": 40.3167,
+      "longitude": 28.3500
+    },
+    {
+      "name": "Зной-Юг",
+      "city": "Зной-Юг",
+      "icao": "UUZY",
+      "iata": "ZNY",
+      "latitude": 40.2833,
+      "longitude": 28.3167
+    },
+    {
+      "name": "Огонь-Север",
+      "city": "Огонь-Север",
+      "icao": "UUOS",
+      "iata": "OGS",
+      "latitude": 40.2500,
+      "longitude": 28.2833
+    },
+    {
+      "name": "Огонь-Юг",
+      "city": "Огонь-Юг",
+      "icao": "UUOY",
+      "iata": "OGY",
+      "latitude": 40.2167,
+      "longitude": 28.2500
+    },
+    {
+      "name": "Пламя-Север",
+      "city": "Пламя-Север",
+      "icao": "UUPS",
+      "iata": "PLS",
+      "latitude": 40.1833,
+      "longitude": 28.2167
+    },
+    {
+      "name": "Пламя-Юг",
+      "city": "Пламя-Юг",
+      "icao": "UUPY",
+      "iata": "PLY",
+      "latitude": 40.1500,
+      "longitude": 28.1833
+    },
+    {
+      "name": "Искра-Восток",
+      "city": "Искра-Восток",
+      "icao": "UUIE",
+      "iata": "ISE",
+      "latitude": 40.1167,
+      "longitude": 28.1500
+    },
+    {
+      "name": "Искра-Запад",
+      "city": "Искра-Запад",
+      "icao": "UUIW",
+      "iata": "ISW",
+      "latitude": 40.0833,
+      "longitude": 28.1167
+    },
+    {
+      "name": "Молния-Восток",
+      "city": "Молния-Восток",
+      "icao": "UUNE",
+      "iata": "MNE",
+      "latitude": 40.0500,
+      "longitude": 28.0833
+    },
+    {
+      "name": "Молния-Запад",
+      "city": "Молния-Запад",
+      "icao": "UUNW",
+      "iata": "MNW",
+      "latitude": 40.0167,
+      "longitude": 28.0500
+    },
+    {
+      "name": "Гром-Восток",
+      "city": "Гром-Восток",
+      "icao": "UUGE",
+      "iata": "GRE",
+      "latitude": 39.9833,
+      "longitude": 28.0167
+    },
+    {
+      "name": "Гром-Запад",
+      "city": "Гром-Запад",
+      "icao": "UUGW",
+      "iata": "GRW",
+      "latitude": 39.9500,
+      "longitude": 27.9833
+    },
+    {
+      "name": "Град-Восток",
+      "city": "Град-Восток",
+      "icao": "UUGE",
+      "iata": "GDE",
+      "latitude": 39.9167,
+      "longitude": 27.9500
+    },
+    {
+      "name": "Град-Запад",
+      "city": "Град-Запад",
+      "icao": "UUGW",
+      "iata": "GDW",
+      "latitude": 39.8833,
+      "longitude": 27.9167
+    },
+    {
+      "name": "Дождь-Восток",
+      "city": "Дождь-Восток",
+      "icao": "UUDE",
+      "iata": "DZE",
+      "latitude": 39.8500,
+      "longitude": 27.8833
+    },
+    {
+      "name": "Дождь-Запад",
+      "city": "Дождь-Запад",
+      "icao": "UUDW",
+      "iata": "DZW",
+      "latitude": 39.8167,
+      "longitude": 27.8500
+    },
+    {
+      "name": "Ливень-Восток",
+      "city": "Ливень-Восток",
+      "icao": "UULE",
+      "iata": "LVE",
+      "latitude": 39.7833,
+      "longitude": 27.8167
+    },
+    {
+      "name": "Ливень-Запад",
+      "city": "Ливень-Запад",
+      "icao": "UULW",
+      "iata": "LVW",
+      "latitude": 39.7500,
+      "longitude": 27.7833
+    },
+    {
+      "name": "Снег-Восток",
+      "city": "Снег-Восток",
+      "icao": "UUSE",
+      "iata": "SNE",
+      "latitude": 39.7167,
+      "longitude": 27.7500
+    },
+    {
+      "name": "Снег-Запад",
+      "city": "Снег-Запад",
+      "icao": "UUSW",
+      "iata": "SNW",
+      "latitude": 39.6833,
+      "longitude": 27.7167
+    },
+    {
+      "name": "Лёд-Восток",
+      "city": "Лёд-Восток",
+      "icao": "UULE",
+      "iata": "LDE",
+      "latitude": 39.6500,
+      "longitude": 27.6833
+    },
+    {
+      "name": "Лёд-Запад",
+      "city": "Лёд-Запад",
+      "icao": "UULW",
+      "iata": "LDW",
+      "latitude": 39.6167,
+      "longitude": 27.6500
+    },
+    {
+      "name": "Мороз-Восток",
+      "city": "Мороз-Восток",
+      "icao": "UUME",
+      "iata": "MRE",
+      "latitude": 39.5833,
+      "longitude": 27.6167
+    },
+    {
+      "name": "Мороз-Запад",
+      "city": "Мороз-Запад",
+      "icao": "UUMW",
+      "iata": "MRW",
+      "latitude": 39.5500,
+      "longitude": 27.5833
+    },
+    {
+      "name": "Холод-Восток",
+      "city": "Холод-Восток",
+      "icao": "UUHE",
+      "iata": "XLE",
+      "latitude": 39.5167,
+      "longitude": 27.5500
+    },
+    {
+      "name": "Холод-Запад",
+      "city": "Холод-Запад",
+      "icao": "UUHW",
+      "iata": "XLW",
+      "latitude": 39.4833,
+      "longitude": 27.5167
+    },
+    {
+      "name": "Тепло-Восток",
+      "city": "Тепло-Восток",
+      "icao": "UUTE",
+      "iata": "TLE",
+      "latitude": 39.4500,
+      "longitude": 27.4833
+    },
+    {
+      "name": "Тепло-Запад",
+      "city": "Тепло-Запад",
+      "icao": "UUTW",
+      "iata": "TLW",
+      "latitude": 39.4167,
+      "longitude": 27.4500
+    },
+    {
+      "name": "Жара-Восток",
+      "city": "Жара-Восток",
+      "icao": "UUZE",
+      "iata": "ZHE",
+      "latitude": 39.3833,
+      "longitude": 27.4167
+    },
+    {
+      "name": "Жара-Запад",
+      "city": "Жара-Запад",
+      "icao": "UUZW",
+      "iata": "ZHW",
+      "latitude": 39.3500,
+      "longitude": 27.3833
+    },
+    {
+      "name": "Зной-Восток",
+      "city": "Зной-Восток",
+      "icao": "UUZE",
+      "iata": "ZNE",
+      "latitude": 39.3167,
+      "longitude": 27.3500
+    },
+    {
+      "name": "Зной-Запад",
+      "city": "Зной-Запад",
+      "icao": "UUZW",
+      "iata": "ZNW",
+      "latitude": 39.2833,
+      "longitude": 27.3167
+    },
+    {
+      "name": "Ветер-Восток",
+      "city": "Ветер-Восток",
+      "icao": "UUWE",
+      "iata": "VTE",
+      "latitude": 39.2500,
+      "longitude": 27.2833
+    },
+    {
+      "name": "Ветер-Запад",
+      "city": "Ветер-Запад",
+      "icao": "UUWW",
+      "iata": "VTW",
+      "latitude": 39.2167,
+      "longitude": 27.2500
+    },
+    {
+      "name": "Буря-Восток",
+      "city": "Буря-Восток",
+      "icao": "UUBE",
+      "iata": "BRE",
+      "latitude": 39.1833,
+      "longitude": 27.2167
+    },
+    {
+      "name": "Буря-Запад",
+      "city": "Буря-Запад",
+      "icao": "UUBW",
+      "iata": "BRW",
+      "latitude": 39.1500,
+      "longitude": 27.1833
+    },
+    {
+      "name": "Шторм-Восток",
+      "city": "Шторм-Восток",
+      "icao": "UUSE",
+      "iata": "SHE",
+      "latitude": 39.1167,
+      "longitude": 27.1500
+    },
+    {
+      "name": "Шторм-Запад",
+      "city": "Шторм-Запад",
+      "icao": "UUSW",
+      "iata": "SHW",
+      "latitude": 39.0833,
+      "longitude": 27.1167
+    },
+    {
+      "name": "Ураган-Восток",
+      "city": "Ураган-Восток",
+      "icao": "UUE",
+      "iata": "UGE",
+      "latitude": 39.0500,
+      "longitude": 27.0833
+    },
+    {
+      "name": "Ураган-Запад",
+      "city": "Ураган-Запад",
+      "icao": "UUEW",
+      "iata": "UGW",
+      "latitude": 39.0167,
+      "longitude": 27.0500
+    },
+    {
+      "name": "Тайфун-Восток",
+      "city": "Тайфун-Восток",
+      "icao": "UUTE",
+      "iata": "TFE",
+      "latitude": 38.9833,
+      "longitude": 27.0167
+    },
+    {
+      "name": "Тайфун-Запад",
+      "city": "Тайфун-Запад",
+      "icao": "UUTW",
+      "iata": "TFW",
+      "latitude": 38.9500,
+      "longitude": 26.9833
+    },
+    {
+      "name": "Циклон-Восток",
+      "city": "Циклон-Восток",
+      "icao": "UUCE",
+      "iata": "CLE",
+      "latitude": 38.9167,
+      "longitude": 26.9500
+    },
+    {
+      "name": "Циклон-Запад",
+      "city": "Циклон-Запад",
+      "icao": "UUCW",
+      "iata": "CLW",
+      "latitude": 38.8833,
+      "longitude": 26.9167
+    },
+    {
+      "name": "Антициклон-Восток",
+      "city": "Антициклон-Восток",
+      "icao": "UUAE",
+      "iata": "ANE",
+      "latitude": 38.8500,
+      "longitude": 26.8833
+    },
+    {
+      "name": "Антициклон-Запад",
+      "city": "Антициклон-Запад",
+      "icao": "UUAW",
+      "iata": "ANW",
+      "latitude": 38.8167,
+      "longitude": 26.8500
+    },
+    {
+      "name": "Туман-Восток",
+      "city": "Туман-Восток",
+      "icao": "UUTE",
+      "iata": "TME",
+      "latitude": 38.7833,
+      "longitude": 26.8167
+    },
+    {
+      "name": "Туман-Запад",
+      "city": "Туман-Запад",
+      "icao": "UUTW",
+      "iata": "TMW",
+      "latitude": 38.7500,
+      "longitude": 26.7833
+    },
+    {
+      "name": "Облако-Восток",
+      "city": "Облако-Восток",
+      "icao": "UUOE",
+      "iata": "OBE",
+      "latitude": 38.7167,
+      "longitude": 26.7500
+    },
+    {
+      "name": "Облако-Запад",
+      "city": "Облако-Запад",
+      "icao": "UUOW",
+      "iata": "OBW",
+      "latitude": 38.6833,
+      "longitude": 26.7167
+    },
+    {
+      "name": "Туча-Восток",
+      "city": "Туча-Восток",
+      "icao": "UUTE",
+      "iata": "TCE",
+      "latitude": 38.6500,
+      "longitude": 26.6833
+    },
+    {
+      "name": "Туча-Запад",
+      "city": "Туча-Запад",
+      "icao": "UUTW",
+      "iata": "TCW",
+      "latitude": 38.6167,
+      "longitude": 26.6500
+    },
+    {
+      "name": "Радуга-Восток",
+      "city": "Радуга-Восток",
+      "icao": "UURE",
+      "iata": "RDE",
+      "latitude": 38.5833,
+      "longitude": 26.6167
+    },
+    {
+      "name": "Радуга-Запад",
+      "city": "Радуга-Запад",
+      "icao": "UURW",
+      "iata": "RDW",
+      "latitude": 38.5500,
+      "longitude": 26.5833
+    },
+    {
+      "name": "Сияние-Восток",
+      "city": "Сияние-Восток",
+      "icao": "UUSE",
+      "iata": "SIE",
+      "latitude": 38.5167,
+      "longitude": 26.5500
+    },
+    {
+      "name": "Сияние-Запад",
+      "city": "Сияние-Запад",
+      "icao": "UUSW",
+      "iata": "SIW",
+      "latitude": 38.4833,
+      "longitude": 26.5167
+    },
+    {
+      "name": "Блеск-Восток",
+      "city": "Блеск-Восток",
+      "icao": "UUBE",
+      "iata": "BLE",
+      "latitude": 38.4500,
+      "longitude": 26.4833
+    },
+    {
+      "name": "Блеск-Запад",
+      "city": "Блеск-Запад",
+      "icao": "UUBW",
+      "iata": "BLW",
+      "latitude": 38.4167,
+      "longitude": 26.4500
+    },
+    {
+      "name": "Свет-Восток",
+      "city": "Свет-Восток",
+      "icao": "UUVE",
+      "iata": "SVE",
+      "latitude": 38.3833,
+      "longitude": 26.4167
+    },
+    {
+      "name": "Свет-Запад",
+      "city": "Свет-Запад",
+      "icao": "UUVW",
+      "iata": "SVW",
+      "latitude": 38.3500,
+      "longitude": 26.3833
+    },
+    {
+      "name": "Луч-Восток",
+      "city": "Луч-Восток",
+      "icao": "UULE",
+      "iata": "LCE",
+      "latitude": 38.3167,
+      "longitude": 26.3500
+    },
+    {
+      "name": "Луч-Запад",
+      "city": "Луч-Запад",
+      "icao": "UULW",
+      "iata": "LCW",
+      "latitude": 38.2833,
+      "longitude": 26.3167
+    },
+    {
+      "name": "Заря-Восток",
+      "city": "Заря-Восток",
+      "icao": "UUZE",
+      "iata": "ZRE",
+      "latitude": 38.2500,
+      "longitude": 26.2833
+    },
+    {
+      "name": "Заря-Запад",
+      "city": "Заря-Запад",
+      "icao": "UUZW",
+      "iata": "ZRW",
+      "latitude": 38.2167,
+      "longitude": 26.2500
+    },
+    {
+      "name": "Звезда-Восток",
+      "city": "Звезда-Восток",
+      "icao": "UUZE",
+      "iata": "ZDE",
+      "latitude": 38.1833,
+      "longitude": 26.2167
+    },
+    {
+      "name": "Звезда-Запад",
+      "city": "Звезда-Запад",
+      "icao": "UUZW",
+      "iata": "ZDW",
+      "latitude": 38.1500,
+      "longitude": 26.1833
+    },
+    {
+      "name": "Луна-Восток",
+      "city": "Луна-Восток",
+      "icao": "UULE",
+      "iata": "LNE",
+      "latitude": 38.1167,
+      "longitude": 26.1500
+    },
+    {
+      "name": "Луна-Запад",
+      "city": "Луна-Запад",
+      "icao": "UULW",
+      "iata": "LNW",
+      "latitude": 38.0833,
+      "longitude": 26.1167
+    },
+    {
+      "name": "Солнце-Восток",
+      "city": "Солнце-Восток",
+      "icao": "UUNE",
+      "iata": "SNE",
+      "latitude": 38.0500,
+      "longitude": 26.0833
+    },
+    {
+      "name": "Солнце-Запад",
+      "city": "Солнце-Запад",
+      "icao": "UUNW",
+      "iata": "SNW",
+      "latitude": 38.0167,
+      "longitude": 26.0500
+    },
+    {
+      "name": "Небо-Восток",
+      "city": "Небо-Восток",
+      "icao": "UUBE",
+      "iata": "NBE",
+      "latitude": 37.9833,
+      "longitude": 26.0167
+    },
+    {
+      "name": "Небо-Запад",
+      "city": "Небо-Запад",
+      "icao": "UUBW",
+      "iata": "NBW",
+      "latitude": 37.9500,
+      "longitude": 25.9833
+    },
+    {
+      "name": "Высь-Восток",
+      "city": "Высь-Восток",
+      "icao": "UUHE",
+      "iata": "VSE",
+      "latitude": 37.9167,
+      "longitude": 25.9500
+    },
+    {
+      "name": "Высь-Запад",
+      "city": "Высь-Запад",
+      "icao": "UUHW",
+      "iata": "VSW",
+      "latitude": 37.8833,
+      "longitude": 25.9167
+    },
+    {
+      "name": "Даль-Восток",
+      "city": "Даль-Восток",
+      "icao": "UUDE",
+      "iata": "DLE",
+      "latitude": 37.8500,
+      "longitude": 25.8833
+    },
+    {
+      "name": "Даль-Запад",
+      "city": "Даль-Запад",
+      "icao": "UUDW",
+      "iata": "DLW",
+      "latitude": 37.8167,
+      "longitude": 25.8500
+    },
+    {
+      "name": "Простор-Восток",
+      "city": "Простор-Восток",
+      "icao": "UUPE",
+      "iata": "PRE",
+      "latitude": 37.7833,
+      "longitude": 25.8167
+    },
+    {
+      "name": "Простор-Запад",
+      "city": "Простор-Запад",
+      "icao": "UUPW",
+      "iata": "PRW",
+      "latitude": 37.7500,
+      "longitude": 25.7833
+    },
+    {
+      "name": "Ширь-Восток",
+      "city": "Ширь-Восток",
+      "icao": "UUSE",
+      "iata": "SHE",
+      "latitude": 37.7167,
+      "longitude": 25.7500
+    },
+    {
+      "name": "Ширь-Запад",
+      "city": "Ширь-Запад",
+      "icao": "UUSW",
+      "iata": "SHW",
+      "latitude": 37.6833,
+      "longitude": 25.7167
+    },
+    {
+      "name": "Раздолье-Восток",
+      "city": "Раздолье-Восток",
+      "icao": "UURE",
+      "iata": "RZE",
+      "latitude": 37.6500,
+      "longitude": 25.6833
+    },
+    {
+      "name": "Раздолье-Запад",
+      "city": "Раздолье-Запад",
+      "icao": "UURW",
+      "iata": "RZW",
+      "latitude": 37.6167,
+      "longitude": 25.6500
+    },
+    {
+      "name": "Приволье-Восток",
+      "city": "Приволье-Восток",
+      "icao": "UUVE",
+      "iata": "PVE",
+      "latitude": 37.5833,
+      "longitude": 25.6167
+    },
+    {
+      "name": "Приволье-Запад",
+      "city": "Приволье-Запад",
+      "icao": "UUVW",
+      "iata": "PVW",
+      "latitude": 37.5500,
+      "longitude": 25.5833
+    },
+    {
+      "name": "Надежда-Восток",
+      "city": "Надежда-Восток",
+      "icao": "UUNE",
+      "iata": "NDE",
+      "latitude": 37.5167,
+      "longitude": 25.5500
+    },
+    {
+      "name": "Надежда-Запад",
+      "city": "Надежда-Запад",
+      "icao": "UUNW",
+      "iata": "NDW",
+      "latitude": 37.4833,
+      "longitude": 25.5167
+    },
+    {
+      "name": "Вера-Восток",
+      "city": "Вера-Восток",
+      "icao": "UUVE",
+      "iata": "VRE",
+      "latitude": 37.4500,
+      "longitude": 25.4833
+    },
+    {
+      "name": "Вера-Запад",
+      "city": "Вера-Запад",
+      "icao": "UUVW",
+      "iata": "VRW",
+      "latitude": 37.4167,
+      "longitude": 25.4500
+    },
+    {
+      "name": "Любовь-Восток",
+      "city": "Любовь-Восток",
+      "icao": "UULE",
+      "iata": "LBE",
+      "latitude": 37.3833,
+      "longitude": 25.4167
+    },
+    {
+      "name": "Любовь-Запад",
+      "city": "Любовь-Запад",
+      "icao": "UULW",
+      "iata": "LBW",
+      "latitude": 37.3500,
+      "longitude": 25.3833
+    },
+    {
+      "name": "Мечта-Восток",
+      "city": "Мечта-Восток",
+      "icao": "UUME",
+      "iata": "MCE",
+      "latitude": 37.3167,
+      "longitude": 25.3500
+    },
+    {
+      "name": "Мечта-Запад",
+      "city": "Мечта-Запад",
+      "icao": "UUMW",
+      "iata": "MCW",
+      "latitude": 37.2833,
+      "longitude": 25.3167
+    },
+    {
+      "name": "Грёза-Восток",
+      "city": "Грёза-Восток",
+      "icao": "UUGE",
+      "iata": "GRE",
+      "latitude": 37.2500,
+      "longitude": 25.2833
+    },
+    {
+      "name": "Грёза-Запад",
+      "city": "Грёза-Запад",
+      "icao": "UUGW",
+      "iata": "GRW",
+      "latitude": 37.2167,
+      "longitude": 25.2500
+    },
+    {
+      "name": "Видение-Восток",
+      "city": "Видение-Восток",
+      "icao": "UUVE",
+      "iata": "VDE",
+      "latitude": 37.1833,
+      "longitude": 25.2167
+    },
+    {
+      "name": "Видение-Запад",
+      "city": "Видение-Запад",
+      "icao": "UUVW",
+      "iata": "VDW",
+      "latitude": 37.1500,
+      "longitude": 25.1833
+    },
+    {
+      "name": "Призрак-Восток",
+      "city": "Призрак-Восток",
+      "icao": "UUPE",
+      "iata": "PZE",
+      "latitude": 37.1167,
+      "longitude": 25.1500
+    },
+    {
+      "name": "Призрак-Запад",
+      "city": "Призрак-Запад",
+      "icao": "UUPW",
+      "iata": "PZW",
+      "latitude": 37.0833,
+      "longitude": 25.1167
+    },
+    {
+      "name": "Тень-Восток",
+      "city": "Тень-Восток",
+      "icao": "UUTE",
+      "iata": "TNE",
+      "latitude": 37.0500,
+      "longitude": 25.0833
+    },
+    {
+      "name": "Тень-Запад",
+      "city": "Тень-Запад",
+      "icao": "UUTW",
+      "iata": "TNW",
+      "latitude": 37.0167,
+      "longitude": 25.0500
+    },
+    {
+      "name": "Мрак-Восток",
+      "city": "Мрак-Восток",
+      "icao": "UUME",
+      "iata": "MRE",
+      "latitude": 36.9833,
+      "longitude": 25.0167
+    },
+    {
+      "name": "Мрак-Запад",
+      "city": "Мрак-Запад",
+      "icao": "UUMW",
+      "iata": "MRW",
+      "latitude": 36.9500,
+      "longitude": 24.9833
+    },
+    {
+      "name": "Тьма-Восток",
+      "city": "Тьма-Восток",
+      "icao": "UUTE",
+      "iata": "TME",
+      "latitude": 36.9167,
+      "longitude": 24.9500
+    },
+    {
+      "name": "Тьма-Запад",
+      "city": "Тьма-Запад",
+      "icao": "UUTW",
+      "iata": "TMW",
+      "latitude": 36.8833,
+      "longitude": 24.9167
+    },
+    {
+      "name": "Ночь-Восток",
+      "city": "Ночь-Восток",
+      "icao": "UUNE",
+      "iata": "NHE",
+      "latitude": 36.8500,
+      "longitude": 24.8833
+    },
+    {
+      "name": "Ночь-Запад",
+      "city": "Ночь-Запад",
+      "icao": "UUNW",
+      "iata": "NHW",
+      "latitude": 36.8167,
+      "longitude": 24.8500
+    },
+    {
+      "name": "Сумрак-Восток",
+      "city": "Сумрак-Восток",
+      "icao": "UUSE",
+      "iata": "SRE",
+      "latitude": 36.7833,
+      "longitude": 24.8167
+    },
+    {
+      "name": "Сумрак-Запад",
+      "city": "Сумрак-Запад",
+      "icao": "UUSW",
+      "iata": "SRW",
+      "latitude": 36.7500,
+      "longitude": 24.7833
+    },
+    {
+      "name": "Сумерки-Восток",
+      "city": "Сумерки-Восток",
+      "icao": "UUSE",
+      "iata": "SME",
+      "latitude": 36.7167,
+      "longitude": 24.7500
+    },
+    {
+      "name": "Сумерки-Запад",
+      "city": "Сумерки-Запад",
+      "icao": "UUSW",
+      "iata": "SMW",
+      "latitude": 36.6833,
+      "longitude": 24.7167
+    },
+    {
+      "name": "Рассвет-Восток",
+      "city": "Рассвет-Восток",
+      "icao": "UURE",
+      "iata": "RSE",
+      "latitude": 36.6500,
+      "longitude": 24.6833
+    },
+    {
+      "name": "Рассвет-Запад",
+      "city": "Рассвет-Запад",
+      "icao": "UURW",
+      "iata": "RSW",
+      "latitude": 36.6167,
+      "longitude": 24.6500
+    },
+    {
+      "name": "Закат-Восток",
+      "city": "Закат-Восток",
+      "icao": "UUZE",
+      "iata": "ZKE",
+      "latitude": 36.5833,
+      "longitude": 24.6167
+    },
+    {
+      "name": "Закат-Запад",
+      "city": "Закат-Запад",
+      "icao": "UUZW",
+      "iata": "ZKW",
+      "latitude": 36.5500,
+      "longitude": 24.5833
+    },
+    {
+      "name": "Утро-Восток",
+      "city": "Утро-Восток",
+      "icao": "UUTE",
+      "iata": "UTE",
+      "latitude": 36.5167,
+      "longitude": 24.5500
+    },
+    {
+      "name": "Утро-Запад",
+      "city": "Утро-Запад",
+      "icao": "UUTW",
+      "iata": "UTW",
+      "latitude": 36.4833,
+      "longitude": 24.5167
+    },
+    {
+      "name": "День-Восток",
+      "city": "День-Восток",
+      "icao": "UUDE",
+      "iata": "DNE",
+      "latitude": 36.4500,
+      "longitude": 24.4833
+    },
+    {
+      "name": "День-Запад",
+      "city": "День-Запад",
+      "icao": "UUDW",
+      "iata": "DNW",
+      "latitude": 36.4167,
+      "longitude": 24.4500
+    },
+    {
+      "name": "Вечер-Восток",
+      "city": "Вечер-Восток",
+      "icao": "UUVE",
+      "iata": "VCE",
+      "latitude": 36.3833,
+      "longitude": 24.4167
+    },
+    {
+      "name": "Вечер-Запад",
+      "city": "Вечер-Запад",
+      "icao": "UUVW",
+      "iata": "VCW",
+      "latitude": 36.3500,
+      "longitude": 24.3833
+    },
+    {
+      "name": "Полдень-Восток",
+      "city": "Полдень-Восток",
+      "icao": "UUPE",
+      "iata": "PDE",
+      "latitude": 36.3167,
+      "longitude": 24.3500
+    },
+    {
+      "name": "Полдень-Запад",
+      "city": "Полдень-Запад",
+      "icao": "UUPW",
+      "iata": "PDW",
+      "latitude": 36.2833,
+      "longitude": 24.3167
+    },
+    {
+      "name": "Полночь-Восток",
+      "city": "Полночь-Восток",
+      "icao": "UUPN",
+      "iata": "PNE",
+      "latitude": 36.2500,
+      "longitude": 24.2833
+    },
+    {
+      "name": "Полночь-Запад",
+      "city": "Полночь-Запад",
+      "icao": "UUPN",
+      "iata": "PNW",
+      "latitude": 36.2167,
+      "longitude": 24.2500
+    }
+  ]
+}

@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a1a2e">
+    <title>MIRA - Тест METAR/TAF</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --bg-color: #f7fafc;
+            --card-bg: #ffffff;
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --text-muted: #718096;
+            --border-color: #e2e8f0;
+            --success: #38a169;
+            --warning: #ed8936;
+            --danger: #e53e3e;
+            --info: #3182ce;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Заголовок */
+        .header {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 24px 32px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Карточки */
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-title i {
+            color: #667eea;
+        }
+
+        /* Форма поиска */
+        .search-form {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 12px;
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: rgba(0, 0, 0, 0.05);
+            color: var(--text-secondary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Результаты */
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 16px;
+        }
+
+        .airport-card {
+            background: white;
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+
+        .airport-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+        }
+
+        .airport-header {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .airport-icao {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .airport-name {
+            font-size: 13px;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+
+        .airport-distance {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .airport-body {
+            padding: 20px;
+        }
+
+        /* METAR/TAF блоки */
+        .metar-block,
+        .taf-block {
+            margin-bottom: 16px;
+        }
+
+        .metar-block:last-child,
+        .taf-block:last-child {
+            margin-bottom: 0;
+        }
+
+        .data-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .data-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .data-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-metar {
+            background: rgba(49, 130, 206, 0.1);
+            color: var(--info);
+        }
+
+        .badge-taf {
+            background: rgba(237, 137, 54, 0.1);
+            color: var(--warning);
+        }
+
+        .badge-age {
+            background: rgba(56, 161, 105, 0.1);
+            color: var(--success);
+        }
+
+        .raw-data {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .parsed-data {
+            font-size: 13px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+        }
+
+        .parsed-data strong {
+            color: var(--text-primary);
+        }
+
+        /* Flight Category */
+        .flight-category {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .flight-category.VFR {
+            background: rgba(56, 161, 105, 0.1);
+            color: var(--success);
+        }
+
+        .flight-category.MVFR {
+            background: rgba(237, 137, 54, 0.1);
+            color: var(--warning);
+        }
+
+        .flight-category.IFR {
+            background: rgba(246, 173, 85, 0.1);
+            color: #dd6b20;
+        }
+
+        .flight-category.LIFR {
+            background: rgba(229, 62, 62, 0.1);
+            color: var(--danger);
+        }
+
+        /* Индикаторы состояния */
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .status-indicator.success {
+            background: rgba(56, 161, 105, 0.1);
+            color: var(--success);
+        }
+
+        .status-indicator.error {
+            background: rgba(229, 62, 62, 0.1);
+            color: var(--danger);
+        }
+
+        .status-indicator.loading {
+            background: rgba(49, 130, 206, 0.1);
+            color: var(--info);
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid currentColor;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Кнопки действий */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .action-buttons .btn {
+            flex: 1;
+            justify-content: center;
+            padding: 10px 16px;
+            font-size: 13px;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .search-form {
+                grid-template-columns: 1fr;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+        }
+
+        /* Toast уведомления */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #2d3748;
+            color: white;
+            padding: 14px 24px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 10000;
+            transition: transform 0.3s ease;
+            opacity: 0;
+        }
+
+        .toast.active {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success { background: var(--success); }
+        .toast.error { background: var(--danger); }
+        .toast.warning { background: var(--warning); }
+        .toast.info { background: var(--info); }
+
+        /* Инфо блок */
+        .info-box {
+            background: rgba(49, 130, 206, 0.05);
+            border: 1px solid rgba(49, 130, 206, 0.2);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .info-box-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--info);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-box-content {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .info-box-content ul {
+            margin: 8px 0 8px 20px;
+        }
+
+        .info-box-content li {
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Заголовок -->
+        <div class="header">
+            <h1>
+                <i class="fas fa-plane-arrival"></i>
+                MIRA — METAR/TAF Тест
+            </h1>
+            <p>Получение и анализ авиационных метеорологических данных из <strong>METARTAF.RU</strong> (основной) и NOAA Aviation Weather API (резервный)</p>
+        </div>
+
+        <!-- Инфо блок -->
+        <div class="info-box">
+            <div class="info-box-title">
+                <i class="fas fa-info-circle"></i>
+                О METAR и TAF
+            </div>
+            <div class="info-box-content">
+                <ul>
+                    <li><strong>METAR</strong> — фактическая погода на аэродроме (обновление каждые 30-60 мин)</li>
+                    <li><strong>TAF</strong> — аэродромный прогноз на 24-30 часов (обновление каждые 6 часов)</li>
+                    <li><strong>VFR/MVFR/IFR/LIFR</strong> — категории лётных условий</li>
+                    <li><strong>Основной источник:</strong> ✈️ METARTAF.RU (для аэропортов РФ)</li>
+                    <li><strong>Резервный источник:</strong> 🌐 NOAA Aviation Weather API (через CORS-прокси)</li>
+                </ul>
+                <div style="margin-top: 10px; padding: 10px; background: rgba(237, 137, 54, 0.1); border-radius: 6px; border-left: 3px solid #ed8936;">
+                    <strong>⚠️ Внимание:</strong> METARTAF.RU может не работать из браузера из-за CORS.
+                    <ul style="margin: 5px 0 0 20px;">
+                        <li>Откройте страницу через локальный веб-сервер: <code>node server.js</code></li>
+                        <li>Или используйте <code>start-metar-test.bat</code></li>
+                        <li>При проблемах данные автоматически загрузятся из NOAA (через прокси)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Форма поиска -->
+        <div class="card">
+            <div class="card-title">
+                <i class="fas fa-search"></i>
+                Поиск аэропортов
+            </div>
+            <div class="search-form">
+                <div class="form-group">
+                    <label for="searchType">Тип поиска</label>
+                    <select id="searchType" onchange="toggleSearchInputs()">
+                        <option value="coords">По координатам</option>
+                        <option value="icao">По ICAO коду</option>
+                        <option value="city">По городу</option>
+                    </select>
+                </div>
+                <div class="form-group" id="coordsGroup">
+                    <label>Координаты (широта, долгота)</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <input type="number" id="searchLat" placeholder="55.7558" step="0.0001" value="55.7558">
+                        <input type="number" id="searchLon" placeholder="37.6173" step="0.0001" value="37.6173">
+                    </div>
+                </div>
+                <div class="form-group" id="icaoGroup" style="display: none;">
+                    <label>ICAO код</label>
+                    <input type="text" id="searchIcao" placeholder="UUDD" maxlength="4" style="text-transform: uppercase;">
+                </div>
+                <div class="form-group" id="cityGroup" style="display: none;">
+                    <label>Город</label>
+                    <input type="text" id="searchCity" placeholder="Москва" list="cityList">
+                    <datalist id="cityList">
+                        <option value="Москва">
+                        <option value="Санкт-Петербург">
+                        <option value="Сочи">
+                        <option value="Екатеринбург">
+                        <option value="Новосибирск">
+                        <option value="Краснодар">
+                        <option value="Пермь">
+                    </datalist>
+                </div>
+                <div class="form-group">
+                    <label>Радиус (км)</label>
+                    <input type="number" id="searchRadius" value="100" min="10" max="500" step="10">
+                </div>
+                <button class="btn btn-primary" onclick="searchAirports()" id="searchBtn">
+                    <i class="fas fa-search"></i>
+                    Найти
+                </button>
+            </div>
+            <div class="action-buttons" style="margin-top: 16px;">
+                <button class="btn btn-secondary" onclick="useCurrentLocation()">
+                    <i class="fas fa-location-crosshairs"></i>
+                    Моё местоположение
+                </button>
+                <button class="btn btn-secondary" onclick="loadPreset('moscow')">
+                    <i class="fas fa-city"></i>
+                    Москва
+                </button>
+                <button class="btn btn-secondary" onclick="loadPreset('spb')">
+                    <i class="fas fa-city"></i>
+                    Санкт-Петербург
+                </button>
+                <button class="btn btn-secondary" onclick="loadPreset('sochi')">
+                    <i class="fas fa-mountain"></i>
+                    Сочи
+                </button>
+            </div>
+            <!-- Настройки API -->
+            <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border-color);">
+                <div class="form-group">
+                    <label for="checkwxApiKey">
+                        <i class="fas fa-key"></i>
+                        CheckWX API Key (опционально)
+                    </label>
+                    <input type="text" id="checkwxApiKey" placeholder="Введите API ключ для лучшего качества" onchange="updateApiKey()">
+                    <small style="color: var(--text-muted); display: block; margin-top: 6px;">
+                        Получите бесплатный ключ на <a href="https://www.checkwx.com/api" target="_blank">CheckWX.com</a> (50 запросов/день)
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Статус -->
+        <div id="statusContainer"></div>
+
+        <!-- Результаты -->
+        <div id="resultsContainer"></div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <i class="fas fa-info-circle"></i>
+        <span id="toastMessage"></span>
+    </div>
+
+    <!-- Модуль METAR/TAF -->
+    <script src="js/metar-taf.js"></script>
+
+    <script>
+        // Переключение типов поиска
+        function toggleSearchInputs() {
+            const type = document.getElementById('searchType').value;
+            document.getElementById('coordsGroup').style.display = type === 'coords' ? 'grid' : 'none';
+            document.getElementById('icaoGroup').style.display = type === 'icao' ? 'block' : 'none';
+            document.getElementById('cityGroup').style.display = type === 'city' ? 'block' : 'none';
+        }
+
+        // Использование текущего местоположения
+        function useCurrentLocation() {
+            if (!navigator.geolocation) {
+                showToast('Геолокация не поддерживается', 'error');
+                return;
+            }
+
+            showToast('Определение местоположения...', 'info');
+            
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    document.getElementById('searchLat').value = position.coords.latitude.toFixed(4);
+                    document.getElementById('searchLon').value = position.coords.longitude.toFixed(4);
+                    document.getElementById('searchType').value = 'coords';
+                    toggleSearchInputs();
+                    showToast('Местоположение определено', 'success');
+                },
+                (error) => {
+                    showToast('Ошибка определения местоположения', 'error');
+                }
+            );
+        }
+
+        // Загрузка пресета
+        function loadPreset(city) {
+            const presets = {
+                moscow: { lat: 55.7558, lon: 37.6173 },
+                spb: { lat: 59.9343, lon: 30.3351 },
+                sochi: { lat: 43.6028, lon: 39.7342 }
+            };
+
+            const preset = presets[city];
+            if (preset) {
+                document.getElementById('searchLat').value = preset.lat;
+                document.getElementById('searchLon').value = preset.lon;
+                document.getElementById('searchType').value = 'coords';
+                toggleSearchInputs();
+            }
+        }
+
+        // Определение источника данных
+        function getMetarSource(icao) {
+            // Проверяем, есть ли данные в кэше METARTAF.RU
+            const cache = MetarTafModule.cache || {};
+            const metarCache = cache.metar || {};
+            const tafCache = cache.taf || {};
+            
+            // Если данные загружены недавно - определяем по наличию в кэше
+            const metarData = metarCache[icao.toUpperCase()];
+            if (metarData && metarData.raw) {
+                // Проверяем формат данных - METARTAF.RU возвращает полный METAR
+                const raw = metarData.raw;
+                if (raw && raw.includes('METAR')) {
+                    return '✈️ METARTAF.RU';
+                }
+            }
+            
+            return '🌐 NOAA (через прокси)';
+        }
+
+        // Поиск аэропортов
+        async function searchAirports() {
+            const searchType = document.getElementById('searchType').value;
+            const radius = parseInt(document.getElementById('searchRadius').value) || 100;
+            
+            let airports = [];
+            
+            if (searchType === 'icao') {
+                const icao = document.getElementById('searchIcao').value.toUpperCase();
+                if (!icao || icao.length !== 4) {
+                    showToast('Введите корректный ICAO код (4 символа)', 'error');
+                    return;
+                }
+                
+                // Проверяем базу аэропортов
+                const airportInfo = MetarTafModule.findAirportByIcao(icao);
+                airports = [{
+                    icao,
+                    name: airportInfo?.name || 'Аэропорт',
+                    city: airportInfo?.city || null,
+                    distance: 0
+                }];
+            } else if (searchType === 'city') {
+                const city = document.getElementById('searchCity').value.trim();
+                if (!city) {
+                    showToast('Введите название города', 'error');
+                    return;
+                }
+                
+                // Ищем аэропорты по городу
+                const cityAirports = MetarTafModule.findAirportsByCity(city);
+                
+                if (cityAirports.length === 0) {
+                    showToast(`Аэропорты для города "${city}" не найдены`, 'warning');
+                    document.getElementById('statusContainer').innerHTML = '';
+                    document.getElementById('resultsContainer').innerHTML = '';
+                    return;
+                }
+                
+                airports = cityAirports.map(apt => ({
+                    ...apt,
+                    distance: 0
+                }));
+            } else {
+                const lat = parseFloat(document.getElementById('searchLat').value);
+                const lon = parseFloat(document.getElementById('searchLon').value);
+                
+                if (isNaN(lat) || isNaN(lon)) {
+                    showToast('Введите корректные координаты', 'error');
+                    return;
+                }
+                
+                airports = await MetarTafModule.findNearbyAirports(lat, lon, radius);
+            }
+            
+            if (airports.length === 0) {
+                showToast('Аэропорты не найдены', 'warning');
+                document.getElementById('statusContainer').innerHTML = '';
+                document.getElementById('resultsContainer').innerHTML = '';
+                return;
+            }
+            
+            // Загружаем METAR/TAF для каждого аэропорта
+            await loadMetarTafForAirports(airports);
+        }
+
+        // Загрузка METAR/TAF для аэропортов
+        async function loadMetarTafForAirports(airports) {
+            const statusContainer = document.getElementById('statusContainer');
+            const resultsContainer = document.getElementById('resultsContainer');
+            
+            // Показываем индикатор загрузки
+            statusContainer.innerHTML = `
+                <div class="card">
+                    <div class="status-indicator loading">
+                        <div class="spinner"></div>
+                        <span>Загрузка METAR/TAF для ${airports.length} аэропорт(ов)...</span>
+                    </div>
+                </div>
+            `;
+            
+            resultsContainer.innerHTML = '';
+            
+            const results = [];
+            
+            for (const airport of airports) {
+                try {
+                    const [metar, taf] = await Promise.all([
+                        MetarTafModule.getMetar(airport.icao).catch(e => ({ error: e.message })),
+                        MetarTafModule.getTaf(airport.icao).catch(e => ({ error: e.message }))
+                    ]);
+                    
+                    results.push({
+                        ...airport,
+                        metar,
+                        taf
+                    });
+                } catch (error) {
+                    results.push({
+                        ...airport,
+                        metar: { error: error.message },
+                        taf: { error: error.message }
+                    });
+                }
+            }
+            
+            // Скрываем индикатор загрузки
+            statusContainer.innerHTML = `
+                <div class="card">
+                    <div class="status-indicator success">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Данные загружены для ${results.length} аэропорт(ов)</span>
+                    </div>
+                </div>
+            `;
+            
+            // Отображаем результаты
+            displayResults(results);
+        }
+
+        // Отображение результатов
+        function displayResults(results) {
+            const container = document.getElementById('resultsContainer');
+            
+            const html = `
+                <div class="card">
+                    <div class="card-title">
+                        <i class="fas fa-list"></i>
+                        Результаты поиска
+                    </div>
+                    <div class="results-grid">
+                        ${results.map(airport => renderAirportCard(airport)).join('')}
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        // Рендер карточки аэропорта
+        function renderAirportCard(airport) {
+            const metarError = airport.metar?.error;
+            const tafError = airport.taf?.error;
+            
+            // Определяем источник данных (по кэшу)
+            const metarSource = getMetarSource(airport.icao);
+
+            return `
+                <div class="airport-card">
+                    <div class="airport-header">
+                        <div>
+                            <div class="airport-icao">${airport.icao}</div>
+                            <div class="airport-name">${airport.name || 'Аэропорт'} ${airport.city ? `(${airport.city})` : ''}</div>
+                        </div>
+                        <div class="airport-distance">${airport.distance} км</div>
+                    </div>
+                    <div class="airport-body">
+                        <!-- Индикатор источника -->
+                        <div style="margin-bottom: 12px; padding: 8px 12px; background: rgba(102, 126, 234, 0.05); border-radius: 6px; font-size: 12px; color: var(--text-secondary);">
+                            <i class="fas fa-database" style="color: #667eea;"></i>
+                            Источник: <strong>${metarSource}</strong>
+                        </div>
+                        
+                        <!-- METAR -->
+                        <div class="metar-block">
+                            <div class="data-header">
+                                <div class="data-title">
+                                    <i class="fas fa-cloud-sun"></i>
+                                    METAR
+                                </div>
+                                ${!metarError ? '<span class="data-badge badge-metar">Факт</span>' : ''}
+                            </div>
+                            ${metarError ? `
+                                <div class="status-indicator error">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <span>${metarError}</span>
+                                </div>
+                            ` : `
+                                <div class="raw-data">${airport.metar.raw}</div>
+                                <div class="parsed-data">
+                                    ${renderMetarParsed(airport.metar)}
+                                </div>
+                            `}
+                        </div>
+                        
+                        <!-- TAF -->
+                        <div class="taf-block">
+                            <div class="data-header">
+                                <div class="data-title">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    TAF
+                                </div>
+                                ${!tafError ? '<span class="data-badge badge-taf">Прогноз</span>' : ''}
+                            </div>
+                            ${tafError ? `
+                                <div class="status-indicator error">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <span>${tafError}</span>
+                                </div>
+                            ` : `
+                                <div class="raw-data">${airport.taf.raw}</div>
+                                <div class="parsed-data">
+                                    ${renderTafParsed(airport.taf)}
+                                </div>
+                            `}
+                        </div>
+                        
+                        <!-- Кнопки действий -->
+                        <div class="action-buttons">
+                            <button class="btn btn-secondary" onclick="copyRaw('${airport.icao}', 'metar')">
+                                <i class="fas fa-copy"></i>
+                                METAR
+                            </button>
+                            <button class="btn btn-secondary" onclick="copyRaw('${airport.icao}', 'taf')">
+                                <i class="fas fa-copy"></i>
+                                TAF
+                            </button>
+                            <button class="btn btn-primary" onclick="useForAnalysis('${airport.icao}')">
+                                <i class="fas fa-check"></i>
+                                Использовать
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Рендер распарсенного METAR
+        function renderMetarParsed(metar) {
+            const lines = [];
+            
+            if (metar.time) {
+                lines.push(`<strong>Время:</strong> ${metar.time.hour.toString().padStart(2, '0')}:${metar.time.minute.toString().padStart(2, '0')} UTC`);
+            }
+            
+            let windText = `<strong>Ветер:</strong> ${metar.wind.speed} м/с`;
+            if (metar.wind.direction) {
+                windText += ` (${metar.wind.direction}°)`;
+            }
+            if (metar.wind.gust) {
+                windText += `, порывы ${metar.wind.gust} м/с`;
+            }
+            if (metar.wind.variable) {
+                windText = '<strong>Ветер:</strong> переменный';
+            }
+            lines.push(windText);
+            
+            lines.push(`<strong>Видимость:</strong> ${metar.visibility.km} км`);
+            
+            if (metar.clouds.length > 0) {
+                const cloudText = metar.clouds.map(c => {
+                    const coverage = {
+                        'FEW': 'Мало',
+                        'SCT': 'Разрежённая',
+                        'BKN': 'Значительная',
+                        'OVC': 'Сплошная',
+                        'VV': 'Вертикальная видимость'
+                    }[c.coverage] || c.coverage;
+                    return `${coverage} (${c.baseMeters} м)`;
+                }).join(', ');
+                lines.push(`<strong>Облачность:</strong> ${cloudText}`);
+            } else {
+                lines.push('<strong>Облачность:</strong> Ясно');
+            }
+            
+            if (metar.temperature !== null) {
+                lines.push(`<strong>Температура:</strong> ${metar.temperature}°C`);
+            }
+            if (metar.dewpoint !== null) {
+                lines.push(`<strong>Точка росы:</strong> ${metar.dewpoint}°C`);
+            }
+            
+            if (metar.pressure.hpa) {
+                lines.push(`<strong>Давление:</strong> ${metar.pressure.hpa} гПа (${metar.pressure.mmHg} мм рт.ст.)`);
+            }
+            
+            if (metar.weather.length > 0) {
+                const weatherText = metar.weather.map(w => w.description).join(', ');
+                lines.push(`<strong>Явления:</strong> ${weatherText}`);
+            }
+            
+            if (metar.flightCategory) {
+                lines.push(`<div class="flight-category ${metar.flightCategory}">${getFlightCategoryIcon(metar.flightCategory)} ${metar.flightCategory}</div>`);
+            }
+            
+            return lines.join('<br>');
+        }
+
+        // Рендер распарсенного TAF
+        function renderTafParsed(taf) {
+            const lines = [];
+            
+            if (taf.issueTime) {
+                lines.push(`<strong>Выпущен:</strong> ${taf.issueTime.hour.toString().padStart(2, '0')}:${taf.issueTime.minute.toString().padStart(2, '0')} UTC`);
+            }
+            
+            if (taf.validTime.from && taf.validTime.to) {
+                lines.push(`<strong>Действует:</strong> ${taf.validTime.from.day.toString().padStart(2, '0')}${taf.validTime.from.hour.toString().padStart(2, '0')}Z - ${taf.validTime.to.day.toString().padStart(2, '0')}${taf.validTime.to.hour.toString().padStart(2, '0')}Z`);
+            }
+            
+            lines.push('<hr style="margin: 8px 0; border: none; border-top: 1px solid #e2e8f0;">');
+            
+            taf.forecast.forEach((period, index) => {
+                const typeIcons = {
+                    'BASE': '📋',
+                    'FM': '➡️',
+                    'TEMPO': '⚡',
+                    'BECMG': '🔄',
+                    'PROB': '❓'
+                };
+                
+                let periodText = `${typeIcons[period.type] || '•'} `;
+                
+                if (period.probability) {
+                    periodText += `Вероятность ${period.probability}%: `;
+                }
+                
+                if (period.time.from) {
+                    periodText += `${period.time.from.hour.toString().padStart(2, '0')}:00`;
+                    if (period.time.to) {
+                        periodText += `-${period.time.to.hour.toString().padStart(2, '0')}:00`;
+                    }
+                    periodText += ' — ';
+                }
+                
+                periodText += `${period.wind.speed} м/с`;
+                if (period.wind.gust) {
+                    periodText += `, порывы ${period.wind.gust} м/с`;
+                }
+                periodText += `, видимость ${period.visibility.km} км`;
+                
+                if (period.weather.length > 0) {
+                    periodText += `, ${period.weather.map(w => w.description).join(', ')}`;
+                }
+                
+                if (period.clouds.length > 0) {
+                    periodText += `, ${period.clouds.map(c => c.coverage).join(', ')}`;
+                }
+                
+                lines.push(periodText);
+            });
+            
+            return lines.join('<br>');
+        }
+
+        // Иконка категории полётов
+        function getFlightCategoryIcon(category) {
+            const icons = {
+                'VFR': '🟢',
+                'MVFR': '🟡',
+                'IFR': '🟠',
+                'LIFR': '🔴'
+            };
+            return icons[category] || '⚪';
+        }
+
+        // Копирование сырых данных
+        function copyRaw(icao, type) {
+            const data = type === 'metar' 
+                ? MetarTafModule.cache.metar[icao]?.raw 
+                : MetarTafModule.cache.taf[icao]?.raw;
+            
+            if (data) {
+                navigator.clipboard.writeText(data).then(() => {
+                    showToast(`${type.toUpperCase()} скопирован`, 'success');
+                });
+            } else {
+                showToast('Данные не найдены', 'error');
+            }
+        }
+
+        // Использование для анализа
+        function useForAnalysis(icao) {
+            showToast(`${icao} выбран для анализа`, 'success');
+            // Здесь будет интеграция с основным модулем MIRA
+            console.log('Выбран аэропорт:', icao);
+        }
+
+        // Toast уведомления
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toast.className = `toast ${type}`;
+            toastMessage.textContent = message;
+            
+            toast.classList.add('active');
+            
+            setTimeout(() => {
+                toast.classList.remove('active');
+            }, 3000);
+        }
+
+        // Обновление API ключа
+        function updateApiKey() {
+            const apiKey = document.getElementById('checkwxApiKey').value.trim();
+            if (apiKey) {
+                MetarTafModule.CHECKWX_API_KEY = apiKey;
+                localStorage.setItem('mira_checkwx_api_key', apiKey);
+                showToast('API ключ сохранён', 'success');
+            }
+        }
+
+        // Загрузка API ключа из localStorage
+        function loadApiKey() {
+            const savedKey = localStorage.getItem('mira_checkwx_api_key');
+            if (savedKey) {
+                document.getElementById('checkwxApiKey').value = savedKey;
+                MetarTafModule.CHECKWX_API_KEY = savedKey;
+            }
+        }
+
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('✅ METAR/TAF тестовая страница загружена');
+            loadApiKey(); // Загружаем сохранённый API ключ
+        });
+    </script>
+</body>
+</html>
