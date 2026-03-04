@@ -25,7 +25,10 @@ const MetarTafModule = {
     CORS_PROXIES: [
         'https://api.allorigins.win/raw?url=',
         'https://corsproxy.io/?',
-        'https://thingproxy.freeboard.io/fetch/'
+        'https://thingproxy.freeboard.io/fetch/',
+        'https://proxy.cors.sh/',
+        'https://cors-anywhere.herokuapp.com/',
+        'https://cors.bridged.cc/'
     ],
 
     /**
@@ -50,6 +53,59 @@ const MetarTafModule = {
      */
     airportsDB: null,
 
+    /**
+     * Список аэропортов доступных на METARTAF.RU
+     * Обновляется автоматически при первом запросе
+     */
+    metartafAirports: new Set([
+        // Основные аэропорты России (будет дополнено)
+        'UUEE', 'UUDD', 'UUWW', 'UUBW', // Москва
+        'ULLI', // Санкт-Петербург
+        'UWKD', // Казань
+        'UWKE', // Бегишево (Набережные Челны)
+        'URSS', // Сочи
+        'URKK', // Краснодар
+        'USPP', // Пермь
+        'USSS', // Екатеринбург
+        'UNNT', // Новосибирск
+        'USTR', // Тюмень
+        'UNKL', // Красноярск
+        'UHWW', // Владивосток
+        'UHHH', // Хабаровск
+        'UIII', // Иркутск
+        'UWUU', // Уфа
+        'UWWW', // Самара
+        'URMM', // Минеральные Воды
+        'URRP', // Ростов-на-Дону
+        'USCC', // Челябинск
+        'UUOB', // Белгород
+        'UUOO', // Воронеж
+        'UMKK', // Калининград
+        'ULMM', // Мурманск
+        'ULAA', // Архангельск
+        'UEEE', // Якутск
+        'UERR', // Мирный
+        'UOOO', // Норильск
+        'UHPP', // Петропавловск-Камчатский
+        'UHSS', // Южно-Сахалинск
+        'UHMM'  // Магадан
+    ]),
+
+    /**
+     * Проверка доступности аэропорта на METARTAF.RU
+     */
+    isMetartafAirport(icao) {
+        return this.metartafAirports.has(icao.toUpperCase());
+    },
+    
+    /**
+     * Добавление аэропорта в список METARTAF.RU (при успешном запросе)
+     */
+    addMetartafAirport(icao) {
+        this.metartafAirports.add(icao.toUpperCase());
+        console.log(`✅ ${icao} добавлен в список METARTAF.RU`);
+    },
+    
     /**
      * Кэш данных
      */
@@ -180,11 +236,18 @@ const MetarTafModule = {
         // Пробуем разные источники по приоритету
         let data = null;
 
-        // 1. METARTAF.RU - основной источник для РФ
-        try {
-            data = await this.fetchMetarMetartaf(cacheKey);
-        } catch (e) {
-            console.warn('METARTAF.RU failed, trying NOAA:', e.message);
+        // 1. METARTAF.RU - основной источник для РФ (только если аэропорт доступен)
+        if (this.isMetartafAirport(cacheKey)) {
+            try {
+                data = await this.fetchMetarMetartaf(cacheKey);
+                // Успешно - добавляем в список
+                this.addMetartafAirport(cacheKey);
+            } catch (e) {
+                console.warn(`METARTAF.RU failed for ${cacheKey}:`, e.message);
+                // Не удалось - возможно аэропорта нет в базе
+            }
+        } else {
+            console.log(`ℹ️ ${cacheKey} не в списке METARTAF.RU, пропускаем`);
         }
 
         // 2. CheckWX API (если есть ключ)
@@ -247,37 +310,50 @@ const MetarTafModule = {
     async fetchMetarMetartaf(icao) {
         const url = `${this.METARTAF_BASE}/${icao}`;
         
-        // Используем CORS-прокси для получения HTML
-        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+        // Используем локальный прокси (если запущен server.js) или CORS-прокси
+        const proxyUrl = window.location.hostname === 'localhost' 
+            ? `/api/metartaf/${icao}`  // Локальный прокси
+            : `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;  // CORS-прокси
         
-        console.log(`🔍 METARTAF.RU: Запрос для ${icao}`);
-        const response = await fetch(proxyUrl);
+        console.log(`🔍 METARTAF.RU: Запрос для ${icao} через ${window.location.hostname === 'localhost' ? 'локальный прокси' : 'CORS-прокси'}`);
         
-        if (!response.ok) {
-            throw new Error(`METARTAF.RU HTTP ${response.status}`);
+        try {
+            const response = await fetch(proxyUrl);
+            
+            if (!response.ok) {
+                throw new Error(`METARTAF.RU HTTP ${response.status}`);
+            }
+            
+            const html = await response.text();
+            console.log(`📄 METARTAF.RU: Получено HTML, размер: ${html.length} байт`);
+            
+            // Проверка на 404 (аэропорт не найден)
+            if (html.includes('404') && (html.includes('не найден') || html.includes('Not Found'))) {
+                throw new Error(`Аэропорт ${icao} не найден на METARTAF.RU`);
+            }
+            
+            // Парсим HTML для извлечения METAR и TAF
+            const metarRaw = this.extractMetarFromHtml(html);
+            const tafRaw = this.extractTafFromHtml(html);
+            
+            console.log(`📝 METARTAF.RU: METAR извлечён: ${metarRaw ? '✅' : '❌'}, TAF: ${tafRaw ? '✅' : '❌'}`);
+            if (metarRaw) console.log(`   METAR: ${metarRaw.substring(0, 80)}...`);
+            if (tafRaw) console.log(`   TAF: ${tafRaw.substring(0, 80)}...`);
+            
+            if (!metarRaw && !tafRaw) {
+                throw new Error('Не удалось извлечь METAR/TAF из HTML');
+            }
+            
+            // Возвращаем массив сырых данных
+            const result = [];
+            if (metarRaw) result.push({ rawOb: metarRaw });
+            if (tafRaw) result.push({ rawTAF: tafRaw });
+            
+            return result;
+        } catch (error) {
+            console.error(`❌ METARTAF.RU ошибка для ${icao}:`, error.message);
+            throw error;
         }
-        
-        const html = await response.text();
-        console.log(`📄 METARTAF.RU: Получено HTML, размер: ${html.length} байт`);
-        
-        // Парсим HTML для извлечения METAR и TAF
-        const metarRaw = this.extractMetarFromHtml(html);
-        const tafRaw = this.extractTafFromHtml(html);
-        
-        console.log(`📝 METARTAF.RU: METAR извлечён: ${metarRaw ? '✅' : '❌'}, TAF: ${tafRaw ? '✅' : '❌'}`);
-        if (metarRaw) console.log(`   METAR: ${metarRaw.substring(0, 80)}...`);
-        if (tafRaw) console.log(`   TAF: ${tafRaw.substring(0, 80)}...`);
-        
-        if (!metarRaw && !tafRaw) {
-            throw new Error('Не удалось извлечь METAR/TAF из HTML');
-        }
-        
-        // Возвращаем массив сырых данных
-        const result = [];
-        if (metarRaw) result.push({ rawOb: metarRaw });
-        if (tafRaw) result.push({ rawTAF: tafRaw });
-        
-        return result;
     },
     
     /**
@@ -309,6 +385,12 @@ const MetarTafModule = {
             return jsonMatch[1].replace(/\\n/g, ' ').trim();
         }
         
+        // Вариант 5: Поиск после слова "METAR" в тексте
+        const afterMetarMatch = html.match(/METAR\s+([A-Z]{4}\s+\d{6}Z\s+[A-Z0-9\s\/\-]+)/i);
+        if (afterMetarMatch) {
+            return 'METAR ' + afterMetarMatch[1].trim();
+        }
+        
         return null;
     },
     
@@ -338,6 +420,12 @@ const MetarTafModule = {
         const jsonMatch = html.match(/"taf"\s*:\s*"([^"]+)"/i);
         if (jsonMatch) {
             return jsonMatch[1].replace(/\\n/g, ' ').trim();
+        }
+        
+        // Вариант 5: Поиск после слова "TAF" в тексте
+        const afterTafMatch = html.match(/TAF\s+([A-Z]{4}\s+\d{6}Z\s+\d{4}\/\d{4}\s+[\s\S]{1,300}?)(?:<|$)/i);
+        if (afterTafMatch) {
+            return 'TAF ' + afterTafMatch[1].trim();
         }
         
         return null;
@@ -643,12 +731,17 @@ const MetarTafModule = {
         // Пробуем разные источники по приоритету
         let data = null;
 
-        // 1. METARTAF.RU - основной источник для РФ
-        try {
-            data = await this.fetchMetarMetartaf(cacheKey);
-            // TAF уже извлечён в этой функции
-        } catch (e) {
-            console.warn('METARTAF.RU failed, trying NOAA:', e.message);
+        // 1. METARTAF.RU - основной источник для РФ (только если аэропорт доступен)
+        if (this.isMetartafAirport(cacheKey)) {
+            try {
+                data = await this.fetchMetarMetartaf(cacheKey);
+                // Успешно - добавляем в список
+                this.addMetartafAirport(cacheKey);
+            } catch (e) {
+                console.warn(`METARTAF.RU failed for ${cacheKey}:`, e.message);
+            }
+        } else {
+            console.log(`ℹ️ ${cacheKey} не в списке METARTAF.RU, пропускаем`);
         }
 
         // 2. CheckWX API (если есть ключ)

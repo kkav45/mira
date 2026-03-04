@@ -11,6 +11,7 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const https = require('https');
 
 const PORT = 8080;
 
@@ -31,14 +32,56 @@ const server = http.createServer((req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    
+
     // Обработка preflight запросов
     if (req.method === 'OPTIONS') {
         res.writeHead(204);
         res.end();
         return;
     }
-    
+
+    // Прокси для METARTAF.RU
+    if (req.url.startsWith('/api/metartaf/')) {
+        const icao = req.url.split('/')[3];
+        if (icao && /^[A-Z]{4}$/i.test(icao)) {
+            https.get(`https://metartaf.ru/${icao.toUpperCase()}`, (response) => {
+                let data = '';
+                response.on('data', (chunk) => data += chunk);
+                response.on('end', () => {
+                    res.writeHead(200, { 
+                        'Content-Type': 'text/html; charset=utf-8',
+                        'Access-Control-Allow-Origin': '*'
+                    });
+                    res.end(data);
+                });
+            }).on('error', (err) => {
+                res.writeHead(500);
+                res.end(JSON.stringify({ error: err.message }));
+            });
+            return;
+        }
+    }
+
+    // Прокси для NOAA Aviation Weather
+    if (req.url.startsWith('/api/noaa/')) {
+        const noaaUrl = req.url.replace('/api/noaa/', 'https://aviationweather.gov/api/');
+        https.get(noaaUrl, (response) => {
+            let data = '';
+            response.on('data', (chunk) => data += chunk);
+            response.on('end', () => {
+                res.writeHead(200, { 
+                    'Content-Type': 'application/json; charset=utf-8',
+                    'Access-Control-Allow-Origin': '*'
+                });
+                res.end(data);
+            });
+        }).on('error', (err) => {
+            res.writeHead(500);
+            res.end(JSON.stringify({ error: err.message }));
+        });
+        return;
+    }
+
     // Парсинг URL
     let filePath = req.url === '/' ? '/test-metar-taf.html' : req.url;
     
