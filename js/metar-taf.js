@@ -304,82 +304,115 @@ const MetarTafModule = {
     },
 
     /**
-     * Получить METAR через METARTAF.RU
-     * Парсинг HTML страницы аэропорта
+     * Получить METAR через METARTAF.RU или NOAA (резерв)
+     * Приоритет: NOAA (CORS-friendly), затем METARTAF.RU через прокси
      */
     async fetchMetarMetartaf(icao) {
-        const url = `${this.METARTAF_BASE}/${icao}`;
+        const metartafUrl = `${this.METARTAF_BASE}/${icao}`;
+        
+        // NOAA Aviation Weather API - основной источник (CORS-friendly!)
+        const noaaUrl = `https://aviationweather.gov/api/data/metar?ids=${icao}&format=json&hours=2`;
 
-        // Список CORS-прокси (по порядку)
-        const proxyServices = [
-            // Пытаемся сделать прямой запрос (некоторые браузеры разрешают)
-            { name: 'direct', url: url, direct: true },
-            // Альтернативные прокси
-            { name: 'allorigins', url: `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}` },
-            { name: 'corsproxy', url: `https://corsproxy.io/?${encodeURIComponent(url)}` },
-            { name: 'thingproxy', url: `https://thingproxy.freeboard.io/fetch/${url}` },
-            { name: 'proxybridge', url: `https://proxybridge.zuplo.io/?url=${encodeURIComponent(url)}` },
-            // Локальный прокси (если есть)
-            { name: 'local', url: `/api/metartaf/${icao}`, local: true }
+        // Список источников по приоритету
+        const sources = [
+            // 1. NOAA - официальный источник, CORS-friendly
+            { 
+                name: 'NOAA', 
+                url: noaaUrl,
+                parser: 'noaa',
+                headers: { 'Accept': 'application/json' }
+            },
+            // 2. Прямой запрос metartaf.ru (редко работает)
+            { 
+                name: 'metartaf-direct', 
+                url: metartafUrl,
+                parser: 'metartaf',
+                headers: { 'Accept': 'application/json' }
+            },
+            // 3. CORS-прокси для metartaf.ru
+            { 
+                name: 'corsproxy', 
+                url: `https://corsproxy.io/?${encodeURIComponent(metartafUrl)}`,
+                parser: 'metartaf'
+            },
+            { 
+                name: 'allorigins', 
+                url: `https://api.allorigins.win/raw?url=${encodeURIComponent(metartafUrl)}`,
+                parser: 'metartaf'
+            },
+            // 4. Локальный прокси (если есть)
+            { 
+                name: 'local', 
+                url: `/api/metartaf/${icao}`,
+                parser: 'metartaf',
+                local: true
+            }
         ];
 
-        // Пытаемся через каждый прокси по очереди
-        for (const proxy of proxyServices) {
+        // Пытаемся через каждый источник по очереди
+        for (const source of sources) {
             try {
-                console.log(`🔍 METARTAF.RU: Запрос для ${icao} через ${proxy.name}`);
+                console.log(`🔍 ${source.name}: Запрос для ${icao}`);
                 
-                const response = await fetch(proxy.url, {
-                    timeout: 10000,
-                    headers: proxy.direct ? {
-                        'Accept': 'application/json',
-                        'User-Agent': 'MIRA/0.2.0'
-                    } : {}
+                const response = await fetch(source.url, {
+                    timeout: 15000,
+                    headers: source.headers || {}
                 });
 
                 if (!response.ok) {
-                    throw new Error(`${proxy.name} HTTP ${response.status}`);
+                    throw new Error(`${source.name} HTTP ${response.status}`);
                 }
 
+                // NOAA возвращает JSON
+                if (source.parser === 'noaa') {
+                    const jsonData = await response.json();
+                    console.log(`📄 NOAA: Успешно, найдено ${jsonData.length} METAR`);
+                    
+                    if (jsonData && jsonData.length > 0) {
+                        return [{ rawOb: jsonData[0].rawOb }];
+                    }
+                    throw new Error('NOAA: Нет данных');
+                }
+
+                // METARTAF возвращает HTML
                 const html = await response.text();
                 
-                // Проверка на пустой ответ
                 if (html.length < 50) {
-                    throw new Error(`${proxy.name}: Пустой ответ`);
+                    throw new Error(`${source.name}: Пустой ответ`);
                 }
 
-                console.log(`📄 METARTAF.RU: Успешно (${proxy.name}), размер: ${html.length} байт`);
+                console.log(`📄 ${source.name}: Успешно, размер: ${html.length} байт`);
 
-                // Проверка на 404 (аэропорт не найден)
+                // Проверка на 404
                 if (html.includes('404') && (html.includes('не найден') || html.includes('Not Found'))) {
-                    throw new Error(`Аэропорт ${icao} не найден на METARTAF.RU`);
+                    throw new Error(`Аэропорт ${icao} не найден`);
                 }
 
-                // Парсим HTML для извлечения METAR и TAF
+                // Парсим HTML
                 const metarRaw = this.extractMetarFromHtml(html);
                 const tafRaw = this.extractTafFromHtml(html);
 
-                console.log(`📝 METARTAF.RU: METAR извлечён: ${metarRaw ? '✅' : '❌'}, TAF: ${tafRaw ? '✅' : '❌'}`);
+                console.log(`📝 ${source.name}: METAR ${metarRaw ? '✅' : '❌'}, TAF: ${tafRaw ? '✅' : '❌'}`);
                 if (metarRaw) console.log(`   METAR: ${metarRaw.substring(0, 80)}...`);
                 if (tafRaw) console.log(`   TAF: ${tafRaw.substring(0, 80)}...`);
 
                 if (!metarRaw && !tafRaw) {
-                    throw new Error('Не удалось извлечь METAR/TAF из HTML');
+                    throw new Error('Не удалось извлечь METAR/TAF');
                 }
 
-                // Возвращаем массив сырых данных
                 const result = [];
                 if (metarRaw) result.push({ rawOb: metarRaw });
                 if (tafRaw) result.push({ rawTAF: tafRaw });
 
                 return result;
             } catch (error) {
-                console.warn(`⚠️ ${proxy.name} не удался: ${error.message}`);
+                console.warn(`⚠️ ${source.name} не удался: ${error.message}`);
                 // Продолжаем следующую попытку
             }
         }
         
-        // Все прокси не удались
-        throw new Error('Все CORS-прокси не доступны. Попробуйте позже или используйте локальный сервер.');
+        // Все источники не удались
+        throw new Error('Все источники METAR недоступны. Попробуйте позже.');
     },
     
     /**
