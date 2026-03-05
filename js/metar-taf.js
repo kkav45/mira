@@ -309,51 +309,77 @@ const MetarTafModule = {
      */
     async fetchMetarMetartaf(icao) {
         const url = `${this.METARTAF_BASE}/${icao}`;
-        
-        // Используем локальный прокси (если запущен server.js) или CORS-прокси
-        const proxyUrl = window.location.hostname === 'localhost' 
-            ? `/api/metartaf/${icao}`  // Локальный прокси
-            : `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;  // CORS-прокси
-        
-        console.log(`🔍 METARTAF.RU: Запрос для ${icao} через ${window.location.hostname === 'localhost' ? 'локальный прокси' : 'CORS-прокси'}`);
-        
-        try {
-            const response = await fetch(proxyUrl);
-            
-            if (!response.ok) {
-                throw new Error(`METARTAF.RU HTTP ${response.status}`);
+
+        // Список CORS-прокси (по порядку)
+        const proxyServices = [
+            // Пытаемся сделать прямой запрос (некоторые браузеры разрешают)
+            { name: 'direct', url: url, direct: true },
+            // Альтернативные прокси
+            { name: 'allorigins', url: `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}` },
+            { name: 'corsproxy', url: `https://corsproxy.io/?${encodeURIComponent(url)}` },
+            { name: 'thingproxy', url: `https://thingproxy.freeboard.io/fetch/${url}` },
+            { name: 'proxybridge', url: `https://proxybridge.zuplo.io/?url=${encodeURIComponent(url)}` },
+            // Локальный прокси (если есть)
+            { name: 'local', url: `/api/metartaf/${icao}`, local: true }
+        ];
+
+        // Пытаемся через каждый прокси по очереди
+        for (const proxy of proxyServices) {
+            try {
+                console.log(`🔍 METARTAF.RU: Запрос для ${icao} через ${proxy.name}`);
+                
+                const response = await fetch(proxy.url, {
+                    timeout: 10000,
+                    headers: proxy.direct ? {
+                        'Accept': 'application/json',
+                        'User-Agent': 'MIRA/0.2.0'
+                    } : {}
+                });
+
+                if (!response.ok) {
+                    throw new Error(`${proxy.name} HTTP ${response.status}`);
+                }
+
+                const html = await response.text();
+                
+                // Проверка на пустой ответ
+                if (html.length < 50) {
+                    throw new Error(`${proxy.name}: Пустой ответ`);
+                }
+
+                console.log(`📄 METARTAF.RU: Успешно (${proxy.name}), размер: ${html.length} байт`);
+
+                // Проверка на 404 (аэропорт не найден)
+                if (html.includes('404') && (html.includes('не найден') || html.includes('Not Found'))) {
+                    throw new Error(`Аэропорт ${icao} не найден на METARTAF.RU`);
+                }
+
+                // Парсим HTML для извлечения METAR и TAF
+                const metarRaw = this.extractMetarFromHtml(html);
+                const tafRaw = this.extractTafFromHtml(html);
+
+                console.log(`📝 METARTAF.RU: METAR извлечён: ${metarRaw ? '✅' : '❌'}, TAF: ${tafRaw ? '✅' : '❌'}`);
+                if (metarRaw) console.log(`   METAR: ${metarRaw.substring(0, 80)}...`);
+                if (tafRaw) console.log(`   TAF: ${tafRaw.substring(0, 80)}...`);
+
+                if (!metarRaw && !tafRaw) {
+                    throw new Error('Не удалось извлечь METAR/TAF из HTML');
+                }
+
+                // Возвращаем массив сырых данных
+                const result = [];
+                if (metarRaw) result.push({ rawOb: metarRaw });
+                if (tafRaw) result.push({ rawTAF: tafRaw });
+
+                return result;
+            } catch (error) {
+                console.warn(`⚠️ ${proxy.name} не удался: ${error.message}`);
+                // Продолжаем следующую попытку
             }
-            
-            const html = await response.text();
-            console.log(`📄 METARTAF.RU: Получено HTML, размер: ${html.length} байт`);
-            
-            // Проверка на 404 (аэропорт не найден)
-            if (html.includes('404') && (html.includes('не найден') || html.includes('Not Found'))) {
-                throw new Error(`Аэропорт ${icao} не найден на METARTAF.RU`);
-            }
-            
-            // Парсим HTML для извлечения METAR и TAF
-            const metarRaw = this.extractMetarFromHtml(html);
-            const tafRaw = this.extractTafFromHtml(html);
-            
-            console.log(`📝 METARTAF.RU: METAR извлечён: ${metarRaw ? '✅' : '❌'}, TAF: ${tafRaw ? '✅' : '❌'}`);
-            if (metarRaw) console.log(`   METAR: ${metarRaw.substring(0, 80)}...`);
-            if (tafRaw) console.log(`   TAF: ${tafRaw.substring(0, 80)}...`);
-            
-            if (!metarRaw && !tafRaw) {
-                throw new Error('Не удалось извлечь METAR/TAF из HTML');
-            }
-            
-            // Возвращаем массив сырых данных
-            const result = [];
-            if (metarRaw) result.push({ rawOb: metarRaw });
-            if (tafRaw) result.push({ rawTAF: tafRaw });
-            
-            return result;
-        } catch (error) {
-            console.error(`❌ METARTAF.RU ошибка для ${icao}:`, error.message);
-            throw error;
         }
+        
+        // Все прокси не удались
+        throw new Error('Все CORS-прокси не доступны. Попробуйте позже или используйте локальный сервер.');
     },
     
     /**
