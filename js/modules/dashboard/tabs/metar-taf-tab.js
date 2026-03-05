@@ -434,6 +434,9 @@ const DashboardTabsMetarTaf = {
             <!-- Предупреждения -->
             ${this.renderWarnings(airports)}
 
+            <!-- Графики -->
+            ${currentAirports.length > 0 ? this.renderCharts(currentAirports) : ''}
+
             <!-- Таблица аэропортов -->
             ${currentAirports.length > 0 ? `
                 <div class="dashboard-card">
@@ -578,12 +581,47 @@ const DashboardTabsMetarTaf = {
                     ${metar.qnh ? `<div style="font-size: 11px; color: #718096;">${Math.round(metar.qnh * 0.750062)} мм рт.ст.</div>` : ''}
                 </td>
                 <td>
-                    <span class="badge badge-${ageClass}">
-                        ${airport.metarAge < 30 ? '✓ Актуально' : '⚠ Устарело'}
-                    </span>
+                    <div style="display: flex; gap: 4px; align-items: center;">
+                        <span class="badge badge-${ageClass}">
+                            ${airport.metarAge < 30 ? '✓ Актуально' : '⚠ Устарело'}
+                        </span>
+                        ${typeof MapModule !== 'undefined' ? `
+                            <button class="btn btn-secondary" 
+                                    onclick="DashboardTabsMetarTaf.showAirportOnMap(${airport.latitude}, ${airport.longitude}, '${airport.icao}')"
+                                    style="padding: 4px 8px; font-size: 11px;"
+                                    title="Показать на карте">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </button>
+                        ` : ''}
+                    </div>
                 </td>
             </tr>
         `;
+    },
+
+    /**
+     * Показать аэропорт на карте
+     */
+    showAirportOnMap(lat, lon, icao) {
+        if (typeof MapModule === 'undefined' || !MapModule.map) {
+            console.warn('⚠️ Карта недоступна');
+            return;
+        }
+
+        // Центрирование карты
+        const center = ol.proj.fromLonLat([lon, lat]);
+        MapModule.map.getView().setCenter(center);
+        MapModule.map.getView().setZoom(10);
+
+        // Добавление маркера (если есть функция)
+        if (typeof MapModule.addAirportMarker === 'function') {
+            MapModule.addAirportMarker(icao, lat, lon);
+        }
+
+        console.log(`📍 ${icao} показан на карте: ${lat.toFixed(4)}, ${lon.toFixed(4)}`);
+        
+        // Закрытие дашборда (опционально)
+        // DashboardModule.close();
     },
 
     /**
@@ -667,6 +705,226 @@ const DashboardTabsMetarTaf = {
                     </div>
                 `).join('')}
             </div>
+        `;
+    },
+
+    /**
+     * Рендер графиков (Plotly)
+     */
+    renderCharts(airports) {
+        // Подготовка данных для графиков
+        const chartData = airports.slice(0, 8).map((airport, index) => {
+            const metar = airport.metar || {};
+            const colors = ['#667eea', '#f093fb', '#4facfe', '#43e97b', '#fa709a', '#fee140', '#30cfd0', '#a8edea'];
+            
+            return {
+                icao: airport.icao,
+                name: airport.name || airport.city || airport.icao,
+                distance: Math.round(airport.distance),
+                temp: metar.temp !== null ? metar.temp : null,
+                wind: metar.windSpeed !== null ? metar.windSpeed : null,
+                windDir: metar.windDir,
+                dewpoint: metar.dewpoint,
+                pressure: metar.qnh,
+                color: colors[index % colors.length],
+                metarAge: Math.round(airport.metarAge)
+            };
+        }).filter(d => d.temp !== null || d.wind !== null);
+
+        if (chartData.length === 0) return '';
+
+        const airportNames = chartData.map(d => `${d.icao}\n(${d.distance}км)`);
+        const tempData = chartData.map(d => d.temp);
+        const windData = chartData.map(d => d.wind);
+        const dewpointData = chartData.map(d => d.dewpoint);
+
+        return `
+            <!-- Графики сравнения аэропортов -->
+            <div class="dashboard-cards-grid" style="grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); margin-top: 20px;">
+                <div class="dashboard-card" style="grid-column: span 2;">
+                    <div class="dashboard-card-title">
+                        <i class="fas fa-chart-line" style="color: #667eea;"></i>
+                        Температура по аэропортам
+                    </div>
+                    <div id="metarTempChart" style="height: 350px;"></div>
+                </div>
+                
+                <div class="dashboard-card" style="grid-column: span 2;">
+                    <div class="dashboard-card-title">
+                        <i class="fas fa-wind" style="color: #667eea;"></i>
+                        Ветер по аэропортам
+                    </div>
+                    <div id="metarWindChart" style="height: 350px;"></div>
+                </div>
+
+                ${dewpointData.some(d => d !== null) ? `
+                <div class="dashboard-card" style="grid-column: span 2;">
+                    <div class="dashboard-card-title">
+                        <i class="fas fa-tint" style="color: #667eea;"></i>
+                        Температура и точка росы
+                    </div>
+                    <div id="metarTempDewpointChart" style="height: 350px;"></div>
+                </div>
+                ` : ''}
+            </div>
+
+            <script>
+                // График температуры
+                (function() {
+                    const trace = {
+                        x: ${JSON.stringify(airportNames)},
+                        y: ${JSON.stringify(tempData)},
+                        type: 'bar',
+                        marker: {
+                            color: ${JSON.stringify(chartData.map(d => d.color))},
+                            line: { color: '#667eea', width: 2 }
+                        },
+                        text: ${JSON.stringify(tempData.map(t => t + '°C'))},
+                        textposition: 'outside',
+                        hoverinfo: 'text',
+                        hovertext: ${JSON.stringify(chartData.map(d => 
+                            `<b>${d.icao}</b><br>` +
+                            `${d.name}<br>` +
+                            `Расстояние: ${d.distance} км<br>` +
+                            `Возраст: ${d.metarAge} мин<br>` +
+                            `Температура: ${d.temp}°C`
+                        ))}
+                    };
+
+                    const layout = {
+                        margin: { t: 30, b: 80, l: 50, r: 30 },
+                        xaxis: { 
+                            title: 'Аэропорт (расстояние)',
+                            tickangle: -45,
+                            tickfont: { size: 10 }
+                        },
+                        yaxis: { 
+                            title: 'Температура (°C)',
+                            zeroline: true,
+                            zerolinecolor: '#e2e8f0'
+                        },
+                        showlegend: false,
+                        hovermode: 'closest'
+                    };
+
+                    const config = { 
+                        responsive: true, 
+                        displayModeBar: false,
+                        scrollZoom: false
+                    };
+
+                    Plotly.newPlot('metarTempChart', [trace], layout, config);
+                })();
+
+                // График ветра
+                (function() {
+                    const trace = {
+                        x: ${JSON.stringify(airportNames)},
+                        y: ${JSON.stringify(windData)},
+                        type: 'scatter',
+                        mode: 'lines+markers',
+                        line: { 
+                            color: '#667eea', 
+                            width: 3,
+                            shape: 'spline'
+                        },
+                        marker: { 
+                            size: 10,
+                            color: ${JSON.stringify(chartData.map(d => d.color))},
+                            symbol: 'circle'
+                        },
+                        text: ${JSON.stringify(windData.map(w => w + ' м/с'))},
+                        textposition: 'top center',
+                        hoverinfo: 'text',
+                        hovertext: ${JSON.stringify(chartData.map(d => 
+                            `<b>${d.icao}</b><br>` +
+                            `${d.name}<br>` +
+                            `Расстояние: ${d.distance} км<br>` +
+                            `Возраст: ${d.metarAge} мин<br>` +
+                            `Ветер: ${d.wind} м/с<br>` +
+                            `Направление: ${d.windDir}°`
+                        ))}
+                    };
+
+                    const layout = {
+                        margin: { t: 30, b: 80, l: 50, r: 30 },
+                        xaxis: { 
+                            title: 'Аэропорт (расстояние)',
+                            tickangle: -45,
+                            tickfont: { size: 10 }
+                        },
+                        yaxis: { 
+                            title: 'Ветер (м/с)',
+                            zeroline: true,
+                            zerolinecolor: '#e2e8f0'
+                        },
+                        showlegend: false,
+                        hovermode: 'closest'
+                    };
+
+                    const config = { 
+                        responsive: true, 
+                        displayModeBar: false,
+                        scrollZoom: false
+                    };
+
+                    Plotly.newPlot('metarWindChart', [trace], layout, config);
+                })();
+
+                // График температуры и точки росы
+                ${dewpointData.some(d => d !== null) ? `
+                (function() {
+                    const traceTemp = {
+                        x: ${JSON.stringify(airportNames)},
+                        y: ${JSON.stringify(tempData)},
+                        type: 'scatter',
+                        mode: 'lines+markers',
+                        name: 'Температура',
+                        line: { color: '#f093fb', width: 3 },
+                        marker: { size: 10 },
+                        hoverinfo: 'text',
+                        hovertext: ${JSON.stringify(chartData.map(d => `Температура: ${d.temp}°C`))}
+                    };
+
+                    const traceDewpoint = {
+                        x: ${JSON.stringify(airportNames)},
+                        y: ${JSON.stringify(dewpointData)},
+                        type: 'scatter',
+                        mode: 'lines+markers',
+                        name: 'Точка росы',
+                        line: { color: '#4facfe', width: 3, dash: 'dash' },
+                        marker: { size: 10, symbol: 'diamond' },
+                        hoverinfo: 'text',
+                        hovertext: ${JSON.stringify(chartData.map(d => `Точка росы: ${d.dewpoint}°C`))}
+                    };
+
+                    const layout = {
+                        margin: { t: 30, b: 80, l: 50, r: 30 },
+                        xaxis: { 
+                            title: 'Аэропорт',
+                            tickangle: -45,
+                            tickfont: { size: 10 }
+                        },
+                        yaxis: { 
+                            title: 'Температура (°C)',
+                            zeroline: true,
+                            zerolinecolor: '#e2e8f0'
+                        },
+                        showlegend: true,
+                        legend: { x: 0, y: 1 },
+                        hovermode: 'closest'
+                    };
+
+                    const config = { 
+                        responsive: true, 
+                        displayModeBar: false,
+                        scrollZoom: false
+                    };
+
+                    Plotly.newPlot('metarTempDewpointChart', [traceTemp, traceDewpoint], layout, config);
+                })();
+                ` : ''}
+            </script>
         `;
     },
 
