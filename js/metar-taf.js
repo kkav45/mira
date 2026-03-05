@@ -1303,6 +1303,16 @@ const MetarTafModule = {
             return R * c;
         };
 
+        // Расчёт пеленга (bearing) от точки до аэропорта
+        const getBearing = (lat1, lon1, lat2, lon2) => {
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const y = Math.sin(dLon) * Math.cos(lat2 * Math.PI / 180);
+            const x = Math.cos(lat1 * Math.PI / 180) * Math.sin(lat2 * Math.PI / 180) -
+                      Math.sin(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.cos(dLon);
+            const bearing = Math.atan2(y, x) * 180 / Math.PI;
+            return (bearing + 360) % 360;
+        };
+
         // Фильтруем и сортируем по расстоянию
         const nearby = this.airportsDB
             .map(apt => ({
@@ -1312,13 +1322,14 @@ const MetarTafModule = {
                 city: apt.city,
                 latitude: apt.latitude,
                 longitude: apt.longitude,
-                distance: Math.round(getDistance(lat, lon, apt.latitude, apt.longitude) * 10) / 10
+                distance: Math.round(getDistance(lat, lon, apt.latitude, apt.longitude) * 10) / 10,
+                bearing: Math.round(getBearing(lat, lon, apt.latitude, apt.longitude))
             }))
             .filter(apt => apt.distance <= radiusKm)
             .sort((a, b) => a.distance - b.distance);
 
         console.log(`🔍 Найдено ${nearby.length} аэропортов в радиусе ${radiusKm} км`);
-        
+
         return nearby;
     },
 
@@ -1345,12 +1356,158 @@ const MetarTafModule = {
         if (!this.airportsDB) {
             return [];
         }
-        
+
         const lowerCity = city.toLowerCase();
-        return this.airportsDB.filter(apt => 
+        return this.airportsDB.filter(apt =>
             apt.city?.toLowerCase().includes(lowerCity)
         );
     },
+
+    /**
+     * Получить METAR для ближайших аэропортов в точке
+     * @param {number} lat - Широта
+     * @param {number} lon - Долгота
+     * @param {number} radiusKm - Радиус поиска (км), по умолчанию 500
+     * @param {number} maxCount - Максимум аэропортов, по умолчанию 12
+     * @returns {Promise<Object>} - Результат с аэропортами и данными
+     */
+    async getMetarForPoint(lat, lon, radiusKm = 500, maxCount = 12) {
+        console.log(`🔍 Запрос METAR для точки (${lat.toFixed(4)}, ${lon.toFixed(4)}), радиус ${radiusKm} км`);
+
+        // 1. Находим ближайшие аэропорты
+        const nearby = await this.findNearbyAirports(lat, lon, radiusKm);
+
+        if (nearby.length === 0) {
+            return {
+                success: false,
+                error: `Аэропорты не найдены в радиусе ${radiusKm} км`,
+                airports: []
+            };
+        }
+
+        // 2. Получаем METAR для каждого аэропорта (с ограничением параллельности)
+        const airports = await this.getMetarBatch(nearby.slice(0, maxCount));
+
+        // 3. Фильтруем те, где есть хоть какие-то данные
+        const airportsWithData = airports.filter(a => a.metar || a.taf);
+
+        // 4. Считаем статистику
+        const currentMetars = airportsWithData.filter(a => a.metar && a.metarAge < 60);
+        const oldMetars = airportsWithData.filter(a => a.metar && a.metarAge >= 60);
+
+        console.log(`✅ Загружено METAR: ${airportsWithData.length} (актуальных: ${currentMetars.length}, устаревших: ${oldMetars.length})`);
+
+        return {
+            success: true,
+            searchCenter: { lat, lon },
+            searchRadiusKm: radiusKm,
+            totalAirports: nearby.length,
+            airports: airportsWithData,
+            stats: {
+                current: currentMetars.length,
+                old: oldMetars.length,
+                withTaf: airportsWithData.filter(a => a.taf).length
+            }
+        };
+    },
+
+    /**
+     * Пакетное получение METAR для нескольких аэропортов
+     * @param {Array} airports - Массив аэропортов
+     * @param {number} maxParallel - Максимум параллельных запросов
+     * @returns {Promise<Array>} - Аэропорты с данными METAR/TAF
+     */
+    async getMetarBatch(airports, maxParallel = 3) {
+        const results = [];
+        const queue = [...airports];
+        const inProgress = new Map();
+
+        return new Promise((resolve) => {
+            const processNext = () => {
+                if (queue.length === 0 && inProgress.size === 0) {
+                    resolve(results);
+                    return;
+                }
+
+                while (inProgress.size < maxParallel && queue.length > 0) {
+                    const airport = queue.shift();
+                    const promise = this.getMetarWithAge(airport.icao)
+                        .then(result => {
+                            results.push({
+                                ...airport,
+                                metar: result.metar,
+                                metarAge: result.age,
+                                taf: result.taf
+                            });
+                            inProgress.delete(airport.icao);
+                            processNext();
+                        })
+                        .catch(error => {
+                            console.warn(`⚠️ Ошибка METAR для ${airport.icao}:`, error.message);
+                            results.push({
+                                ...airport,
+                                metar: null,
+                                metarAge: null,
+                                taf: null
+                            });
+                            inProgress.delete(airport.icao);
+                            processNext();
+                        });
+                    inProgress.set(airport.icao, promise);
+                }
+            };
+
+            processNext();
+        });
+    },
+
+    /**
+     * Получить METAR с возрастом данных
+     * @param {string} icao - ICAO код
+     * @returns {Promise<Object>} - { metar, age, taf }
+     */
+    async getMetarWithAge(icao) {
+        const cacheKey = icao.toUpperCase();
+
+        // Проверка кэша METAR
+        let metar = null;
+        let metarAge = null;
+
+        const cachedMetar = this.cache.metar[cacheKey];
+        if (cachedMetar && Date.now() - cachedMetar.timestamp < 60 * 60 * 1000) {
+            metar = cachedMetar.data;
+            metarAge = (Date.now() - cachedMetar.timestamp) / 60000; // минут
+            console.log(`📥 METAR из кэша: ${cacheKey} (${Math.round(metarAge)} мин)`);
+        } else {
+            // Запрос нового METAR
+            try {
+                metar = await this.getMetar(cacheKey);
+                const cached = this.cache.metar[cacheKey];
+                if (cached) {
+                    metarAge = (Date.now() - cached.timestamp) / 60000;
+                }
+            } catch (error) {
+                console.warn(`❌ METAR не найден для ${cacheKey}`);
+            }
+        }
+
+        // Проверка кэша TAF
+        let taf = null;
+        const cachedTaf = this.cache.taf[cacheKey];
+        if (cachedTaf && Date.now() - cachedTaf.timestamp < 6 * 60 * 60 * 1000) {
+            taf = cachedTaf.data;
+            console.log(`📥 TAF из кэша: ${cacheKey}`);
+        } else {
+            // Запрос нового TAF
+            try {
+                taf = await this.getTaf(cacheKey);
+            } catch (error) {
+                // TAF может отсутствовать - это нормально
+            }
+        }
+
+        return { metar, age: metarAge, taf };
+    }
 };
 
 // Инициализация при загрузке

@@ -920,6 +920,26 @@
 
     <!-- Модальное окно ДАШБОРДА -->
     <div id="dashboardModal" class="dashboard-modal">
+        <!-- Заголовок для печати -->
+        <div class="print-header" id="printHeader">
+            <h1>МИРА — Метеорологическая скоринг-система</h1>
+            <p>Отчёт по метеорологическому анализу маршрутов БВС</p>
+            <div class="print-header-meta">
+                <div class="print-header-meta-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span id="printDate">—</span>
+                </div>
+                <div class="print-header-meta-item">
+                    <i class="fas fa-route"></i>
+                    <span id="printRoutesCount">0 маршрутов</span>
+                </div>
+                <div class="print-header-meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span id="printTime">—</span>
+                </div>
+            </div>
+        </div>
+
         <div class="dashboard-modal-header">
             <div class="dashboard-modal-title">
                 <h1>
@@ -933,6 +953,9 @@
             <div class="dashboard-modal-actions">
                 <button class="dashboard-back-btn" onclick="DashboardModule.close()" title="Назад к карте">
                     <i class="fas fa-arrow-left"></i> Назад к карте
+                </button>
+                <button class="dashboard-back-btn" onclick="DashboardTabsReport.printReport()" title="Печать отчёта" id="printReportBtn" style="background: rgba(255, 255, 255, 0.2);">
+                    <i class="fas fa-print"></i> Печать
                 </button>
                 <button class="dashboard-modal-close" onclick="DashboardModule.close()" title="Закрыть">
                     <i class="fas fa-times"></i>
@@ -953,7 +976,11 @@
     <script src="js/utils.js?v=20260301"></script>
     <script src="js/storage.js?v=20260301"></script>
     <script src="js/map.js?v=2026030310"></script>
-    <script src="js/weather.js?v=2026030333"></script>
+    <script src="js/vertical-profile.js?v=20260305"></script>
+    <script src="js/verification.js?v=20260305"></script>
+    <script src="js/atmospheric-indices.js?v=20260305"></script>
+    <script src="js/weather.js?v=20260305"></script>
+    <script src="js/interpolator.js?v=20260305"></script>
     <script src="js/charts.js?v=20260301"></script>
     <script src="js/route.js?v=2026030329"></script>
     <script src="js/energy-model.js?v=20260301"></script>
@@ -968,13 +995,16 @@
     <script src="js/scoring.js?v=2026030333"></script>
 
     <!-- Модуль дашборда -->
-    <script src="js/modules/dashboard/dashboard.js?v=20260301"></script>
-    <script src="js/modules/dashboard/tabs/meteo-tab.js?v=2026030223"></script>
-    <script src="js/modules/dashboard/tabs/ground-tab.js?v=20260301"></script>
-    <script src="js/modules/dashboard/tabs/flight-tab.js?v=20260301"></script>
-    <script src="js/modules/dashboard/tabs/segments-tab.js?v=2026030220"></script>
-    <script src="js/modules/dashboard/tabs/energy-tab.js?v=2026030225"></script>
-    <script src="js/modules/dashboard/tabs/report-tab.js?v=2026030332"></script>
+    <script src="js/modules/dashboard/dashboard.js?v=20260305"></script>
+    <script src="js/metar-taf.js?v=20260305"></script>
+    <script src="js/modules/dashboard/tabs/meteo-tab.js?v=20260305"></script>
+    <script src="js/modules/dashboard/tabs/metar-taf-tab.js?v=20260305"></script>
+    <script src="js/modules/dashboard/tabs/ground-tab.js?v=20260305"></script>
+    <script src="js/modules/dashboard/tabs/flight-tab.js?v=20260305"></script>
+    <script src="js/modules/dashboard/tabs/segments-tab.js?v=20260305"></script>
+    <script src="js/modules/dashboard/tabs/energy-tab.js?v=20260305"></script>
+    <script src="js/modules/dashboard/tabs/report-tab.js?v=20260305"></script>
+    <script src="js/modules/dashboard/tabs/act-print.js?v=20260305"></script>
 
     <script>
         let routeCreationMode = false;

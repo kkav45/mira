@@ -40,7 +40,7 @@ const server = http.createServer((req, res) => {
         return;
     }
 
-    // Прокси для METARTAF.RU
+    // Прокси для METARTAF.RU (HTML)
     if (req.url.startsWith('/api/metartaf/')) {
         const icao = req.url.split('/')[3];
         if (icao && /^[A-Z]{4}$/i.test(icao)) {
@@ -48,7 +48,7 @@ const server = http.createServer((req, res) => {
                 let data = '';
                 response.on('data', (chunk) => data += chunk);
                 response.on('end', () => {
-                    res.writeHead(200, { 
+                    res.writeHead(200, {
                         'Content-Type': 'text/html; charset=utf-8',
                         'Access-Control-Allow-Origin': '*'
                     });
@@ -56,6 +56,59 @@ const server = http.createServer((req, res) => {
                 });
             }).on('error', (err) => {
                 res.writeHead(500);
+                res.end(JSON.stringify({ error: err.message }));
+            });
+            return;
+        }
+    }
+
+    // Прокси для METARTAF.RU JSON API
+    if (req.url.startsWith('/api/metartaf-json/')) {
+        const icao = req.url.split('/')[3];
+        if (icao && /^[A-Z]{4}$/i.test(icao)) {
+            https.get(`https://metartaf.ru/${icao.toUpperCase()}.json`, (response) => {
+                // Если аэропорт не найден (404)
+                if (response.statusCode === 404) {
+                    res.writeHead(404, {
+                        'Content-Type': 'application/json; charset=utf-8',
+                        'Access-Control-Allow-Origin': '*'
+                    });
+                    res.end(JSON.stringify({ error: 'Аэропорт не найден на metartaf.ru', icao }));
+                    return;
+                }
+                
+                let data = '';
+                response.on('data', (chunk) => data += chunk);
+                response.on('end', () => {
+                    try {
+                        const jsonData = JSON.parse(data);
+                        // Если в ответе нет данных
+                        if (!jsonData.metar && !jsonData.taf) {
+                            res.writeHead(404, {
+                                'Content-Type': 'application/json; charset=utf-8',
+                                'Access-Control-Allow-Origin': '*'
+                            });
+                            res.end(JSON.stringify({ error: 'Нет данных METAR/TAF', icao }));
+                            return;
+                        }
+                        res.writeHead(200, {
+                            'Content-Type': 'application/json; charset=utf-8',
+                            'Access-Control-Allow-Origin': '*'
+                        });
+                        res.end(JSON.stringify(jsonData));
+                    } catch (e) {
+                        res.writeHead(500, {
+                            'Content-Type': 'application/json; charset=utf-8',
+                            'Access-Control-Allow-Origin': '*'
+                        });
+                        res.end(JSON.stringify({ error: 'Ошибка парсинга JSON: ' + e.message }));
+                    }
+                });
+            }).on('error', (err) => {
+                res.writeHead(503, {
+                    'Content-Type': 'application/json; charset=utf-8',
+                    'Access-Control-Allow-Origin': '*'
+                });
                 res.end(JSON.stringify({ error: err.message }));
             });
             return;

@@ -1,0 +1,1645 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поиск аэропортов в радиусе - MIRA Test</title>
+    
+    <!-- OpenLayers -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v9.2.4/ol.css">
+    <script src="https://cdn.jsdelivr.net/npm/ol@v9.2.4/dist/ol.js"></script>
+    
+    <!-- Модуль интерполяции -->
+    <script src="js/interpolator.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+        }
+        
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        
+        .map-section {
+            flex: 1;
+            position: relative;
+        }
+        
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .controls-section {
+            width: 450px;
+            background: #16213e;
+            padding: 20px;
+            overflow-y: auto;
+            border-left: 2px solid #0f3460;
+        }
+        
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #e94560;
+        }
+        
+        h2 {
+            font-size: 1.1rem;
+            margin: 15px 0 10px;
+            color: #0f3460;
+            background: #e94560;
+            padding: 8px 12px;
+            border-radius: 5px;
+        }
+        
+        .control-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        input[type="number"],
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #0f3460;
+            border-radius: 5px;
+            background: #1a1a2e;
+            color: #eee;
+            font-size: 1rem;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            margin: 10px 0;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+        
+        .btn-primary {
+            background: #e94560;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #ff6b6b;
+        }
+        
+        .btn-success {
+            background: #4ecca3;
+            color: #1a1a2e;
+        }
+        
+        .btn-success:hover {
+            background: #7fffd4;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #ff6b6b;
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .coords-display {
+            background: #0f3460;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .coords-display p {
+            margin: 5px 0;
+            font-family: monospace;
+        }
+        
+        .radius-display {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #e94560;
+        }
+        
+        .airports-list {
+            max-height: 300px;
+            overflow-y: auto;
+            background: #0f3460;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .airport-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #1a1a2e;
+            transition: background 0.3s;
+        }
+        
+        .airport-item:hover {
+            background: #1a1a2e;
+        }
+        
+        .airport-item:last-child {
+            border-bottom: none;
+        }
+        
+        .airport-info {
+            flex: 1;
+        }
+        
+        .airport-name {
+            font-weight: bold;
+            color: #4ecca3;
+        }
+        
+        .airport-icao {
+            font-family: monospace;
+            background: #1a1a2e;
+            padding: 2px 6px;
+            border-radius: 3px;
+            margin-left: 8px;
+        }
+        
+        .airport-city {
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+        
+        .airport-distance {
+            font-size: 0.9rem;
+            color: #e94560;
+        }
+        
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        
+        .remove-btn:hover {
+            background: #ff6b6b;
+        }
+        
+        .metar-taf-container {
+            background: #0f3460;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        
+        .metar-taf-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #1a1a2e;
+        }
+        
+        .metar-taf-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .metar-taf-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .metar-taf-code {
+            font-weight: bold;
+            color: #4ecca3;
+        }
+        
+        .metar-taf-data {
+            font-family: monospace;
+            font-size: 0.85rem;
+            background: #1a1a2e;
+            padding: 10px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        
+        .status-success {
+            background: #4ecca3;
+            color: #1a1a2e;
+        }
+        
+        .status-error {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .status-loading {
+            background: #ffc107;
+            color: #1a1a2e;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #0f3460;
+            border-top-color: #e94560;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .instructions {
+            background: #0f3460;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .instructions ol {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+        
+        .instructions li {
+            margin: 5px 0;
+        }
+        
+        .no-data {
+            text-align: center;
+            color: #aaa;
+            padding: 20px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .clear-all-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .clear-all-btn:hover {
+            background: #ff6b6b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="map-section">
+            <div id="map"></div>
+        </div>
+        
+        <div class="controls-section">
+            <h1><i class="fas fa-plane"></i> Поиск аэропортов</h1>
+            
+            <div class="instructions">
+                <strong>Как использовать:</strong>
+                <ol>
+                    <li>Кликните на карту, чтобы установить точку поиска</li>
+                    <li>Установите радиус поиска (км)</li>
+                    <li>Нажмите "Найти аэропорты"</li>
+                    <li>Получите METAR/TAF данные для найденных аэропортов</li>
+                </ol>
+            </div>
+            
+            <div class="control-group">
+                <label>Радиус поиска: <span id="radiusValue" class="radius-display">50</span> км</label>
+                <input type="range" id="radiusSlider" min="10" max="500" value="50" step="10">
+                <input type="number" id="radiusInput" min="10" max="500" value="50">
+            </div>
+            
+            <div class="control-group">
+                <div class="coords-display">
+                    <p><strong>Выбранная точка:</strong></p>
+                    <p>Широта: <span id="latDisplay">-</span></p>
+                    <p>Долгота: <span id="lonDisplay">-</span></p>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="searchBtn" disabled>
+                    <i class="fas fa-search"></i> Найти аэропорты
+                </button>
+                <button class="btn btn-success" id="fetchMetarTafBtn" disabled>
+                    <i class="fas fa-cloud"></i> Получить METAR/TAF
+                </button>
+                <button class="btn btn-success" id="analyzeBtn" disabled>
+                    <i class="fas fa-chart-line"></i> Анализ + Open-Meteo
+                </button>
+                <button class="btn btn-danger" id="clearBtn">
+                    <i class="fas fa-trash"></i> Очистить
+                </button>
+            </div>
+            
+            <h2>Найденные аэропорты (<span id="airportsCount">0</span>)</h2>
+            <div class="airports-list" id="airportsList">
+                <div class="no-data">Аэропорты не найдены. Кликните на карту и задайте радиус поиска.</div>
+            </div>
+            
+            <h2>Данные METAR/TAF</h2>
+            <div class="metar-taf-container" id="metarTafContainer">
+                <div class="no-data">Данные не загружены. Выберите аэропорты и нажмите "Получить METAR/TAF"</div>
+            </div>
+            
+            <h2 id="analysisTitle" style="display: none;">Анализ точки</h2>
+            <div class="metar-taf-container" id="analysisContainer" style="display: none;">
+                <div class="no-data">Результаты интерполяции</div>
+            </div>
+            
+            <h2 id="comparisonTitle" style="display: none;">Сравнение с Open-Meteo</h2>
+            <div class="metar-taf-container" id="comparisonContainer" style="display: none;">
+                <div class="no-data">Данные для сравнения</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Глобальные переменные
+        let map;
+        let markerLayer;
+        let circleLayer;
+        let airportsLayer;
+        let selectedPoint = null;
+        let airportsData = [];
+        let metarTafData = {};
+        
+        // Инициализация карты
+        function initMap() {
+            map = new ol.Map({
+                target: 'map',
+                layers: [
+                    new ol.layer.Tile({
+                        source: new ol.source.OSM()
+                    })
+                ],
+                view: new ol.View({
+                    center: ol.proj.fromLonLat([37.6176, 55.7558]), // Москва
+                    zoom: 7
+                })
+            });
+            
+            // Слой для маркера
+            markerLayer = new ol.layer.Vector({
+                source: new ol.source.Vector()
+            });
+            map.addLayer(markerLayer);
+            
+            // Слой для круга радиуса
+            circleLayer = new ol.layer.Vector({
+                source: new ol.source.Vector()
+            });
+            map.addLayer(circleLayer);
+            
+            // Слой для аэропортов
+            airportsLayer = new ol.layer.Vector({
+                source: new ol.source.Vector()
+            });
+            map.addLayer(airportsLayer);
+            
+            // Обработчик клика по карте
+            map.on('click', function(e) {
+                const coords = ol.proj.toLonLat(e.coordinate);
+                selectedPoint = {
+                    lat: coords[1],
+                    lon: coords[0]
+                };
+                
+                updateMarker(coords);
+                updateCircle(coords);
+                updateCoordsDisplay();
+                document.getElementById('searchBtn').disabled = false;
+                
+                // Очищаем предыдущие результаты
+                clearAirports();
+            });
+        }
+        
+        // Обновление маркера
+        function updateMarker(coords) {
+            markerLayer.getSource().clear();
+            const marker = new ol.Feature({
+                geometry: new ol.geom.Point(ol.proj.fromLonLat(coords))
+            });
+            marker.setStyle(new ol.style.Style({
+                image: new ol.style.Circle({
+                    radius: 10,
+                    fill: new ol.style.Fill({color: '#e94560'}),
+                    stroke: new ol.style.Stroke({color: '#fff', width: 2})
+                })
+            }));
+            markerLayer.getSource().addFeature(marker);
+        }
+        
+        // Обновление круга радиуса
+        function updateCircle(coords) {
+            circleLayer.getSource().clear();
+            const radiusKm = parseFloat(document.getElementById('radiusSlider').value);
+            const radiusMeters = radiusKm * 1000;
+            
+            const circle = ol.geom.Polygon.circular(
+                ol.proj.fromLonLat(coords),
+                radiusMeters
+            );
+            
+            const circleFeature = new ol.Feature({
+                geometry: circle
+            });
+            circleFeature.setStyle(new ol.style.Style({
+                fill: new ol.style.Fill({color: 'rgba(233, 69, 96, 0.2)'}),
+                stroke: new ol.style.Stroke({color: '#e94560', width: 2})
+            }));
+            circleLayer.getSource().addFeature(circleFeature);
+        }
+        
+        // Обновление отображения координат
+        function updateCoordsDisplay() {
+            if (selectedPoint) {
+                document.getElementById('latDisplay').textContent = selectedPoint.lat.toFixed(6);
+                document.getElementById('lonDisplay').textContent = selectedPoint.lon.toFixed(6);
+            }
+        }
+        
+        // Загрузка аэропортов
+        async function loadAirports() {
+            try {
+                const response = await fetch('airports.json');
+                const data = await response.json();
+                return data.airports || [];
+            } catch (error) {
+                console.error('Ошибка загрузки аэропортов:', error);
+                return [];
+            }
+        }
+        
+        // Расчет расстояния между точками (формула гаверсинуса)
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Радиус Земли в км
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+        
+        // Поиск аэропортов в радиусе
+        async function searchAirports() {
+            if (!selectedPoint) return;
+            
+            const radiusKm = parseFloat(document.getElementById('radiusSlider').value);
+            const allAirports = await loadAirports();
+            
+            airportsData = allAirports.filter(airport => {
+                const distance = calculateDistance(
+                    selectedPoint.lat,
+                    selectedPoint.lon,
+                    airport.latitude,
+                    airport.longitude
+                );
+                return distance <= radiusKm;
+            }).map(airport => {
+                const distance = calculateDistance(
+                    selectedPoint.lat,
+                    selectedPoint.lon,
+                    airport.latitude,
+                    airport.longitude
+                );
+                return { ...airport, distance };
+            }).sort((a, b) => a.distance - b.distance);
+            
+            displayAirports();
+            document.getElementById('fetchMetarTafBtn').disabled = airportsData.length === 0;
+        }
+        
+        // Отображение аэропортов в списке
+        function displayAirports() {
+            const container = document.getElementById('airportsList');
+            document.getElementById('airportsCount').textContent = airportsData.length;
+            
+            if (airportsData.length === 0) {
+                container.innerHTML = '<div class="no-data">Аэропорты в заданном радиусе не найдены</div>';
+                return;
+            }
+            
+            container.innerHTML = airportsData.map((airport, index) => `
+                <div class="airport-item" data-index="${index}">
+                    <div class="airport-info">
+                        <div class="airport-name">${airport.name} <span class="airport-icao">${airport.icao}</span></div>
+                        <div class="airport-city">${airport.city || ''}</div>
+                        <div class="airport-distance">${airport.distance.toFixed(1)} км</div>
+                    </div>
+                    <button class="remove-btn" onclick="removeAirport(${index})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+            
+            // Отображение аэропортов на карте
+            displayAirportsOnMap();
+        }
+        
+        // Отображение аэропортов на карте
+        function displayAirportsOnMap() {
+            airportsLayer.getSource().clear();
+            
+            airportsData.forEach(airport => {
+                const coords = ol.proj.fromLonLat([airport.longitude, airport.latitude]);
+                const marker = new ol.Feature({
+                    geometry: new ol.geom.Point(coords)
+                });
+                marker.setStyle(new ol.style.Style({
+                    image: new ol.style.Circle({
+                        radius: 7,
+                        fill: new ol.style.Fill({color: '#4ecca3'}),
+                        stroke: new ol.style.Stroke({color: '#fff', width: 2})
+                    })
+                }));
+                airportsLayer.getSource().addFeature(marker);
+            });
+        }
+        
+        // Удаление аэропорта из списка
+        function removeAirport(index) {
+            airportsData.splice(index, 1);
+            displayAirports();
+            document.getElementById('fetchMetarTafBtn').disabled = airportsData.length === 0;
+
+            // Удаляем из данных METAR/TAF
+            const icao = airportsData[index]?.icao;
+            if (icao && metarTafData[icao]) {
+                delete metarTafData[icao];
+                displayMetarTaf();
+            }
+        }
+
+        // Удаление аэропорта по ICAO (для аэропортов без данных)
+        function removeAirportByIcao(icao) {
+            const index = airportsData.findIndex(a => a.icao === icao);
+            if (index !== -1) {
+                airportsData.splice(index, 1);
+                displayAirports();
+            }
+            delete metarTafData[icao];
+            displayMetarTaf();
+        }
+        
+        // Очистка всех аэропортов
+        function clearAirports() {
+            airportsData = [];
+            metarTafData = {};
+            displayAirports();
+            displayMetarTaf();
+            airportsLayer.getSource().clear();
+            document.getElementById('fetchMetarTafBtn').disabled = true;
+        }
+
+        // Получение METAR/TAF данных
+        async function fetchMetarTaf() {
+            if (airportsData.length === 0) return;
+
+            const container = document.getElementById('metarTafContainer');
+            container.innerHTML = '<div class="no-data"><div class="loading-spinner"></div> Загрузка данных...</div>';
+
+            for (const airport of airportsData) {
+                await fetchAirportMetarTaf(airport);
+            }
+
+            displayMetarTaf();
+            document.getElementById('analyzeBtn').disabled = false;
+        }
+        
+        // Получение данных для одного аэропорта
+        async function fetchAirportMetarTaf(airport) {
+            const icao = airport.icao;
+            metarTafData[icao] = { loading: true };
+            displayMetarTaf();
+            
+            try {
+                // Используем прокси сервера для обхода CORS
+                const response = await fetch(`/api/metartaf-json/${icao}`);
+                
+                // 404 - нет данных для этого аэропорта
+                if (response.status === 404) {
+                    metarTafData[icao] = {
+                        success: false,
+                        error: 'Нет данных на metartaf.ru',
+                        noData: true
+                    };
+                    displayMetarTaf();
+                    return;
+                }
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.metar || data.taf) {
+                    metarTafData[icao] = {
+                        success: true,
+                        metar: { raw: data.metar },
+                        taf: { raw: data.taf },
+                        timestamp: new Date().toISOString()
+                    };
+                } else {
+                    metarTafData[icao] = {
+                        success: false,
+                        error: 'Нет данных METAR/TAF',
+                        noData: true
+                    };
+                }
+            } catch (error) {
+                console.error(`Ошибка получения данных для ${icao}:`, error);
+                metarTafData[icao] = {
+                    success: false,
+                    error: error.message
+                };
+            }
+            
+            displayMetarTaf();
+        }
+
+        // Расшифровка METAR
+        function decodeMetar(raw) {
+            if (!raw) return null;
+            
+            const result = {
+                raw: raw,
+                type: 'METAR',
+                station: null,
+                time: null,
+                wind: {},
+                visibility: null,
+                weather: [],
+                clouds: [],
+                temp: null,
+                dewpoint: null,
+                qnh: null,
+                remarks: []
+            };
+            
+            // Очищаем raw от лишних строк (дата/время от metartaf.ru)
+            const metarLine = raw.split('\n').find(line => line.startsWith('METAR') || line.startsWith('SPECI')) || raw;
+            
+            // Тип (METAR/SPECI)
+            const typeMatch = metarLine.match(/^(METAR|SPECI)\s+/i);
+            if (typeMatch) result.type = typeMatch[1].toUpperCase();
+            
+            // Станция
+            const stationMatch = metarLine.match(/\b([A-Z]{4})\b/);
+            if (stationMatch) result.station = stationMatch[1];
+            
+            // Время
+            const timeMatch = metarLine.match(/\b(\d{6})Z\b/);
+            if (timeMatch) {
+                result.time = timeMatch[1];
+                const day = parseInt(timeMatch[1].substr(0, 2));
+                const hour = parseInt(timeMatch[1].substr(2, 2));
+                const min = parseInt(timeMatch[1].substr(4, 2));
+                result.timeDecoded = `${day}-го числа, ${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')} UTC`;
+            }
+            
+            // Ветер: 36010MPS или 36010G15MPS или 00000MPS или VRB05MPS
+            // Ищем только если есть MPS, KT или KM/H в конце
+            const windMatch = metarLine.match(/\b(000|\d{3}|VRB)(\d{2})(?:G(\d{2}))?(MPS|KT|KM\/H)\b/);
+            if (windMatch) {
+                const dir = windMatch[1] === 'VRB' ? 'VRB' : parseInt(windMatch[1]);
+                const speed = parseInt(windMatch[2]);
+                const gust = windMatch[3] ? parseInt(windMatch[3]) : null;
+                let unit = windMatch[4];
+
+                // Конвертация в м/с
+                let speedMs = speed;
+                let gustMs = gust;
+                if (unit === 'KT') {
+                    speedMs = Math.round(speed * 0.514);
+                    gustMs = gust ? Math.round(gust * 0.514) : null;
+                } else if (unit === 'KM/H') {
+                    speedMs = Math.round(speed / 3.6);
+                    gustMs = gust ? Math.round(gust / 3.6) : null;
+                }
+
+                result.wind = {
+                    direction: dir === 0 ? 'Штиль' : (dir === 'VRB' ? 'Переменный' : `${dir}°`),
+                    directionDeg: dir === 'VRB' ? 0 : dir,  // Числовое направление для интерполяции
+                    speed: speedMs,
+                    speedRaw: speed,
+                    gust: gustMs,
+                    gustRaw: gust,
+                    unit: 'м/с'
+                };
+            }
+            
+            // Видимость: 9999 (>10км), 0500 (500м), 0200 (200м)
+            const visMatch = metarLine.match(/\b(0[0-9]{3}|[1-9][0-9]{3}|CAVOK|\/\/\/)\b/);
+            if (visMatch) {
+                const vis = visMatch[1];
+                if (vis === 'CAVOK') {
+                    result.visibility = { value: 10000, unit: 'м', desc: '>10 км (CAVOK)' };
+                } else if (vis === '////' || vis === '///') {
+                    result.visibility = { value: null, unit: 'м', desc: 'н/д' };
+                } else {
+                    const visM = parseInt(vis);
+                    result.visibility = { 
+                        value: visM, 
+                        unit: 'м',
+                        desc: visM >= 1000 ? `${(visM / 1000).toFixed(1)} км` : `${visM} м`
+                    };
+                }
+            }
+            
+            // Погодные явления
+            const weatherPatterns = [
+                { code: '+SHSN', desc: 'Сильный ливневый снег' },
+                { code: '-SHSN', desc: 'Слабый ливневый снег' },
+                { code: 'SHSN', desc: 'Ливневый снег' },
+                { code: '+SN', desc: 'Сильный снег' },
+                { code: '-SN', desc: 'Слабый снег' },
+                { code: 'SN', desc: 'Снег' },
+                { code: '+RA', desc: 'Сильный дождь' },
+                { code: '-RA', desc: 'Слабый дождь' },
+                { code: 'RA', desc: 'Дождь' },
+                { code: '+SHRA', desc: 'Сильный ливневой дождь' },
+                { code: '-SHRA', desc: 'Слабый ливневой дождь' },
+                { code: 'SHRA', desc: 'Ливневой дождь' },
+                { code: 'FG', desc: 'Туман' },
+                { code: 'FZFG', desc: 'Замерзающий туман' },
+                { code: 'BR', desc: 'Дымка' },
+                { code: 'HZ', desc: 'Мгла' },
+                { code: 'DU', desc: 'Пыль' },
+                { code: 'TS', desc: 'Гроза' },
+                { code: 'VCSH', desc: 'Осадки вблизи' },
+                { code: 'NSW', desc: 'Без значимых явлений' }
+            ];
+            
+            weatherPatterns.forEach(pattern => {
+                if (metarLine.includes(pattern.code)) {
+                    result.weather.push(pattern.desc);
+                }
+            });
+            
+            // Облачность: SCT025, BKN010CB, OVC008, VV005
+            const cloudMatch = metarLine.match(/((?:SCT|BKN|OVC|FEW|VV)(\d{3})(?:CB|TCU)?)/g);
+            if (cloudMatch) {
+                cloudMatch.forEach(cloud => {
+                    const type = cloud.match(/(SCT|BKN|OVC|FEW|VV)/)[1];
+                    const levelFt = parseInt(cloud.match(/\d{3}/)[0]) * 100;
+                    const levelM = Math.round(levelFt * 0.3048);
+                    const typeDesc = {
+                        'FEW': 'Мало',
+                        'SCT': 'Разреженная',
+                        'BKN': 'Значительная',
+                        'OVC': 'Сплошная',
+                        'VV': 'Вертикальная видимость'
+                    }[type];
+                    result.clouds.push({ 
+                        type, 
+                        levelFt, 
+                        levelM,
+                        desc: `${typeDesc} на ${levelM} м (${levelFt} фт)` 
+                    });
+                });
+            }
+            
+            // Температура и точка росы: M05/M08 или 05/02
+            const tempMatch = metarLine.match(/\b(M?\d{2})\/(M?\d{2})\b/);
+            if (tempMatch) {
+                const temp = parseInt(tempMatch[1].replace('M', '-'));
+                const dew = parseInt(tempMatch[2].replace('M', '-'));
+                result.temp = temp;
+                result.dewpoint = dew;
+            }
+            
+            // Давление: Q1013 или A2992
+            const qnhMatch = metarLine.match(/\bQ(\d{4})\b/);
+            if (qnhMatch) {
+                const qnhHpa = parseInt(qnhMatch[1]);
+                const qnhMm = Math.round(qnhHpa * 0.75006);
+                result.qnh = {
+                    hpa: qnhHpa,
+                    mm: qnhMm,
+                    desc: `Q${qnhHpa} гПа (${qnhMm} мм рт.ст.)`
+                };
+            }
+            
+            // Примечания
+            const nosigMatch = metarLine.match(/\b(NOSIG)\b/);
+            if (nosigMatch) result.remarks.push('Без существенных изменений');
+            
+            const rwyMatch = metarLine.match(/\b(R\d{2}[LCR]?\/(\d{6}))\b/g);
+            if (rwyMatch) {
+                rwyMatch.forEach(r => {
+                    const visMatch = r.match(/(\d{6})/);
+                    if (visMatch) {
+                        const visM = parseInt(visMatch[1].substr(0, 4));
+                        result.remarks.push(`ВПП ${r.replace(visMatch[1], `${visM} м`)}`);
+                    } else {
+                        result.remarks.push(`ВПП: ${r}`);
+                    }
+                });
+            }
+            
+            return result;
+        }
+
+        // Расшифровка TAF
+        function decodeTaf(raw) {
+            if (!raw) return null;
+            
+            const result = {
+                raw: raw,
+                station: null,
+                issueTime: null,
+                validPeriod: null,
+                forecasts: []
+            };
+            
+            // Станция
+            const stationMatch = raw.match(/\b([A-Z]{4})\b/);
+            if (stationMatch) result.station = stationMatch[1];
+            
+            // Время выпуска
+            const issueMatch = raw.match(/\b(\d{6})Z\b/);
+            if (issueMatch) {
+                result.issueTime = issueMatch[1];
+            }
+            
+            // Период действия
+            const validMatch = raw.match(/\b(\d{2})\/(\d{2})\b/);
+            if (validMatch) {
+                result.validPeriod = {
+                    from: `${validMatch[1]}-го ${validMatch[1]}:00 UTC`,
+                    to: `${validMatch[2]}-го ${validMatch[2]}:00 UTC`
+                };
+            }
+            
+            // Разбиваем на периоды (TEMPO, BECMG, FM, PROB)
+            const periods = raw.split(/\s+(?=TEMPO|BECMG|FM|PROB|TAF\s)/);
+            
+            periods.forEach((period, idx) => {
+                const forecast = {
+                    type: idx === 0 ? 'Основной' : null,
+                    wind: {},
+                    visibility: null,
+                    weather: [],
+                    clouds: [],
+                    temp: {}
+                };
+                
+                // Тип периода
+                if (period.includes('TEMPO')) forecast.type = 'Временно (TEMPO)';
+                if (period.includes('BECMG')) forecast.type = 'Становясь (BECMG)';
+                if (period.includes('FM')) forecast.type = 'С (FM)';
+                if (period.includes('PROB')) forecast.type = 'Вероятность (PROB)';
+                
+                // Ветер: 36010MPS или 36010G15MPS
+                const windMatch = period.match(/\b(\d{3}|VRB)(\d{2})(G(\d{2}))?(MPS|KT)?/);
+                if (windMatch) {
+                    const dir = windMatch[1];
+                    const speed = parseInt(windMatch[2]);
+                    const gust = windMatch[4] ? parseInt(windMatch[4]) : null;
+                    let unit = windMatch[5] || 'MPS';
+                    
+                    // Конвертация в м/с
+                    let speedMs = speed;
+                    let gustMs = gust;
+                    if (unit === 'KT') {
+                        speedMs = Math.round(speed * 0.514);
+                        gustMs = gust ? Math.round(gust * 0.514) : null;
+                    }
+                    
+                    forecast.wind = {
+                        direction: dir === 'VRB' ? 'Переменный' : `${dir}°`,
+                        speed: speedMs,
+                        gust: gustMs,
+                        unit: 'м/с'
+                    };
+                }
+                
+                // Видимость
+                const visMatch = period.match(/\b(\d{4}|CAVOK|9999)\b/);
+                if (visMatch) {
+                    const vis = visMatch[1];
+                    if (vis === 'CAVOK' || vis === '9999') {
+                        forecast.visibility = '>10 км';
+                    } else {
+                        const visM = parseInt(vis);
+                        forecast.visibility = visM >= 1000 ? `${(visM / 1000).toFixed(1)} км` : `${visM} м`;
+                    }
+                }
+                
+                // Облачность с конвертацией в метры
+                const cloudMatch = period.match(/((?:SCT|BKN|OVC|FEW|VV)(\d{3})(?:CB|TCU)?)/g);
+                if (cloudMatch) {
+                    forecast.clouds = cloudMatch.map(c => {
+                        const type = c.match(/(SCT|BKN|OVC|FEW|VV)/)[1];
+                        const levelFt = parseInt(c.match(/\d{3}/)[0]) * 100;
+                        const levelM = Math.round(levelFt * 0.3048);
+                        const typeDesc = {
+                            'FEW': 'Мало',
+                            'SCT': 'Разреженная',
+                            'BKN': 'Значительная',
+                            'OVC': 'Сплошная',
+                            'VV': 'Вертикальная видимость'
+                        }[type];
+                        return `${typeDesc} на ${levelM} м (${levelFt} фт)`;
+                    });
+                }
+                
+                // Температура TX/TN
+                const txMatch = period.match(/\bTX(M?)(\d{2})\/(\d{2})(\d{2})Z\b/);
+                if (txMatch) {
+                    forecast.temp.max = {
+                        value: (txMatch[1] ? '-' : '') + txMatch[2],
+                        time: `${txMatch[3]}:${txMatch[4]} UTC`
+                    };
+                }
+                const tnMatch = period.match(/\bTN(M?)(\d{2})\/(\d{2})(\d{2})Z\b/);
+                if (tnMatch) {
+                    forecast.temp.min = {
+                        value: (tnMatch[1] ? '-' : '') + tnMatch[2],
+                        time: `${tnMatch[3]}:${tnMatch[4]} UTC`
+                    };
+                }
+                
+                // Погодные явления
+                const weatherPatterns = [
+                    { code: '+SHSN', desc: 'Сильный ливневый снег' },
+                    { code: '-SHSN', desc: 'Слабый ливневый снег' },
+                    { code: 'SHSN', desc: 'Ливневый снег' },
+                    { code: '+SN', desc: 'Сильный снег' },
+                    { code: '-SN', desc: 'Слабый снег' },
+                    { code: 'SN', desc: 'Снег' },
+                    { code: '+RA', desc: 'Сильный дождь' },
+                    { code: '-RA', desc: 'Слабый дождь' },
+                    { code: 'RA', desc: 'Дождь' },
+                    { code: 'FG', desc: 'Туман' },
+                    { code: 'FZFG', desc: 'Замерзающий туман' }
+                ];
+                
+                weatherPatterns.forEach(p => {
+                    if (period.includes(p.code)) forecast.weather.push(p.desc);
+                });
+                
+                if (forecast.type || forecast.wind.speed || forecast.visibility) {
+                    result.forecasts.push(forecast);
+                }
+            });
+            
+            return result;
+        }
+
+        // Отображение METAR/TAF данных
+        function displayMetarTaf() {
+            const container = document.getElementById('metarTafContainer');
+            const icaos = Object.keys(metarTafData);
+
+            if (icaos.length === 0) {
+                container.innerHTML = '<div class="no-data">Данные не загружены. Выберите аэропорты и нажмите "Получить METAR/TAF"</div>';
+                return;
+            }
+
+            // Разделяем на успешные и без данных
+            const validIcaos = icaos.filter(icao => {
+                const data = metarTafData[icao];
+                return data.success && (data.metar?.raw || data.taf?.raw);
+            });
+            
+            const noDataIcaos = icaos.filter(icao => {
+                const data = metarTafData[icao];
+                return !data.success || data.noData;
+            });
+
+            if (validIcaos.length === 0 && noDataIcaos.length === 0) {
+                container.innerHTML = '<div class="no-data">Нет данных METAR/TAF для выбранных аэропортов</div>';
+                return;
+            }
+
+            let html = '';
+            
+            // Отображаем аэропорты без данных
+            if (noDataIcaos.length > 0) {
+                html += '<div style="margin-bottom: 15px;">';
+                html += '<div style="font-size: 0.85rem; color: #ffc107; margin-bottom: 8px;"><i class="fas fa-exclamation-triangle"></i> Аэропорты без данных (удалите их):</div>';
+                html += noDataIcaos.map(icao => {
+                    const airport = airportsData.find(a => a.icao === icao);
+                    const data = metarTafData[icao];
+                    return `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background: rgba(220, 53, 69, 0.1); border-radius: 5px; margin-bottom: 5px;">
+                            <span>${airport?.name || icao} (${icao})</span>
+                            <div>
+                                <span style="font-size: 0.75rem; color: #dc3545; margin-right: 10px;">${data.error || 'Нет данных'}</span>
+                                <button class="remove-btn" onclick="removeAirportByIcao('${icao}')">
+                                    <i class="fas fa-trash"></i> Удалить
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                html += '</div>';
+            }
+            
+            // Отображаем аэропорты с данными
+            if (validIcaos.length > 0) {
+                html += validIcaos.map(icao => {
+                    const data = metarTafData[icao];
+                    const airport = airportsData.find(a => a.icao === icao);
+                    const metarDecoded = data.metar?.raw ? decodeMetar(data.metar.raw) : null;
+                    const tafDecoded = data.taf?.raw ? decodeTaf(data.taf.raw) : null;
+                    
+                    return `
+                        <div class="metar-taf-item">
+                            <div class="metar-taf-header">
+                                <span class="metar-taf-code">${airport?.name || icao} (${icao})</span>
+                                <span class="status-badge status-success">Данные получены</span>
+                            </div>
+                            
+                            ${metarDecoded ? renderMetarDecoded(metarDecoded) : ''}
+                            ${tafDecoded ? renderTafDecoded(tafDecoded) : ''}
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            container.innerHTML = html;
+        }
+
+        // Рендер расшифрованного METAR
+        function renderMetarDecoded(m) {
+            return `
+                <div style="margin-bottom: 15px; padding: 12px; background: rgba(78, 204, 163, 0.1); border-radius: 8px; border-left: 4px solid #4ecca3;">
+                    <div style="margin-bottom: 10px;">
+                        <strong style="color: #4ecca3;"><i class="fas fa-cloud-sun"></i> METAR</strong>
+                        <span style="font-size: 0.85rem; color: #aaa; margin-left: 10px;">${m.type}</span>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 10px;">
+                        ${m.timeDecoded ? `
+                            <div>
+                                <div style="font-size: 0.75rem; color: #aaa;">Время</div>
+                                <div style="font-weight: 500;">${m.timeDecoded}</div>
+                            </div>
+                        ` : ''}
+                        ${m.wind.direction ? `
+                            <div>
+                                <div style="font-size: 0.75rem; color: #aaa;">Ветер</div>
+                                <div style="font-weight: 500;">
+                                    <i class="fas fa-wind"></i> ${m.wind.direction}
+                                    <strong>${m.wind.speed}</strong> м/с
+                                    ${m.wind.gust ? `<span style="color: #ffc107;">G${m.wind.gust}</span>` : ''}
+                                </div>
+                            </div>
+                        ` : ''}
+                        ${m.visibility ? `
+                            <div>
+                                <div style="font-size: 0.75rem; color: #aaa;">Видимость</div>
+                                <div style="font-weight: 500;"><i class="fas fa-eye"></i> ${m.visibility.desc}</div>
+                            </div>
+                        ` : ''}
+                        ${m.weather.length > 0 ? `
+                            <div>
+                                <div style="font-size: 0.75rem; color: #aaa;">Явления</div>
+                                <div style="font-weight: 500;"><i class="fas fa-cloud-rain"></i> ${m.weather.join(', ')}</div>
+                            </div>
+                        ` : ''}
+                        ${m.clouds.length > 0 ? `
+                            <div>
+                                <div style="font-size: 0.75rem; color: #aaa;">Облачность</div>
+                                <div style="font-weight: 500;"><i class="fas fa-cloud"></i> ${m.clouds.map(c => c.desc).join(', ')}</div>
+                            </div>
+                        ` : ''}
+                        ${m.temp !== null ? `
+                            <div>
+                                <div style="font-size: 0.75rem; color: #aaa;">Температура</div>
+                                <div style="font-weight: 500;">
+                                    <i class="fas fa-thermometer-half"></i> ${m.temp >= 0 ? '+' : ''}${m.temp}°C
+                                    ${m.dewpoint !== null ? `<br/><span style="font-size: 0.85rem; color: #aaa;">Td: ${m.dewpoint >= 0 ? '+' : ''}${m.dewpoint}°C</span>` : ''}
+                                </div>
+                            </div>
+                        ` : ''}
+                        ${m.qnh ? `
+                            <div>
+                                <div style="font-size: 0.75rem; color: #aaa;">Давление</div>
+                                <div style="font-weight: 500;"><i class="fas fa-tachometer-alt"></i> ${m.qnh.desc}</div>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    ${m.remarks.length > 0 ? `
+                        <div style="font-size: 0.85rem; color: #aaa; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
+                            <i class="fas fa-info-circle"></i> ${m.remarks.join('; ')}
+                        </div>
+                    ` : ''}
+                    
+                    <details style="margin-top: 10px; font-size: 0.85rem;">
+                        <summary style="cursor: pointer; color: #aaa;">Показать исходный METAR</summary>
+                        <div class="metar-taf-data" style="margin-top: 8px;">${m.raw}</div>
+                    </details>
+                </div>
+            `;
+        }
+
+        // Рендер расшифрованного TAF
+        function renderTafDecoded(t) {
+            return `
+                <div style="padding: 12px; background: rgba(102, 126, 234, 0.1); border-radius: 8px; border-left: 4px solid #667eea;">
+                    <div style="margin-bottom: 10px;">
+                        <strong style="color: #667eea;"><i class="fas fa-calendar-alt"></i> TAF</strong>
+                        ${t.validPeriod ? `
+                            <span style="font-size: 0.85rem; color: #aaa; margin-left: 10px;">
+                                ${t.validPeriod.from} — ${t.validPeriod.to}
+                            </span>
+                        ` : ''}
+                    </div>
+                    
+                    ${t.forecasts.map((f, idx) => `
+                        <div style="padding: 10px; margin: 8px 0; background: rgba(255,255,255,0.05); border-radius: 5px; ${idx > 0 ? 'border-left: 3px solid #ffc107;' : ''}">
+                            ${f.type ? `<div style="font-size: 0.8rem; color: #ffc107; margin-bottom: 8px;"><strong>${f.type}</strong></div>` : ''}
+                            
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px;">
+                                ${f.wind.speed ? `
+                                    <div>
+                                        <div style="font-size: 0.75rem; color: #aaa;">Ветер</div>
+                                        <div style="font-size: 0.9rem;">
+                                            <i class="fas fa-wind"></i> ${f.wind.direction} ${f.wind.speed}${f.wind.gust ? 'G' + f.wind.gust : ''} ${f.wind.unit || 'м/с'}
+                                        </div>
+                                    </div>
+                                ` : ''}
+                                ${f.visibility ? `
+                                    <div>
+                                        <div style="font-size: 0.75rem; color: #aaa;">Видимость</div>
+                                        <div style="font-size: 0.9rem;"><i class="fas fa-eye"></i> ${f.visibility}</div>
+                                    </div>
+                                ` : ''}
+                                ${f.clouds.length > 0 ? `
+                                    <div>
+                                        <div style="font-size: 0.75rem; color: #aaa;">Облачность</div>
+                                        <div style="font-size: 0.9rem;"><i class="fas fa-cloud"></i> ${f.clouds.join(', ')}</div>
+                                    </div>
+                                ` : ''}
+                                ${f.weather.length > 0 ? `
+                                    <div>
+                                        <div style="font-size: 0.75rem; color: #aaa;">Явления</div>
+                                        <div style="font-size: 0.9rem;"><i class="fas fa-cloud-rain"></i> ${f.weather.join(', ')}</div>
+                                    </div>
+                                ` : ''}
+                                ${f.temp.max ? `
+                                    <div>
+                                        <div style="font-size: 0.75rem; color: #aaa;">Макс. температура</div>
+                                        <div style="font-size: 0.9rem;"><i class="fas fa-sun"></i> ${f.temp.max.value >= 0 ? '+' : ''}${f.temp.max.value}°C (${f.temp.max.time})</div>
+                                    </div>
+                                ` : ''}
+                                ${f.temp.min ? `
+                                    <div>
+                                        <div style="font-size: 0.75rem; color: #aaa;">Мин. температура</div>
+                                        <div style="font-size: 0.9rem;"><i class="fas fa-moon"></i> ${f.temp.min.value >= 0 ? '+' : ''}${f.temp.min.value}°C (${f.temp.min.time})</div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `).join('')}
+                    
+                    <details style="margin-top: 10px; font-size: 0.85rem;">
+                        <summary style="cursor: pointer; color: #aaa;">Показать исходный TAF</summary>
+                        <div class="metar-taf-data" style="margin-top: 8px;">${t.raw}</div>
+                    </details>
+                </div>
+            `;
+        }
+
+        // Обработчики событий
+        document.getElementById('radiusSlider').addEventListener('input', function() {
+            document.getElementById('radiusValue').textContent = this.value;
+            document.getElementById('radiusInput').value = this.value;
+            if (selectedPoint) {
+                updateCircle([selectedPoint.lon, selectedPoint.lat]);
+            }
+        });
+
+        document.getElementById('radiusInput').addEventListener('input', function() {
+            document.getElementById('radiusValue').textContent = this.value;
+            document.getElementById('radiusSlider').value = this.value;
+            if (selectedPoint) {
+                updateCircle([selectedPoint.lon, selectedPoint.lat]);
+            }
+        });
+
+        document.getElementById('searchBtn').addEventListener('click', searchAirports);
+        document.getElementById('fetchMetarTafBtn').addEventListener('click', fetchMetarTaf);
+        document.getElementById('analyzeBtn').addEventListener('click', analyzePoint);
+        document.getElementById('clearBtn').addEventListener('click', function() {
+            selectedPoint = null;
+            markerLayer.getSource().clear();
+            circleLayer.getSource().clear();
+            clearAirports();
+            document.getElementById('latDisplay').textContent = '-';
+            document.getElementById('lonDisplay').textContent = '-';
+            document.getElementById('searchBtn').disabled = true;
+            document.getElementById('analyzeBtn').disabled = true;
+            document.getElementById('analysisTitle').style.display = 'none';
+            document.getElementById('analysisContainer').style.display = 'none';
+            document.getElementById('comparisonTitle').style.display = 'none';
+            document.getElementById('comparisonContainer').style.display = 'none';
+        });
+
+        // Анализ точки (интерполяция + Open-Meteo)
+        async function analyzePoint() {
+            if (!selectedPoint || airportsData.length === 0) return;
+            
+            const container = document.getElementById('analysisContainer');
+            const title = document.getElementById('analysisTitle');
+            const comparisonTitle = document.getElementById('comparisonTitle');
+            const comparisonContainer = document.getElementById('comparisonContainer');
+            
+            title.style.display = 'block';
+            container.style.display = 'block';
+            container.innerHTML = '<div class="no-data"><div class="loading-spinner"></div> Выполняется интерполяция...</div>';
+            
+            comparisonTitle.style.display = 'none';
+            comparisonContainer.style.display = 'none';
+            
+            // Подготовка данных METAR для интерполяции
+            const metarData = {};
+            for (const airport of airportsData) {
+                const data = metarTafData[airport.icao];
+                if (data?.success) {
+                    const metar = data.metar?.raw ? decodeMetar(data.metar.raw) : null;
+                    metarData[airport.icao] = {
+                        temp: metar?.temp ?? null,
+                        dewpoint: metar?.dewpoint ?? null,
+                        windSpeed: metar?.wind?.speed ?? null,
+                        windDir: metar?.wind?.directionDeg ?? null,
+                        visibility: metar?.visibility?.value ?? null,
+                        qnh: metar?.qnh?.hpa ?? null,
+                        cloudBase: metar?.clouds?.[0]?.levelM ?? null,
+                        age: 0
+                    };
+                }
+            }
+            
+            // Выполняем интерполяцию
+            console.log('Данные для интерполяции:', metarData);
+            console.log('Аэропорты:', airportsData.map(a => ({ icao: a.icao, distance: a.distance })));
+            
+            const result = window.MeteoInterpolator.interpolate(
+                selectedPoint,
+                airportsData,
+                metarData,
+                { maxRadiusKm: parseFloat(document.getElementById('radiusSlider').value) }
+            );
+            
+            displayAnalysis(result);
+            
+            // Получаем данные Open-Meteo для сравнения
+            await fetchOpenMeteoComparison(selectedPoint);
+        }
+
+        // Получение данных Open-Meteo
+        async function fetchOpenMeteoComparison(point) {
+            const comparisonTitle = document.getElementById('comparisonTitle');
+            const comparisonContainer = document.getElementById('comparisonContainer');
+            
+            comparisonTitle.style.display = 'block';
+            comparisonContainer.style.display = 'block';
+            comparisonContainer.innerHTML = '<div class="no-data"><div class="loading-spinner"></div> Загрузка Open-Meteo...</div>';
+            
+            try {
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${point.lat}&longitude=${point.lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m,pressure_msl,surface_pressure,cloud_cover,visibility&timezone=auto`;
+                
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Open-Meteo API error');
+                
+                const data = await response.json();
+                displayComparison(data.current);
+            } catch (error) {
+                console.error('Open-Meteo error:', error);
+                comparisonContainer.innerHTML = `
+                    <div style="padding: 20px; text-align: center; color: #dc3545;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                        <div>Ошибка Open-Meteo: ${error.message}</div>
+                    </div>
+                `;
+            }
+        }
+
+        // Отображение сравнения
+        function displayComparison(openMeteoData) {
+            const container = document.getElementById('comparisonContainer');
+            
+            // Находим последние интерполированные данные
+            const lastAnalysis = container.previousElementSibling?.previousElementSibling;
+            
+            let html = `
+                <div style="margin-bottom: 15px;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                        <span style="font-size: 0.9rem; color: #4ecca3;">
+                            <i class="fas fa-cloud-sun"></i> Open-Meteo.com
+                        </span>
+                        <span style="font-size: 0.75rem; color: #aaa;">
+                            ${new Date(openMeteoData.time).toLocaleString('ru-RU')}
+                        </span>
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 15px;">
+            `;
+            
+            // Температура
+            html += `
+                <div style="padding: 12px; background: rgba(233, 69, 96, 0.1); border-radius: 8px; text-align: center;">
+                    <div style="font-size: 0.75rem; color: #aaa; margin-bottom: 5px;">
+                        <i class="fas fa-thermometer-half"></i> Температура
+                    </div>
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #e94560;">
+                        ${openMeteoData.temperature_2m >= 0 ? '+' : ''}${Math.round(openMeteoData.temperature_2m)}°C
+                    </div>
+                    <div style="font-size: 0.75rem; color: #aaa; margin-top: 5px;">
+                        Ощущается: ${openMeteoData.apparent_temperature >= 0 ? '+' : ''}${Math.round(openMeteoData.apparent_temperature)}°C
+                    </div>
+                </div>
+            `;
+            
+            // Ветер (конвертация из км/ч в м/с)
+            html += `
+                <div style="padding: 12px; background: rgba(78, 204, 163, 0.1); border-radius: 8px; text-align: center;">
+                    <div style="font-size: 0.75rem; color: #aaa; margin-bottom: 5px;">
+                        <i class="fas fa-wind"></i> Ветер
+                    </div>
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #4ecca3;">
+                        ${Math.round(openMeteoData.wind_speed_10m / 3.6)} м/с
+                        <div style="font-size: 0.9rem;">(${openMeteoData.wind_direction_10m}°)</div>
+                    </div>
+                    ${openMeteoData.wind_gusts_10m ? `
+                        <div style="font-size: 0.75rem; color: #ffc107; margin-top: 5px;">
+                            Порывы: ${Math.round(openMeteoData.wind_gusts_10m / 3.6)} м/с (${Math.round(openMeteoData.wind_gusts_10m)} км/ч)
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            // Видимость
+            html += `
+                <div style="padding: 12px; background: rgba(255, 193, 7, 0.1); border-radius: 8px; text-align: center;">
+                    <div style="font-size: 0.75rem; color: #aaa; margin-bottom: 5px;">
+                        <i class="fas fa-eye"></i> Видимость
+                    </div>
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #ffc107;">
+                        ${openMeteoData.visibility >= 1000 ? (openMeteoData.visibility / 1000).toFixed(1) + ' км' : Math.round(openMeteoData.visibility) + ' м'}
+                    </div>
+                </div>
+            `;
+            
+            // Давление
+            html += `
+                <div style="padding: 12px; background: rgba(155, 89, 182, 0.1); border-radius: 8px; text-align: center;">
+                    <div style="font-size: 0.75rem; color: #aaa; margin-bottom: 5px;">
+                        <i class="fas fa-tachometer-alt"></i> Давление
+                    </div>
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #9b59b6;">
+                        ${Math.round(openMeteoData.pressure_msl)} гПа
+                        <div style="font-size: 0.9rem;">${Math.round(openMeteoData.pressure_msl * 0.75)} мм рт.ст.</div>
+                    </div>
+                </div>
+            `;
+            
+            // Облачность
+            html += `
+                <div style="padding: 12px; background: rgba(102, 126, 234, 0.1); border-radius: 8px; text-align: center;">
+                    <div style="font-size: 0.75rem; color: #aaa; margin-bottom: 5px;">
+                        <i class="fas fa-cloud"></i> Облачность
+                    </div>
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #667eea;">
+                        ${openMeteoData.cloud_cover}%
+                    </div>
+                </div>
+            `;
+            
+            // Влажность
+            html += `
+                <div style="padding: 12px; background: rgba(52, 152, 219, 0.1); border-radius: 8px; text-align: center;">
+                    <div style="font-size: 0.75rem; color: #aaa; margin-bottom: 5px;">
+                        <i class="fas fa-tint"></i> Влажность
+                    </div>
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #3498db;">
+                        ${openMeteoData.relative_humidity_2m}%
+                    </div>
+                </div>
+            `;
+            
+            html += `
+                </div>
+                
+                <div style="font-size: 0.85rem; color: #aaa; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
+                    <div style="margin-bottom: 8px;">
+                        <strong>Погодное явление:</strong> код ${openMeteoData.weather_code}
+                    </div>
+                    <div style="font-size: 0.75rem; color: #888;">
+                        WMO код: <a href="https://open-meteo.com/en/docs" target="_blank" style="color: #4ecca3;">документация</a>
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        // Отображение результатов анализа
+        function displayAnalysis(result) {
+            const container = document.getElementById('analysisContainer');
+            
+            if (!result.success) {
+                container.innerHTML = `
+                    <div style="padding: 20px; text-align: center; color: #dc3545;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                        <div>${result.error}</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            const { interpolated, stations, quality } = result;
+            
+            let html = `
+                <div style="margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <span style="font-size: 0.9rem; color: #aaa;">
+                            <i class="fas fa-map-marker-alt"></i> 
+                            Точка: ${selectedPoint.lat.toFixed(4)}, ${selectedPoint.lon.toFixed(4)}
+                        </span>
+                        <div style="text-align: right;">
+                            <span class="status-badge status-${quality.level === 'high' ? 'success' : quality.level === 'medium' ? 'loading' : 'error'}">
+                                Качество: ${quality.score}%
+                            </span>
+                            <div style="font-size: 0.7rem; color: #aaa; margin-top: 3px;">
+                                ${quality.mode === 'extrapolation' ? 'Экстраполяция' : quality.mode === 'limited' ? 'Ограничено' : 'Интерполяция'}
+                            </div>
+                        </div>
+                    </div>
+                    ${quality.issues.length > 0 ? `
+                        <div style="font-size: 0.8rem; color: #ffc107; margin-bottom: 10px;">
+                            <i class="fas fa-exclamation-circle"></i> ${quality.issues.join('; ')}
+                        </div>
+                    ` : ''}
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 15px;">
+            `;
+            
+            // Температура
+            if (interpolated.temp !== null && interpolated.temp !== undefined) {
+                html += `
+                    <div style="padding: 12px; background: rgba(233, 69, 96, 0.1); border-radius: 8px; text-align: center;">
+                        <div style="font-size: 0.75rem; color: #aaa; margin-bottom: 5px;">
+                            <i class="fas fa-thermometer-half"></i> Температура
+                        </div>
+                        <div style="font-size: 1.5rem; font-weight: bold; color: #e94560;">
+                            ${interpolated.temp >= 0 ? '+' : ''}${Math.round(interpolated.temp)}°C
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Точка росы
+            if (interpolated.dewpoint !== null && interpolated.dewpoint !== undefined) {
+                html += `
+                    <div style="padding: 12px; background: rgba(102, 126, 234, 0.1); border-radius: 8px; text-align: center;">
+                        <div style="font-size: 0.75rem; color: #aaa; margin-bottom: 5px;">
+                            <i class="fas fa-tint"></i> Точка росы
+                        </div>
+                        <div style="font-size: 1.5rem; font-weight: bold; color: #667eea;">
+                            ${interpolated.dewpoint >= 0 ? '+' : ''}${Math.round(interpolated.dewpoint)}°C
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Ветер
+            if (interpolated.windSpeed !== null && interpolated.windSpeed !== undefined) {
+                html += `
+                    <div style="padding: 12px; background: rgba(78, 204, 163, 0.1); border-radius: 8px; text-align: center;">
+                        <div style="font-size: 0.75rem; color: #aaa; margin-bottom: 5px;">
+                            <i class="fas fa-wind"></i> Ветер
+                        </div>
+                        <div style="font-size: 1.5rem; font-weight: bold; color: #4ecca3;">
+                            ${Math.round(interpolated.windSpeed)} м/с
+                            ${interpolated.windDir ? `<span style="font-size: 0.9rem;">(${interpolated.windDir}°)</span>` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Видимость
+            if (interpolated.visibility !== null && interpolated.visibility !== undefined) {
+                html += `
+                    <div style="padding: 12px; background: rgba(255, 193, 7, 0.1); border-radius: 8px; text-align: center;">
+                        <div style="font-size: 0.75rem; color: #aaa; margin-bottom: 5px;">
+                            <i class="fas fa-eye"></i> Видимость
+                        </div>
+                        <div style="font-size: 1.5rem; font-weight: bold; color: #ffc107;">
+                            ${interpolated.visibility >= 1000 ? (interpolated.visibility / 1000).toFixed(1) + ' км' : Math.round(interpolated.visibility) + ' м'}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Давление
+            if (interpolated.qnh !== null && interpolated.qnh !== undefined) {
+                html += `
+                    <div style="padding: 12px; background: rgba(155, 89, 182, 0.1); border-radius: 8px; text-align: center;">
+                        <div style="font-size: 0.75rem; color: #aaa; margin-bottom: 5px;">
+                            <i class="fas fa-tachometer-alt"></i> Давление
+                        </div>
+                        <div style="font-size: 1.5rem; font-weight: bold; color: #9b59b6;">
+                            Q${Math.round(interpolated.qnh)} гПа
+                            <div style="font-size: 0.9rem;">${Math.round(interpolated.qnh * 0.75)} мм рт.ст.</div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            html += `
+                </div>
+                
+                <div style="font-size: 0.85rem; color: #aaa; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
+                    <div style="margin-bottom: 8px;">
+                        <strong>Станции:</strong> ${stations.length} аэропортов использовано
+                    </div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 5px;">
+                        ${stations.map(s => `
+                            <span style="padding: 3px 8px; background: rgba(255,255,255,0.1); border-radius: 3px; font-size: 0.75rem;">
+                                ${s.icao} (${Math.round(s.distance)} км)
+                            </span>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        // Инициализация при загрузке
+        initMap();
+    </script>
+</body>
+</html>

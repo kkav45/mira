@@ -1,0 +1,23 @@
+{
+  "name": "mira-meteorology",
+  "version": "0.1.4.5",
+  "description": "MIRA - Meteorological scoring system for aviation",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "check-metar": "node check-metar-with-library.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "metar",
+    "taf",
+    "aviation",
+    "weather",
+    "scoring"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@airport-discovery/metars-tafs": "^1.0.3"
+  }
+}

@@ -1,7 +1,7 @@
 /**
  * MIRA Dashboard Module
- * Модальное окно на весь экран с 6 вкладками
- * Версия: 0.2.0
+ * Модальное окно на весь экран с 7 вкладками
+ * Версия: 0.3.0 (добавлена вкладка METAR/TAF)
  */
 
 const DashboardModule = {
@@ -12,12 +12,13 @@ const DashboardModule = {
      * Вкладки дашборда
      */
     tabs: [
-        { id: 'meteo',    label: 'Метеопрогноз',  icon: 'fa-cloud-sun',    enabled: true },
-        { id: 'ground',   label: 'Сидя на земле', icon: 'fa-flag',         enabled: true },
-        { id: 'flight',   label: 'В полёте',      icon: 'fa-plane',        enabled: true },
-        { id: 'segments', label: 'Сегменты',      icon: 'fa-map',          enabled: false },
-        { id: 'energy',   label: 'Энергия',       icon: 'fa-battery-three-quarters', enabled: false },
-        { id: 'report',   label: 'Отчёт',         icon: 'fa-file-pdf',     enabled: true }
+        { id: 'meteo',     label: 'Метеопрогноз',  icon: 'fa-cloud-sun',    enabled: true },
+        { id: 'metar-taf', label: 'METAR/TAF',     icon: 'fa-plane-departure', enabled: true },
+        { id: 'ground',    label: 'Сидя на земле', icon: 'fa-flag',         enabled: true },
+        { id: 'flight',    label: 'В полёте',      icon: 'fa-plane',        enabled: true },
+        { id: 'segments',  label: 'Сегменты',      icon: 'fa-map',          enabled: false },
+        { id: 'energy',    label: 'Энергия',       icon: 'fa-battery-three-quarters', enabled: false },
+        { id: 'report',    label: 'Отчёт',         icon: 'fa-file-pdf',     enabled: true }
     ],
 
     /**
@@ -116,6 +117,10 @@ const DashboardModule = {
             case 'meteo':
                 body.innerHTML = DashboardTabsMeteo.render();
                 DashboardTabsMeteo.afterRender();
+                break;
+            case 'metar-taf':
+                body.innerHTML = DashboardTabsMetarTaf.render();
+                DashboardTabsMetarTaf.afterRender();
                 break;
             case 'ground':
                 body.innerHTML = DashboardTabsGround.render();

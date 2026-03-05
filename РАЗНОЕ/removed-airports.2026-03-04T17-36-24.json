@@ -1,0 +1,70 @@
+{
+  "removedAt": "2026-03-04T17:36:24.981Z",
+  "reason": "No METAR data available in NOAA API",
+  "airports": [
+    {
+      "name": "Курумоч",
+      "city": "Самара",
+      "icao": "UWWW",
+      "iata": "KUF",
+      "latitude": 53.5049,
+      "longitude": 50.8211
+    },
+    {
+      "name": "Салехард",
+      "city": "Салехард",
+      "icao": "USDD",
+      "iata": "SLY",
+      "latitude": 66.5908,
+      "longitude": 66.6111
+    },
+    {
+      "name": "Усинск",
+      "city": "Усинск",
+      "icao": "UUYS",
+      "iata": "USK",
+      "latitude": 65.9578,
+      "longitude": 57.4672
+    },
+    {
+      "name": "Магнитогорск",
+      "city": "Магнитогорск",
+      "icao": "USCM",
+      "iata": "MQF",
+      "latitude": 53.3933,
+      "longitude": 58.7556
+    },
+    {
+      "name": "Вологда",
+      "city": "Вологда",
+      "icao": "ULWW",
+      "iata": "VGD",
+      "latitude": 59.2836,
+      "longitude": 39.9472
+    },
+    {
+      "name": "Игарка",
+      "city": "Игарка",
+      "icao": "UOII",
+      "iata": "IAA",
+      "latitude": 67.4333,
+      "longitude": 86.6167
+    },
+    {
+      "name": "Холмская",
+      "city": "Холмская",
+      "icao": "URKM",
+      "iata": "HLM",
+      "latitude": 44.75,
+      "longitude": 38.7
+    },
+    {
+      "name": "Колодежный",
+      "city": "Колодежный",
+      "icao": "UUOK",
+      "iata": "KLD",
+      "latitude": 50.7,
+      "longitude": 40.45
+    }
+  ]
+}

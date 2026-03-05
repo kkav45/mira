@@ -7,6 +7,61 @@ const DashboardTabsReport = {
     // Текущие данные отчёта
     currentReportData: null,
 
+    /**
+     * Обновление заголовка для печати
+     */
+    updatePrintHeader() {
+        const printDate = document.getElementById('printDate');
+        const printRoutesCount = document.getElementById('printRoutesCount');
+        const printTime = document.getElementById('printTime');
+
+        const fullReport = typeof RouteModule !== 'undefined' && RouteModule.getFullReport
+            ? RouteModule.getFullReport()
+            : [];
+
+        const analysisDate = fullReport?.[0]?.analysisDate;
+        if (analysisDate) {
+            const date = new Date(analysisDate);
+            if (printDate) {
+                printDate.textContent = date.toLocaleDateString('ru-RU', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                });
+            }
+            if (printTime) {
+                printTime.textContent = date.toLocaleTimeString('ru-RU', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+        } else {
+            const now = new Date();
+            if (printDate) printDate.textContent = now.toLocaleDateString('ru-RU', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+            if (printTime) printTime.textContent = now.toLocaleTimeString('ru-RU', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        if (printRoutesCount) {
+            const count = fullReport?.length || 0;
+            printRoutesCount.textContent = `${count} ${this.declension(count, ['маршрут', 'маршрута', 'маршрутов'])}`;
+        }
+    },
+
+    /**
+     * Склонение слов по числу
+     */
+    declension(number, words) {
+        const cases = [2, 0, 1, 1, 1, 2];
+        return words[(number % 100 > 4 && number % 100 < 20) ? 2 : cases[(number % 10 < 5) ? number % 10 : 5]];
+    },
+
     render() {
         return `
             <div class="dashboard-card">
@@ -22,10 +77,17 @@ const DashboardTabsReport = {
             <!-- Кнопки действий -->
             <div style="display: flex; gap: 12px; margin-top: 16px;">
                 <button class="dashboard-back-btn" onclick="DashboardTabsReport.printReport()" style="flex: 1; justify-content: center; background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);">
-                    <i class="fas fa-print"></i> Печать
+                    <i class="fas fa-print"></i> Печать отчёта
                 </button>
                 <button class="dashboard-back-btn" onclick="DashboardTabsReport.downloadPDF()" style="flex: 1; justify-content: center; background: linear-gradient(135deg, #f56565 0%, #c53030 100%);">
                     <i class="fas fa-download"></i> Скачать PDF
+                </button>
+            </div>
+
+            <!-- Кнопка печати Акта -->
+            <div style="display: flex; gap: 12px; margin-top: 12px;">
+                <button class="dashboard-back-btn" onclick="DashboardTabsReport.printAct()" style="flex: 1; justify-content: center; background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);">
+                    <i class="fas fa-file-signature"></i> Печать Акта оценки
                 </button>
             </div>
         `;
@@ -206,21 +268,24 @@ const DashboardTabsReport = {
      */
     printReport() {
         console.log('🖨️ Печать отчёта...');
-        
+
+        // Обновляем заголовок для печати
+        this.updatePrintHeader();
+
         // Раскрываем аккордеон перед печатью
         const factorsContent = document.getElementById('factorsContent');
         const factorsIcon = document.getElementById('factorsIcon');
         const wasHidden = factorsContent && factorsContent.style.display === 'none';
-        
+
         if (wasHidden) {
             factorsContent.style.display = 'block';
             factorsIcon.classList.add('rotated');
         }
-        
+
         // Небольшая задержка для отображения контента
         setTimeout(() => {
             window.print();
-            
+
             // Возвращаем аккордеон в исходное состояние
             if (wasHidden) {
                 setTimeout(() => {
@@ -261,10 +326,36 @@ const DashboardTabsReport = {
     },
 
     /**
-     * После отображения (пустая функция для совместимости)
+     * После отображения
      */
     afterRender() {
-        // Не требуется для нового отчёта
+        // Обновляем заголовок для печати при открытии вкладки
+        this.updatePrintHeader();
+    },
+
+    /**
+     * Печать Акта оценки метеоусловий
+     */
+    printAct() {
+        console.log('📄 Печать Акта оценки...');
+
+        const fullReport = typeof RouteModule !== 'undefined' && RouteModule.getFullReport
+            ? RouteModule.getFullReport()
+            : [];
+
+        if (fullReport.length === 0) {
+            alert('Нет данных для формирования Акта. Проведите анализ маршрутов.');
+            return;
+        }
+
+        // Используем первый маршрут для акта
+        const reportData = fullReport[0];
+
+        if (typeof ActPrintModule !== 'undefined') {
+            ActPrintModule.printAct(reportData);
+        } else {
+            alert('Модуль печати Акта не загружен');
+        }
     }
 };
 

@@ -820,6 +820,50 @@ const WeatherModule = {
     },
 
     /**
+     * 🆕 Расчёт риска для вертикального профиля (для VerticalProfileModule)
+     * @param {Object} p - Данные уровня профиля
+     * @returns {number} Score 0-10
+     */
+    calculateVerticalRiskScore(p) {
+        let score = 0;
+        
+        // Ветер (0-3 балла)
+        if (p.wind > 15) score += 3;
+        else if (p.wind > 12) score += 2;
+        else if (p.wind > 10) score += 1;
+        
+        // Обледенение (0-3 балла)
+        if (p.icingRisk === 'high') score += 3;
+        else if (p.icingRisk === 'medium') score += 2;
+        
+        // Турбулентность (0-3 балла)
+        if (p.turbulence === 'severe') score += 3;
+        else if (p.turbulence === 'moderate') score += 2;
+        
+        // Температура (0-1 балл)
+        if (p.temp < -15) score += 2;
+        else if (p.temp < -10) score += 1;
+        
+        return Math.min(10, score);
+    },
+
+    /**
+     * 🆕 Факторы риска для вертикального профиля
+     * @param {Object} p - Данные уровня профиля
+     * @returns {Array} Массив факторов
+     */
+    getVerticalRiskFactors(p) {
+        const factors = [];
+        
+        if (p.wind > 10) factors.push('wind');
+        if (p.icingRisk === 'high' || p.icingRisk === 'medium') factors.push('icing');
+        if (p.turbulence === 'moderate' || p.turbulence === 'severe') factors.push('turbulence');
+        if (p.temp < -10) factors.push('temp');
+        
+        return factors;
+    },
+
+    /**
      * 🆕 Расчёт нижней границы облаков (НГО) в метрах
      * @param {number} cloudCoverLow - Нижняя облачность (%)
      * @param {number} cloudCover - Общая облачность (%)
@@ -1074,29 +1118,38 @@ const WeatherModule = {
     },
 
     /**
-     * Интерполяция данных для высот (ОБНОВЛЁННАЯ)
+     * Интерполяция данных для высот (ОБНОВЛЁННАЯ v2.0 - с использованием VerticalProfileModule)
      */
     interpolateForAltitude(data, altitude) {
-        // Стандартные высоты для БВС
+        // Используем новый модуль вертикального профилирования
+        if (typeof VerticalProfileModule !== 'undefined') {
+            const surfaceData = {
+                temp2m: data.temp2m || data.temperature || 0,
+                dewpoint2m: data.dewPoint || data.dewpoint || (data.temp2m - 5),
+                pressure: data.pressure || data.pressure_msl || 1013,
+                wind10m: data.wind10m || data.wind || 0,
+                windDir10m: data.windDir || data.wind_direction || 0,
+                humidity: data.humidity || data.relative_humidity || 50,
+                precip: data.precip || data.precipitation || 0,
+                cloudCover: data.cloudCover || data.cloud_cover || 0
+            };
+            
+            const profile = VerticalProfileModule.buildVerticalProfile(surfaceData, {
+                altitudes: [altitude]
+            });
+            
+            return profile[0];
+        }
+        
+        // Старая реализация (fallback)
         const ALTITUDES = [250, 350, 450, 550];
-        
-        // Базовые параметры
-        const tempLapse = -6.5 / 1000; // °C на метр (стандартная атмосфера)
+        const tempLapse = -6.5 / 1000;
         const tempAdjustment = tempLapse * altitude;
-        
-        // Ветер увеличивается с высотой (логарифмический профиль)
-        // На 500м ветер примерно на 15-20% сильнее
         const windFactor = 1 + (altitude / 500) * 0.18;
-        
-        // Влажность уменьшается с высотой
         const humidityFactor = Math.max(0.5, 1 - (altitude / 2000));
-        
-        // Давление (барометрическая формула)
         const pressureAdjustment = Math.exp(-altitude / 8500);
-        
-        // Точка росы (упрощённо)
         const dewPointAdjustment = tempAdjustment * 0.8;
-        
+
         return {
             altitude: altitude,
             temp: (data.temp2m || 0) + tempAdjustment,
@@ -1105,37 +1158,73 @@ const WeatherModule = {
             humidity: Math.max(0, (data.humidity || 50) * humidityFactor),
             pressure: (data.pressure || 1013) * pressureAdjustment,
             dewPoint: (data.dewPoint || data.temp2m - 5) + dewPointAdjustment,
-            
-            // Дополнительные расчёты
             windGust: (data.windGust || data.wind10m * 1.2) * windFactor,
             cloudCover: data.cloudCover || 0,
-            
-            // Флаги
             isAboveClouds: altitude > 500 && (data.cloudCover || 0) > 80,
             isBelowClouds: altitude < 300 && (data.cloudCoverLow || 0) > 50
         };
     },
 
     /**
-     * Вертикальный профиль для всех стандартных высот (НОВОЕ)
+     * Вертикальный профиль для всех стандартных высот (ОБНОВЛЁННАЯ v2.0 - 7 высот)
+     * Согласно МЕТЕОМОДЕЛЬ_ОПИСАНИЕ.md раздел 4.1
      */
     getVerticalProfile(analyzedData) {
         if (!analyzedData || !analyzedData.hourly) return null;
-        
+
         const currentHour = analyzedData.hourly[0];
-        const ALTITUDES = [250, 350, 450, 550];
         
+        // 7 целевых высот для БВС (0-650м)
+        const ALTITUDES = [0, 100, 250, 350, 450, 550, 650];
+
+        // Используем VerticalProfileModule если доступен
+        if (typeof VerticalProfileModule !== 'undefined') {
+            const surfaceData = {
+                temp2m: currentHour.temp2m || currentHour.temperature || 0,
+                dewpoint2m: currentHour.dewPoint || currentHour.dewpoint || (currentHour.temp2m - 5),
+                pressure: currentHour.pressure || currentHour.pressure_msl || 1013,
+                wind10m: currentHour.wind10m || currentHour.wind || 0,
+                windDir10m: currentHour.windDir || currentHour.wind_direction || 0,
+                humidity: currentHour.humidity || currentHour.relative_humidity || 50,
+                precip: currentHour.precip || currentHour.precipitation || 0,
+                cloudCover: currentHour.cloudCover || currentHour.cloud_cover || 0
+            };
+            
+            const profile = VerticalProfileModule.buildVerticalProfile(surfaceData);
+            
+            // Добавляем дополнительные поля для совместимости
+            return profile.map(p => ({
+                altitude: p.altitude,
+                temp: p.temp,
+                dewpoint: p.dewpoint,
+                humidity: p.humidity,
+                pressure: p.pressure,
+                density: p.density,
+                wind: p.wind,
+                windDir: p.windDir,
+                windGust: p.windGust,
+                icingRisk: p.icingRisk,
+                turbulenceRisk: p.turbulence === 'severe' ? 'high' : p.turbulence,
+                riskScore: this.calculateVerticalRiskScore(p),
+                riskLevel: this.getRiskLevel(this.calculateVerticalRiskScore(p)),
+                riskFactors: this.getVerticalRiskFactors(p),
+                optimal: p.icingRisk === 'low' && p.turbulence === 'low' && p.wind < 10,
+                recommended: p.icingRisk === 'low' && p.turbulence !== 'severe' && p.wind < 15
+            }));
+        }
+
+        // Старая реализация (fallback)
         const profile = ALTITUDES.map(altitude => {
             const interpolated = this.interpolateForAltitude(currentHour, altitude);
-            
+
             // Расчёт рисков для высоты
             const icingRisk = this.calculateIcingRisk(interpolated.temp, interpolated.humidity);
             const turbulenceRisk = this.calculateTurbulenceRisk(interpolated.wind, interpolated.windGust);
-            
+
             // Интегральный риск для высоты
             let riskScore = 0;
             let riskFactors = [];
-            
+
             // Ветер
             if (interpolated.wind > 15) {
                 riskScore += 3;
@@ -1147,7 +1236,7 @@ const WeatherModule = {
                 riskScore += 1;
                 riskFactors.push('wind');
             }
-            
+
             // Обледенение
             if (icingRisk === 'high') {
                 riskScore += 3;
@@ -1156,7 +1245,7 @@ const WeatherModule = {
                 riskScore += 2;
                 riskFactors.push('icing');
             }
-            
+
             // Турбулентность
             if (turbulenceRisk === 'high') {
                 riskScore += 3;
@@ -1165,7 +1254,7 @@ const WeatherModule = {
                 riskScore += 2;
                 riskFactors.push('turbulence');
             }
-            
+
             // Температура (экстремально низкая)
             if (interpolated.temp < -15) {
                 riskScore += 2;
@@ -1174,9 +1263,9 @@ const WeatherModule = {
                 riskScore += 1;
                 riskFactors.push('temp');
             }
-            
+
             const riskLevel = this.getRiskLevel(riskScore);
-            
+
             return {
                 altitude: altitude,
                 ...interpolated,

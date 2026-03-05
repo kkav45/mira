@@ -1,0 +1,12 @@
+[
+  {
+    "icao": "USSS",
+    "success": false,
+    "error": "getaddrinfo ENOTFOUND tgftp.nws.noaa.gov"
+  },
+  {
+    "icao": "USUU",
+    "success": false,
+    "error": "getaddrinfo ENOTFOUND tgftp.nws.noaa.gov"
+  }
+]
