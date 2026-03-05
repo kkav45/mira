@@ -26,6 +26,88 @@ const DashboardTabsMetarTaf = {
     searchCenter: null,
 
     /**
+     * Состояние загрузки
+     */
+    hasLoaded: false,
+
+    /**
+     * Параметры фильтрации
+     */
+    filter: {
+        showOnlyCurrent: false,  // Только актуальные (< 60 мин)
+        showOnlyWithTaf: false   // Только с TAF
+    },
+
+    /**
+     * Параметры сортировки
+     */
+    sort: {
+        by: 'distance',  // 'distance' | 'age' | 'wind' | 'temp'
+        order: 'asc'     // 'asc' | 'desc'
+    },
+
+    /**
+     * Применить фильтрацию и сортировку
+     */
+    applyFiltersAndSort(airports) {
+        let filtered = [...airports];
+
+        // Фильтрация
+        if (this.filter.showOnlyCurrent) {
+            filtered = filtered.filter(a => a.metar && a.metarAge < this.maxMetarAgeMinutes);
+        }
+        if (this.filter.showOnlyWithTaf) {
+            filtered = filtered.filter(a => a.taf !== null);
+        }
+
+        // Сортировка
+        filtered.sort((a, b) => {
+            let comparison = 0;
+
+            switch (this.sort.by) {
+                case 'distance':
+                    comparison = (a.distance || 9999) - (b.distance || 9999);
+                    break;
+                case 'age':
+                    comparison = (a.metarAge || 999) - (b.metarAge || 999);
+                    break;
+                case 'wind':
+                    comparison = (a.metar?.windSpeed || 0) - (b.metar?.windSpeed || 0);
+                    break;
+                case 'temp':
+                    comparison = (a.metar?.temp || 0) - (b.metar?.temp || 0);
+                    break;
+            }
+
+            return this.sort.order === 'asc' ? comparison : -comparison;
+        });
+
+        return filtered;
+    },
+
+    /**
+     * Установить фильтр
+     */
+    setFilter(filterType, value) {
+        this.filter[filterType] = value;
+        this.render();
+    },
+
+    /**
+     * Установить сортировку
+     */
+    setSort(sortBy) {
+        if (this.sort.by === sortBy) {
+            // Переключение порядка
+            this.sort.order = this.sort.order === 'asc' ? 'desc' : 'asc';
+        } else {
+            this.sort.by = sortBy;
+            this.sort.order = 'asc';
+        }
+        this.render();
+    },
+
+    /**
      * Рендер контента вкладки
      */
     render() {
@@ -240,11 +322,8 @@ const DashboardTabsMetarTaf = {
      * Основной контент вкладки
      */
     renderContent() {
-        const airports = this.airportsWithData;
+        const airports = this.applyFiltersAndSort(this.airportsWithData);
         const center = this.searchCenter || this.getCenterPoint();
-
-        // Сортируем по расстоянию
-        airports.sort((a, b) => (a.distance || 9999) - (b.distance || 9999));
 
         // Разделяем на актуальные и устаревшие
         const currentAirports = airports.filter(a => a.metar && a.metarAge < this.maxMetarAgeMinutes);
@@ -252,11 +331,19 @@ const DashboardTabsMetarTaf = {
 
         // Статистика
         const stats = {
-            total: airports.length,
+            total: this.airportsWithData.length,
             current: currentAirports.length,
-            withMetar: airports.filter(a => a.metar).length,
-            withTaf: airports.filter(a => a.taf).length,
+            withMetar: this.airportsWithData.filter(a => a.metar).length,
+            withTaf: this.airportsWithData.filter(a => a.taf).length,
             old: oldAirports.length
+        };
+
+        // Индикаторы активной сортировки
+        const sortIcons = {
+            distance: this.sort.by === 'distance' ? (this.sort.order === 'asc' ? ' ↑' : ' ↓') : '',
+            age: this.sort.by === 'age' ? (this.sort.order === 'asc' ? ' ↑' : ' ↓') : '',
+            wind: this.sort.by === 'wind' ? (this.sort.order === 'asc' ? ' ↑' : ' ↓') : '',
+            temp: this.sort.by === 'temp' ? (this.sort.order === 'asc' ? ' ↑' : ' ↓') : ''
         };
 
         return `
@@ -280,6 +367,51 @@ const DashboardTabsMetarTaf = {
                     ${this.renderStatCard('Есть TAF', stats.withTaf, 'fa-calendar-alt', '#805ad5')}
                 </div>
 
+                <!-- Фильтры и сортировка -->
+                <div style="display: flex; gap: 16px; margin-top: 20px; flex-wrap: wrap; align-items: center;">
+                    <!-- Фильтры -->
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <span style="font-size: 13px; color: #718096; font-weight: 600;">Фильтры:</span>
+                        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                            <input type="checkbox" 
+                                   ${this.filter.showOnlyCurrent ? 'checked' : ''} 
+                                   onchange="DashboardTabsMetarTaf.setFilter('showOnlyCurrent', this.checked)">
+                            <span style="font-size: 13px;">Только актуальные</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                            <input type="checkbox" 
+                                   ${this.filter.showOnlyWithTaf ? 'checked' : ''} 
+                                   onchange="DashboardTabsMetarTaf.setFilter('showOnlyWithTaf', this.checked)">
+                            <span style="font-size: 13px;">Только с TAF</span>
+                        </label>
+                    </div>
+
+                    <!-- Сортировка -->
+                    <div style="display: flex; gap: 8px; align-items: center; margin-left: auto;">
+                        <span style="font-size: 13px; color: #718096; font-weight: 600;">Сортировка:</span>
+                        <button class="btn btn-secondary" 
+                                onclick="DashboardTabsMetarTaf.setSort('distance')"
+                                style="padding: 6px 12px; font-size: 12px;">
+                            Расстояние${sortIcons.distance}
+                        </button>
+                        <button class="btn btn-secondary" 
+                                onclick="DashboardTabsMetarTaf.setSort('age')"
+                                style="padding: 6px 12px; font-size: 12px;">
+                            Время${sortIcons.age}
+                        </button>
+                        <button class="btn btn-secondary" 
+                                onclick="DashboardTabsMetarTaf.setSort('wind')"
+                                style="padding: 6px 12px; font-size: 12px;">
+                            Ветер${sortIcons.wind}
+                        </button>
+                        <button class="btn btn-secondary" 
+                                onclick="DashboardTabsMetarTaf.setSort('temp')"
+                                style="padding: 6px 12px; font-size: 12px;">
+                            Температура${sortIcons.temp}
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Кнопки действий -->
                 <div style="display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap;">
                     <button class="btn btn-secondary" onclick="DashboardTabsMetarTaf.loadMetarData()">
@@ -299,25 +431,34 @@ const DashboardTabsMetarTaf = {
                 </div>
             </div>
 
+            <!-- Предупреждения -->
+            ${this.renderWarnings(airports)}
+
             <!-- Таблица аэропортов -->
             ${currentAirports.length > 0 ? `
                 <div class="dashboard-card">
                     <div class="dashboard-card-title">
                         <i class="fas fa-list" style="color: #667eea;"></i>
-                        Аэропорты с актуальными METAR
+                        Аэропорты (${currentAirports.length} из ${this.airportsWithData.length})
                     </div>
                     <div class="metar-table-container" style="overflow-x: auto;">
                         <table class="metar-table">
                             <thead>
                                 <tr>
                                     <th>Аэропорт</th>
-                                    <th>Расстояние</th>
-                                    <th>Время (UTC)</th>
+                                    <th style="cursor: pointer;" onclick="DashboardTabsMetarTaf.setSort('distance')">
+                                        Расстояние${sortIcons.distance}
+                                    </th>
+                                    <th style="cursor: pointer;" onclick="DashboardTabsMetarTaf.setSort('age')">
+                                        Время (UTC)${sortIcons.age}
+                                    </th>
                                     <th>Ветер</th>
                                     <th>Видимость</th>
                                     <th>Погода</th>
                                     <th>Облачность</th>
-                                    <th>Температура</th>
+                                    <th style="cursor: pointer;" onclick="DashboardTabsMetarTaf.setSort('temp')">
+                                        Температура${sortIcons.temp}
+                                    </th>
                                     <th>Давление</th>
                                     <th>Статус</th>
                                 </tr>
@@ -442,6 +583,90 @@ const DashboardTabsMetarTaf = {
                     </span>
                 </td>
             </tr>
+        `;
+    },
+
+    /**
+     * Рендер предупреждений
+     */
+    renderWarnings(airports) {
+        const warnings = [];
+
+        // Проверка: все данные устарели
+        const allOld = airports.length > 0 && airports.every(a => !a.metar || a.metarAge >= this.maxMetarAgeMinutes);
+        if (allOld) {
+            warnings.push({
+                type: 'error',
+                icon: 'fa-exclamation-triangle',
+                color: '#e53e3e',
+                bg: '#fff5f5',
+                text: 'Все данные METAR устарели (> 60 минут). Используйте с осторожностью.'
+            });
+        }
+
+        // Проверка: нет данных
+        const noData = airports.length > 0 && airports.every(a => !a.metar);
+        if (noData) {
+            warnings.push({
+                type: 'error',
+                icon: 'fa-times-circle',
+                color: '#e53e3e',
+                bg: '#fff5f5',
+                text: 'Нет данных METAR для найденных аэропортов.'
+            });
+        }
+
+        // Проверка: опасные явления
+        const dangerousAirports = airports.filter(a => {
+            const metar = a.metar || {};
+            return (metar.windSpeed && metar.windSpeed > 15) || 
+                   (metar.visibility && metar.visibility < 1000) ||
+                   (metar.weather && metar.weather.toLowerCase().includes('гроза')) ||
+                   (metar.weather && metar.weather.toLowerCase().includes('ливень'));
+        });
+
+        if (dangerousAirports.length > 0) {
+            warnings.push({
+                type: 'warning',
+                icon: 'fa-exclamation-circle',
+                color: '#dd6b20',
+                bg: '#fffaf0',
+                text: `Опасные явления на ${dangerousAirports.length} аэропорт(а)х: сильный ветер, низкая видимость, гроза.`
+            });
+        }
+
+        // Проверка: сильный ветер
+        const highWind = airports.filter(a => a.metar?.windSpeed && a.metar.windSpeed > 10);
+        if (highWind.length > 0 && !dangerousAirports.length) {
+            warnings.push({
+                type: 'info',
+                icon: 'fa-wind',
+                color: '#d69e2e',
+                bg: '#fffff0',
+                text: `Сильный ветер (> 10 м/с) на ${highWind.length} аэропорт(а)х.`
+            });
+        }
+
+        if (warnings.length === 0) return '';
+
+        return `
+            <div style="margin-top: 20px;">
+                ${warnings.map(w => `
+                    <div style="
+                        padding: 16px;
+                        background: ${w.bg};
+                        border-left: 4px solid ${w.color};
+                        border-radius: 4px;
+                        margin-bottom: 12px;
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                    ">
+                        <i class="fas ${w.icon}" style="color: ${w.color}; font-size: 20px;"></i>
+                        <span style="color: ${w.color}; font-weight: 600;">${w.text}</span>
+                    </div>
+                `).join('')}
+            </div>
         `;
     },
 
@@ -687,12 +912,32 @@ const DashboardTabsMetarTaf = {
      * После рендеринга
      */
     afterRender() {
-        // Можно добавить дополнительную логику после рендеринга
+        // Автоматическая загрузка при первом открытии
+        if (!this.hasLoaded && this.airportsWithData.length === 0) {
+            this.hasLoaded = true;
+            console.log('🔄 Автоматическая загрузка METAR...');
+            setTimeout(() => this.loadMetarData(), 500);
+        }
+        
         console.log('✅ Вкладка METAR/TAF отрисована');
+    },
+
+    /**
+     * Инициализация (вызывается при загрузке страницы)
+     */
+    init() {
+        console.log('✅ DashboardTabsMetarTaf инициализирован');
     }
 };
 
 // Экспорт модуля
 if (typeof window !== 'undefined') {
     window.DashboardTabsMetarTaf = DashboardTabsMetarTaf;
+    
+    // Автоинициализация
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => DashboardTabsMetarTaf.init());
+    } else {
+        DashboardTabsMetarTaf.init();
+    }
 }
